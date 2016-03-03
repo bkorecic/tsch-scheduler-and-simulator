@@ -1,0 +1,1994 @@
+# depslib dependency file v1.0
+1423260968 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	"util/debug.h"
+	"util/files.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+
+1423260968 desa.h"
+
+1423260978 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1437003667 efs.h"
+
+1415216831 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/util/list.h
+
+1423175915 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+
+1436736549 /graphs.h"
+
+1422478858 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1416038004 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1440832157 
+
+1423249637 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1437003843 me_schedule.h"
+
+1421126836 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/util/debug.h
+
+1416037723 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/util/defs.h
+
+1423260795 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1441781154 ebug.h"
+
+1423205554 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1423175571 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1440868121 oring.h"
+
+1422838918 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1423175583 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1416618525 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1422664282 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1422478239 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1422664560 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1436736525 dule.h"
+
+1423175891 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1423175866 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1436236815 h"
+
+1423175873 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1417335333 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1422478986 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1423175612 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1422478452 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1423175830 source:/mnt/hgfs/pedrohenriquegomes/USC/Dev/research/modesa/modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<glpk.h>
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1437003843 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1437003667 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/list.h
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/defs.h
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/debug.h
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1436474227 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1440868121 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1436738440 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1436736525 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1440833463 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1436722882 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1436737113 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1436737129 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1436736826 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/modesa/modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<glpk.h>
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1436738641 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1436737027 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1436236815 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1436738792 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1436737070 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1440869424 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+
+1436236815 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1441074059 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+
+1441754588 schedule.h"
+
+1436736549 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1440832266 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1440832157 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/schedule/fhss.h
+	<stdint.h>
+
+1437003737 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1436907793 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/schedule/schedule.h
+
+1440831230 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1440831230 >
+
+1440831216 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
+1440831216 rint.h"
+
+1437003843 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\graphs\graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1437003667 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\graphs\graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1436236815 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\list.h
+
+1436236815 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\defs.h
+
+1436236815 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\debug.h
+
+1436236815 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\mcc\time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1436474227 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\mcc\cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1436236815 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\mcc\cms_tree.h
+	"../graphs/graphs.h"
+
+1440868121 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\mcc\graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1436738440 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\mcc\graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1436736525 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\mcc\mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1440833463 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1436722882 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\mcc\time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1436737113 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\modesa\modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1436737129 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\modesa\modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1441781154 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\modesa\modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/glpk.h"
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1440832266 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\schedule\fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1440832157 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\schedule\fhss.h
+	<stdint.h>
+
+1436907793 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\schedule\schedule.h
+
+1437003737 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\schedule\schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1440831230 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1436738641 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\tasa\coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1436737027 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\tasa\coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1436236815 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\tasa\matching.c
+	<stdio.h>
+	"matching.h"
+
+1436236815 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\tasa\matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1436738792 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\tasa\tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1436737070 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\tasa\tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1440869424 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+
+1436236815 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1440831216 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
+1441754588 source:\\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+
+1436736549 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\mcc\mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1228384800 \\lenovo-pedro\users\pedro henrique gomes\dropbox\dev\research\scheduling_algorithms\util\glpk.h
+
+1442095958 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1442095944 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/list.h
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/defs.h
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/debug.h
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1441834750 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+
+1440833463 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1440831230 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1436736549 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1436737070 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1436737129 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1436907793 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/schedule/schedule.h
+
+1436474227 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1441839628 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1436738440 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1436736525 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1442095976 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1442096000 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1442096035 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/modesa/modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/glpk.h"
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1228381200 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/glpk.h
+
+1440832266 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1440832157 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/schedule/fhss.h
+	<stdint.h>
+
+1437003737 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1436738641 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1436737027 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1436236815 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1436236815 /home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1442096058 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1442098033 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+	"../schedule/fhss.h"
+
+1436236815 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1440831216 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
+1444284232 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1444284232 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1444284234 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/list.h
+
+1444284234 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/defs.h
+
+1444284233 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/debug.h
+
+1444284233 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284232 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1444284232 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1444284232 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1444284232 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1444284232 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1444284234 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/schedule/fhss.h
+	<stdint.h>
+
+1444284233 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/schedule/schedule.h
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284234 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284234 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+	"../schedule/fhss.h"
+
+1444284234 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1444284234 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
+1448074070 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+
+1444284232 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1445758522 source:/media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/modesa/modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/glpk.h"
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1444284234 /media/pedro/Data/USC/4_Dev/research/scheduling_algorithms/util/glpk.h
+
+1444284232 source:/home/pedro/scheduling_algorithms/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1448246160 /home/pedro/scheduling_algorithms/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1444284234 /home/pedro/scheduling_algorithms/util/list.h
+
+1444284234 /home/pedro/scheduling_algorithms/util/defs.h
+
+1444284233 /home/pedro/scheduling_algorithms/util/debug.h
+
+1444284233 /home/pedro/scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1448246127 source:/home/pedro/scheduling_algorithms/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+
+1444284234 /home/pedro/scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1444284234 /home/pedro/scheduling_algorithms/util/print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1444284232 /home/pedro/scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284232 /home/pedro/scheduling_algorithms/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1444284233 /home/pedro/scheduling_algorithms/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284233 /home/pedro/scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284233 /home/pedro/scheduling_algorithms/schedule/schedule.h
+
+1444284232 source:/home/pedro/scheduling_algorithms/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1444284232 source:/home/pedro/scheduling_algorithms/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1444284232 /home/pedro/scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1444284232 source:/home/pedro/scheduling_algorithms/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1444284233 source:/home/pedro/scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/home/pedro/scheduling_algorithms/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1445758522 source:/home/pedro/scheduling_algorithms/modesa/modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/glpk.h"
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1444284234 /home/pedro/scheduling_algorithms/util/glpk.h
+
+1444284233 source:/home/pedro/scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284233 /home/pedro/scheduling_algorithms/schedule/fhss.h
+	<stdint.h>
+
+1444284233 source:/home/pedro/scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284233 source:/home/pedro/scheduling_algorithms/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1444284233 /home/pedro/scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/home/pedro/scheduling_algorithms/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1444284233 /home/pedro/scheduling_algorithms/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/home/pedro/scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1444284234 source:/home/pedro/scheduling_algorithms/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+	"../schedule/fhss.h"
+
+1444284234 source:/home/pedro/scheduling_algorithms/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1444284234 source:/home/pedro/scheduling_algorithms/util/print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
+1444284232 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1448302276 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1444284234 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/list.h
+
+1444284234 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/defs.h
+
+1444284233 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/debug.h
+
+1444284233 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1448302599 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+
+1444284234 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1444284234 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1444284232 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284232 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1444284233 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284233 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284233 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/schedule/schedule.h
+
+1444284232 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1444284232 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1444284232 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1444284232 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1444284233 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1445758522 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/modesa/modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/glpk.h"
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1444284234 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/glpk.h
+
+1444284233 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284233 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/schedule/fhss.h
+	<stdint.h>
+
+1444284233 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284233 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1444284233 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1444284233 /media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1444284234 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+	"../schedule/fhss.h"
+
+1444284234 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1444284234 source:/media/DD84C12414C121AB8/USC/4_Dev/research/scheduling_algorithms/util/print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
+1444284232 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1448246981 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1444284234 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/list.h
+
+1444284234 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/defs.h
+
+1444284233 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/debug.h
+
+1444284233 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284232 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1444284232 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1444284232 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1444284232 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1444284232 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1444284234 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1445758522 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/modesa/modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/glpk.h"
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1444284234 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/glpk.h
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.h
+	<stdint.h>
+
+1444284233 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.h
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284234 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1444284233 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284234 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+	"../schedule/fhss.h"
+
+1444284234 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1444284234 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/util/print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
+1457029028 source:/media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+
+1444284232 /media/pedro/Data/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284232 source:/home/pedro/1_scheduling_algorithms/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1448246981 /home/pedro/1_scheduling_algorithms/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1444284234 /home/pedro/1_scheduling_algorithms/util/list.h
+
+1444284234 /home/pedro/1_scheduling_algorithms/util/defs.h
+
+1444284233 /home/pedro/1_scheduling_algorithms/util/debug.h
+
+1444284233 /home/pedro/1_scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1457031034 source:/home/pedro/1_scheduling_algorithms/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+
+1457030963 /home/pedro/1_scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1457031010 /home/pedro/1_scheduling_algorithms/util/print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1444284232 /home/pedro/1_scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284232 /home/pedro/1_scheduling_algorithms/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1444284233 /home/pedro/1_scheduling_algorithms/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284233 /home/pedro/1_scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284233 /home/pedro/1_scheduling_algorithms/schedule/schedule.h
+
+1444284232 source:/home/pedro/1_scheduling_algorithms/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1444284232 source:/home/pedro/1_scheduling_algorithms/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1444284232 /home/pedro/1_scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1444284232 source:/home/pedro/1_scheduling_algorithms/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1444284233 source:/home/pedro/1_scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/home/pedro/1_scheduling_algorithms/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1445758522 source:/home/pedro/1_scheduling_algorithms/modesa/modesa_ip.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/glpk.h"
+	"modesa.h"
+	"../util/files.h"
+	"../util/debug.h"
+
+1444284234 /home/pedro/1_scheduling_algorithms/util/glpk.h
+
+1444284233 source:/home/pedro/1_scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284233 /home/pedro/1_scheduling_algorithms/schedule/fhss.h
+	<stdint.h>
+
+1444284233 source:/home/pedro/1_scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284233 source:/home/pedro/1_scheduling_algorithms/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1444284233 /home/pedro/1_scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/home/pedro/1_scheduling_algorithms/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1444284233 /home/pedro/1_scheduling_algorithms/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284233 source:/home/pedro/1_scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1457030985 source:/home/pedro/1_scheduling_algorithms/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+	"../schedule/fhss.h"
+
+1444284234 source:/home/pedro/1_scheduling_algorithms/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1457030374 source:/home/pedro/1_scheduling_algorithms/util/print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
