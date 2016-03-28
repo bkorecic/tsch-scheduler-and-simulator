@@ -347,11 +347,11 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
         /* Traffic time slots */
         for (uint16_t j = 1; j <= superframe_length; j++)
         {
-            fprintf(fp, "            case %d:\n", j-1);
             TimeSlot_t *ts;
 
             if ((ts = getTimeSlot(j, &node->timeslots)) != NULL)
             {
+                fprintf(fp, "            case %d:\n", j-1);
                 if (ts->type == TS_RX)
                 {
                     /* Type */
@@ -431,21 +431,8 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
                 {
                     max_freq = ts->freq;
                 }
+                fprintf(fp, "               return;\n");
             }
-            else
-            {
-                fprintf(fp, "               extScheduleEntry->type = CELLTYPE_OFF;\n");
-                if (export_mask_channels)
-                {
-                    fprintf(fp, "               extScheduleEntry->channelMask = 0;\n");
-                }
-                else
-                {
-                    fprintf(fp, "               extScheduleEntry->channelMask = 0;\n");
-                }
-                fprintf(fp, "               extScheduleEntry->neighbor = 0;\n");
-            }
-            fprintf(fp, "               break;\n");
         }
 
         fprintf(fp, "            default:\n");
@@ -457,6 +444,19 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
     fprintf(fp, "      default:\n");
     fprintf(fp, "         break;\n");
     fprintf(fp, "   }\n");
+
+    fprintf(fp, "   extScheduleEntry->type = CELLTYPE_OFF;\n");
+    if (export_mask_channels)
+    {
+        fprintf(fp, "   extScheduleEntry->channelMask = 0;\n");
+    }
+    else
+    {
+        fprintf(fp, "   extScheduleEntry->channelMask = 0;\n");
+    }
+    fprintf(fp, "   extScheduleEntry->neighbor = 0;\n");
+
+
     fprintf(fp, "}\n");
     //fprintf(fp,"#endif");
 
