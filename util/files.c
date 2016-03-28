@@ -327,16 +327,10 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
             superframe_length = ListLength(&node->timeslots);
         }
     }
-    //fprintf(fp,"//#define EXTERNAL_SCHEDULE\n\n");
 
     fprintf(fp, "#include \"opendefs.h\"\n");
     fprintf(fp, "#include \"schedule.h\"\n");
     fprintf(fp, "\n");
-
-    //fprintf(fp, "#ifdef EXTERNAL_SCHEDULE\n");
-    //fprintf(fp, "#define N_NODES %d\n", n_nodes);
-    //fprintf(fp, "#define N_TIMESLOTS %d\n\n", superframe_length);   /* We have one timeslot for adv, one for TXRX and one for serialRX */
-
     fprintf(fp, "void getExtSchedule(uint16_t addr, uint8_t timeslot_offset, extScheduleEntry_t *extScheduleEntry)\n{");
     fprintf(fp, "\n");
     fprintf(fp, "   switch (addr) {\n");
@@ -367,13 +361,13 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
                     {
                         Node_t *node_with_channels = node;
                         uint16_t mask_channels = create_mask_channels(node_with_channels);
-                        fprintf(fp, "               extScheduleEntry->channelMask = 0b");
+                        fprintf(fp, "               extScheduleEntry->channelMask = %d;   // 0b", mask_channels);
                         print_binary(fp, mask_channels);
-                        fprintf(fp, ";\n");
+                        fprintf(fp, "\n");
                     }
                     else
                     {
-                        fprintf(fp, "               extScheduleEntry->channelOffset = %d;\n", ts->freq - 1);
+                        fprintf(fp, "               extScheduleEntry->channelMask = %d;\n", ts->freq);
                     }
                     /* Neighbor */
                     if (use_eui64)
@@ -402,13 +396,13 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
                     {
                         Node_t *node_with_channels = getParent(tree, node);
                         uint16_t mask_channels = create_mask_channels(node_with_channels);
-                        fprintf(fp, "               extScheduleEntry->channelMask = 0b");
+                        fprintf(fp, "               extScheduleEntry->channelMask = %d;   // 0b", mask_channels);
                         print_binary(fp, mask_channels);
-                        fprintf(fp, ";\n");
+                        fprintf(fp, "\n");
                     }
                     else
                     {
-                        fprintf(fp, "               extScheduleEntry->channelOffset = %d;\n", ts->freq - 1);
+                        fprintf(fp, "               extScheduleEntry->channelMask = %d;\n", ts->freq);
                     }
                     /* Neighbor */
                     if (use_eui64)
@@ -447,7 +441,7 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
                 }
                 else
                 {
-                    fprintf(fp, "               extScheduleEntry->channelOffset = 0;\n");
+                    fprintf(fp, "               extScheduleEntry->channelMask = 0;\n");
                 }
                 fprintf(fp, "               extScheduleEntry->neighbor = 0;\n");
             }
@@ -463,7 +457,7 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
     fprintf(fp, "      default:\n");
     fprintf(fp, "         break;\n");
     fprintf(fp, "   }\n");
-    fprintf(fp, "\n");
+    fprintf(fp, "}\n");
     //fprintf(fp,"#endif");
 
     fprintf(stdout, "SF = %d\n", superframe_length);
@@ -484,27 +478,26 @@ void generateTreeFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree)
     fprintf(fp, "#include \"topology.h\"\n");
     fprintf(fp, "#include \"idmanager.h\"\n\n");
 
-    fprintf(fp, "bool topology_isAcceptablePacket(ieee802154_header_iht* ieee802514_header) {\n");
+    fprintf(fp, "bool topology_isAcceptablePacket(uint16_t shortID) {\n");
     fprintf(fp, "#ifdef FORCETOPOLOGY\n");
-    fprintf(fp, "\tbool returnVal;\n");
-    fprintf(fp, "\treturnVal=FALSE;\n");
-    fprintf(fp, "\tuint16_t my_addr = idmanager_getMyID(ADDR_64B)->addr_64b[7] | (idmanager_getMyID(ADDR_64B)->addr_64b[6] << 8);\n");
-    fprintf(fp, "\tuint16_t src_addr = ieee802514_header->src.addr_64b[7] | (ieee802514_header->src.addr_64b[6] << 8);\n");
-    fprintf(fp, "\tswitch (my_addr) {\n");
+    fprintf(fp, "   bool returnVal;\n");
+    fprintf(fp, "   \n");
+    fprintf(fp, "   returnVal=FALSE;\n");
+    fprintf(fp, "   switch (idmanager_getMyShortID()) {\n");
 
     for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
     {
         Node_t *node = (Node_t *)elem1->obj;
 
-        fprintf(fp, "\t\tcase 0x%04x:\n", (unsigned int)(node->eui64 & 0x000000000000ffff));
-        fprintf(fp, "\t\t\tif (\n");
+        fprintf(fp, "      case 0x%04x:\n", (unsigned int)(node->eui64 & 0x000000000000ffff));
+        fprintf(fp, "         if (\n");
 
         /* The parent */
         Node_t *parent = getParent(tree, node);
         bool flag_parent = false;
         if (parent != NULL)
         {
-            fprintf(fp, "\t\t\t\tsrc_addr==0x%04x", (unsigned int)(parent->eui64 & 0x000000000000ffff));
+            fprintf(fp, "            shortID==0x%04x", (unsigned int)(parent->eui64 & 0x000000000000ffff));
             flag_parent = true;
         }
 
@@ -519,22 +512,22 @@ void generateTreeFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree)
                 fprintf(fp, "||\n");
                 flag_parent = false;
             }
-            fprintf(fp, "\t\t\t\tsrc_addr==0x%04x", (unsigned int)(child_subtree->root->eui64 & 0x000000000000ffff));
+            fprintf(fp, "            shortID==0x%04x", (unsigned int)(child_subtree->root->eui64 & 0x000000000000ffff));
 
             flag_children = true;
         }
 
         fprintf(fp, "\n");
-        fprintf(fp, "\t\t\t) {\n");
-        fprintf(fp, "\t\t\treturnVal=TRUE;\n");
-        fprintf(fp, "\t\t}\n");
-        fprintf(fp, "\t\tbreak;\n");
+        fprintf(fp, "         ) {\n");
+        fprintf(fp, "         returnVal=TRUE;\n");
+        fprintf(fp, "      }\n");
+        fprintf(fp, "      break;\n");
     }
 
-    fprintf(fp, "\t}\n");
-    fprintf(fp, "\treturn returnVal;\n");
+    fprintf(fp, "   }\n");
+    fprintf(fp, "   return returnVal;\n");
     fprintf(fp, "#else\n");
-    fprintf(fp, "\treturn TRUE;\n");
+    fprintf(fp, "   return TRUE;\n");
     fprintf(fp, "#endif\n");
     fprintf(fp, "}\n");
 }

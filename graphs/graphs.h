@@ -7,13 +7,11 @@
 #include "../util/list.h"
 #include "../util/defs.h"
 
-#define MAX_NODES 127
+#define MAX_NODES 50
 #define MAX_HOP_COUNT MAX_NODES
 #define MAX_TIMESLOTS 256
 
 #define NUM_CHANNELS 16
-
-#define ETX_THRESHOLD 0.9
 
 typedef enum {
 	SINK,

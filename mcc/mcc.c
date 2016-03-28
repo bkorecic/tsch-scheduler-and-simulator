@@ -13,7 +13,7 @@
 
 int main_mcc(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, \
              bool intMatrix[][MAX_NODES][NUM_CHANNELS], bool confMatrix[][MAX_NODES][NUM_CHANNELS], float prrMatrix[][MAX_NODES][NUM_CHANNELS], \
-             bool ca_routing, bool ca_allocation, int8_t channel)
+             bool ca_routing, bool ca_allocation, int8_t channel, float etx_threshold)
 {
     /* Create the time slots */
     createTimeSlotSchedule(tree, nodesList);
@@ -24,7 +24,7 @@ int main_mcc(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, \
     /* Assign the receive channels */
     if (ca_allocation)
     {
-        assignChannelLinks(nodesList, prrMatrix, confMatrix, tree);
+        assignChannelLinks(nodesList, prrMatrix, confMatrix, tree, etx_threshold);
     }
     else
     {

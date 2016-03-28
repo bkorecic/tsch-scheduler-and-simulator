@@ -31,7 +31,7 @@ typedef enum {
  */
 bool assignChannelNodes(List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNELS], CHANNEL_TYPE type, Tree_t *cmst, int8_t channel);
 
-bool assignChannelLinks(List *nodesList, float etxMatrix[][MAX_NODES][NUM_CHANNELS], bool confMatrix[][MAX_NODES][NUM_CHANNELS], Tree_t *cmst);
+bool assignChannelLinks(List *nodesList, float etxMatrix[][MAX_NODES][NUM_CHANNELS], bool confMatrix[][MAX_NODES][NUM_CHANNELS], Tree_t *cmst, float etx_threshold);
 
 bool paintNodes(List *nodesSorted, bool confMatrix[][MAX_NODES][NUM_CHANNELS], int8_t channel);
 

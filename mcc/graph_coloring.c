@@ -8,6 +8,9 @@ bool assignChannelNodes(List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNE
 {
     uint8_t n_nodes = ListLength(nodesList);
 
+    /* This array maps the painted colors into frequency channels (0 - 15). This is given in order of channel quality */
+    uint8_t color_to_ch_map[16] = {15, 14, 9, 4, 0, 13, 12, 11, 10, 8, 7, 6, 5, 3, 2, 1};
+
     /* List that holds all nodes sorted by non-decreasing order of degree */
     List nodesSorted; memset(&nodesSorted, 0, sizeof(List)); ListInit(&nodesSorted);
 
@@ -103,7 +106,7 @@ bool assignChannelNodes(List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNE
                 TimeSlot_t *ts = (TimeSlot_t *)elem2->obj;
                 if (ts->type == TS_RX)
                 {
-                    ts->freq = (uint8_t)ListFirst(&node->channels)->obj;
+                    ts->freq = color_to_ch_map[(uint8_t)ListFirst(&node->channels)->obj];
                 }
             }
 
@@ -116,7 +119,7 @@ bool assignChannelNodes(List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNE
                     TimeSlot_t *ts = (TimeSlot_t *)elem4->obj;
                     if (ts->type == TS_TX)
                     {
-                        ts->freq = (uint8_t)ListFirst(&node->channels)->obj;
+                        ts->freq = color_to_ch_map[(uint8_t)ListFirst(&node->channels)->obj];
                     }
                 }
             }
@@ -129,7 +132,7 @@ bool assignChannelNodes(List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNE
                 TimeSlot_t *ts = (TimeSlot_t *)elem2->obj;
                 if (ts->type == TS_TX)
                 {
-                    ts->freq = (uint8_t)ListFirst(&node->channels)->obj;
+                    ts->freq = color_to_ch_map[(uint8_t)ListFirst(&node->channels)->obj];
                 }
             }
 
@@ -139,7 +142,7 @@ bool assignChannelNodes(List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNE
                 TimeSlot_t *ts = (TimeSlot_t *)elem3->obj;
                 if (ts->type == TS_RX)
                 {
-                    ts->freq = (uint8_t)ListFirst(&node->channels)->obj;
+                    ts->freq = color_to_ch_map[(uint8_t)ListFirst(&node->channels)->obj];
                 }
             }
 
@@ -149,7 +152,7 @@ bool assignChannelNodes(List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNE
     return (true);
 }
 
-bool assignChannelLinks(List *nodesList, float etxMatrix[][MAX_NODES][NUM_CHANNELS], bool confMatrix[][MAX_NODES][NUM_CHANNELS], Tree_t *cmst)
+bool assignChannelLinks(List *nodesList, float etxMatrix[][MAX_NODES][NUM_CHANNELS], bool confMatrix[][MAX_NODES][NUM_CHANNELS], Tree_t *cmst, float etx_threshold)
 {
     /* Create a list with all links in the graph G */
     List linksList; memset(&linksList, 0, sizeof(List)); ListInit(&linksList);
@@ -255,7 +258,7 @@ bool assignChannelLinks(List *nodesList, float etxMatrix[][MAX_NODES][NUM_CHANNE
         uint16_t good_channel_size = 0;
         for (uint8_t c = 0; c < NUM_CHANNELS; c++)
         {
-            if (etxMatrix[n1->id][n2->id][c] <= (1.0/ETX_THRESHOLD) && etxMatrix[n2->id][n1->id][c] <= (1.0/ETX_THRESHOLD))
+            if (etxMatrix[n1->id][n2->id][c] <= (1.0/etx_threshold) && etxMatrix[n2->id][n1->id][c] <= (1.0/etx_threshold))
             {
                 good_channel_size++;
             }
@@ -353,7 +356,7 @@ bool paintNodes(List *nodesSorted, bool confMatrix[][MAX_NODES][NUM_CHANNELS], i
     /* Paint each node */
     for (ListElem *elem1 = ListFirst(nodesSorted); elem1 != NULL; elem1 = ListNext(nodesSorted, elem1))
     {
-        uint8_t color = 1;
+        uint8_t color = 0;
         Node_t *nodeToColor = (Node_t *)elem1->obj;
 
         /* Check if we already have used this color */
