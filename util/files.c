@@ -287,7 +287,7 @@ bool readLinksFile(FILE *fp, List *nodesList, List *linksList, uint8_t maxPrr)
                     prr /= (float)maxPrr; /* Calculating the PRR in percentage */
                     etx = 1.0/prr;
 
-                    PRINTF("Link %d->%d Ch %d PRR %f ETX %f\n", node->id, j, ch, prr, etx);
+                    //PRINTF("Link %d->%d Ch %d PRR %f ETX %f\n", node->id, j, ch, prr, etx);
 
                     /* Create a new Link object */
                     if (prr != 0.0)
@@ -314,7 +314,6 @@ bool readLinksFile(FILE *fp, List *nodesList, List *linksList, uint8_t maxPrr)
 
 void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool export_mask_channels, bool use_eui64)
 {
-    uint8_t n_nodes = ListLength(nodesList);
     uint8_t max_freq = 0;
 
     /* Calculate the slot_frame size */
@@ -360,7 +359,7 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
                     if (export_mask_channels)
                     {
                         Node_t *node_with_channels = node;
-                        uint16_t mask_channels = create_mask_channels(node_with_channels);
+                        uint16_t mask_channels = createMaskChannels(node_with_channels);
                         fprintf(fp, "               extScheduleEntry->channelMask = %d;   // 0b", mask_channels);
                         print_binary(fp, mask_channels);
                         fprintf(fp, "\n");
@@ -395,7 +394,7 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
                     if (export_mask_channels)
                     {
                         Node_t *node_with_channels = getParent(tree, node);
-                        uint16_t mask_channels = create_mask_channels(node_with_channels);
+                        uint16_t mask_channels = createMaskChannels(node_with_channels);
                         fprintf(fp, "               extScheduleEntry->channelMask = %d;   // 0b", mask_channels);
                         print_binary(fp, mask_channels);
                         fprintf(fp, "\n");

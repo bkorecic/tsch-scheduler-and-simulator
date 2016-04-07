@@ -7,25 +7,22 @@
 #include "fhss.h"
 #include "schedule.h"
 
-uint8_t openwsn_fhss_calculate_chan(uint8_t freq_offset, uint64_t asn, uint8_t slotframe_size)
+uint8_t fhssOpenwsnChan(uint8_t freq_offset, uint64_t asn)
 {
-    return ((freq_offset + asn) % slotframe_size);
+    uint8_t ch_idx = (freq_offset + asn) % NUM_CHANNELS;
+
+    return chTemplate_default[ch_idx];
 }
 
-uint8_t tsch_function0_calculate_chan(uint8_t freq_offset, uint64_t asn, uint8_t slotframe_size)
-{
-    return (freq_offset);
-}
-
-uint8_t blacklist_calculate_chan(List *blacklist, uint8_t freq_offset, uint64_t asn, uint8_t slotframe_size)
+uint8_t fhssCentralizedBlacklistChan(List *blacklist, uint8_t freq_offset, uint64_t asn)
 {
     uint8_t freq;
     uint8_t i = 0;
     bool flag = true;
 
-    while(flag)
+    while(flag == true && i < NUM_CHANNELS)
     {
-        freq = openwsn_fhss_calculate_chan(freq_offset, asn + i, slotframe_size);
+        freq = fhssOpenwsnChan(freq_offset, asn + i);
         if (!ListFind(blacklist, (void *)freq))
         {
             flag = false;
@@ -36,25 +33,107 @@ uint8_t blacklist_calculate_chan(List *blacklist, uint8_t freq_offset, uint64_t 
     return (freq);
 }
 
-uint8_t distributed_blacklist_calculate_chan(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint64_t asn, uint8_t slotframe_size)
+uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint64_t asn)
 {
     uint8_t freq = 0;
+
+    float draw = (rand() % 100)/100;
+
+    if (draw < MAB_EPSILON)
+    {
+        /* We will explore all channels randomly */
+
+        return fhssDistributedBlacklistMABExplore(parent, asn);
+    }
+    else
+    {
+        /* We will exploit the best arm */
+
+        uint8_t best_freq = 0, best_reward = 0;
+        for (ListElem *elem = ListFirst(&parent->channels); elem != NULL; elem = ListNext(&parent->channels, elem))
+        {
+            uint8_t freq_off = (uint8_t)elem->obj;
+
+            freq = fhssOpenwsnChan(freq_off, asn);
+            if (parent->avg_reward[freq] > best_reward)
+            {
+                best_freq = freq;
+                best_reward = parent->avg_reward[freq];
+            }
+        }
+
+        return (freq);
+    }
+}
+
+uint8_t fhssDistributedBlacklistMABFirstGoodArmChan(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint64_t asn)
+{
+    uint8_t freq = 0;
+
+    float draw = (rand() % 100)/100;
+
+    if (draw < MAB_EPSILON)
+    {
+        /* We will explore all channels randomly */
+
+        return fhssDistributedBlacklistMABExplore(parent, asn);
+    }
+    else
+    {
+        /* We will exploit the first good arm */
+
+        for (ListElem *elem = ListFirst(&parent->channels); elem != NULL; elem = ListNext(&parent->channels, elem))
+        {
+            uint8_t freq_off = (uint8_t)elem->obj;
+
+            freq = fhssOpenwsnChan(freq_off, asn);
+            if (parent->avg_reward[freq] > THRESHOLD_REWARD_GOOD_ARM)
+            {
+                return (freq);
+            }
+        }
+
+        return (freq);
+    }
+    return 0;
+}
+
+uint8_t fhssDistributedBlacklistOptimalChan(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint64_t asn)
+{
+    uint8_t best_freq = 0, best_prr = 0;
 
     for (ListElem *elem = ListFirst(&parent->channels); elem != NULL; elem = ListNext(&parent->channels, elem))
     {
         uint8_t freq_off = (uint8_t)elem->obj;
 
-        freq = openwsn_fhss_calculate_chan(freq_off, asn, slotframe_size);
-        if (prrMatrix[child->id][parent->id][freq] >= THRESHOLD_BLACKCHANNEL)
+        uint8_t freq = fhssOpenwsnChan(freq_off, asn);
+        if (prrMatrix[child->id][parent->id][freq] > best_prr)
         {
-            return (freq);
+            best_freq = freq;
+            best_prr = prrMatrix[child->id][parent->id][freq];
         }
     }
 
-    return (freq);
+    return (best_freq);
 }
 
-uint16_t create_mask_channels(Node_t *node)
+uint8_t fhssDistributedBlacklistMABExplore(Node_t *parent, uint64_t asn)
+{
+    uint8_t offset_to_explore = rand() % ListLength(&parent->channels);
+
+    uint8_t i = 0;
+    for (ListElem *elem = ListFirst(&parent->channels); elem != NULL; elem = ListNext(&parent->channels, elem))
+    {
+        if (i++ == offset_to_explore)
+        {
+            uint8_t freq_off = (uint8_t)elem->obj;
+
+            return (fhssOpenwsnChan(freq_off, asn));
+        }
+    }
+}
+
+uint16_t createMaskChannels(Node_t *node)
 {
     uint16_t mask = 0;
 

@@ -16,14 +16,14 @@
 #define PROTOCOL                MCC_ICRA
 #define SINK_NODE               0
 #define CHANNEL                 15      /* Channel to be considered for single-channel algorithms */
-#define EXECUTE_SCHEDULE        0       /* This is 1 if we are going to simulate the schedule */
-#define EXPORT_MASK_CHANNELS    0       /* This is 1 if we are going to output a mask with all channels that could be used
+#define EXECUTE_SCHEDULE        1       /* This is 1 if we are going to simulate the schedule */
+#define EXPORT_MASK_CHANNELS    1       /* This is 1 if we are going to output a mask with all channels that could be used
                                         in the schedule file. This is used for distributed FHSS implementation */
 #define ETX_THRESHOLD           0.9
 
-//#define DATA_FILE "data/prr_soda/data_43_sim.dat"
-#define DATA_FILE "prr_file.dat"
-#define LINKS_PREFIX "data/prr_tutornet/experiment_2/prr45"
+#define DATA_FILE "data/prr_tutornet/experiment_blacklist/real_prr_1.dat"
+//#define DATA_FILE "prr_file.dat"
+#define LINKS_PREFIX "data/prr_tutornet/experiment_blacklist/real_prr"
 #define TREE_FILE "tree.dat"
 
 void readPrrFile(char *file_name, List *nodesList, List linksList[]);
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
     /* Execute the schedule */
     if (execute_sch)
     {
-        execute_schedule(&nodesList, linksList, tree, sink_id, LINKS_PREFIX, 900000);
+        execute_schedule(&nodesList, linksList, tree, sink_id, LINKS_PREFIX, 900000, 60000);
         printPacketTxRxperNode(&nodesList);
     }
 

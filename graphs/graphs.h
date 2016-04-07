@@ -77,6 +77,12 @@ typedef struct node_t {
     bool        last_rx;
     uint8_t     worst_prr;
 /* Schedule */
+
+/* Blacklist */
+    uint8_t     avg_reward[NUM_CHANNELS];
+    uint32_t    cumulative_regret;
+    uint8_t     optimal_freq;
+/* Blacklist */
 } Node_t;
 
 typedef struct link_t {
