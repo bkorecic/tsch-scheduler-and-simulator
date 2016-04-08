@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
     /* Execute the schedule */
     if (execute_sch)
     {
-        execute_schedule(&nodesList, linksList, tree, sink_id, LINKS_PREFIX, 900000, 60000);
+        execute_schedule(&nodesList, linksList, tree, sink_id, LINKS_PREFIX, 900000, 60000, 60000);
         printPacketTxRxperNode(&nodesList);
     }
 

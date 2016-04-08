@@ -16,9 +16,9 @@
 #define FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM 4
 #define FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL 5
 
-#define FHSS FHSS_NONE
+#define FHSS FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL
 
-int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint64_t n_timeslots_per_file, uint16_t n_timeslots_regret)
+int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint64_t n_timeslots_per_file, uint16_t n_timeslots_regret, uint16_t n_timeslots_throughput)
 {
     List blacklist; memset(&blacklist, 0, sizeof(List)); ListInit(&blacklist);
     uint8_t prrMatrix[MAX_NODES][MAX_NODES][NUM_CHANNELS];
@@ -52,10 +52,7 @@ int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sin
         /* Create the prrMatrix */
         createPrrMatrix(prrMatrix, linksList);
 
-        /* Print the prrMatrix */
-        //printPrrMatrix(prrMatrix, ListLength(nodesList));
-
-        if (FHSS == FHSS_CENTRALIZED_BLACKLIST)
+        if (fhss == FHSS_CENTRALIZED_BLACKLIST)
         {
             /* Create the black list of channel where at least one PRR is less than THRESHOLD_BLACKCHANNEL */
             ListUnlinkAll(&blacklist);
@@ -82,6 +79,18 @@ int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sin
         while (asn < n)
         {
             uint16_t time = asn % superframe_length;
+
+            /* Check if we need to output the regret */
+            if ((asn % n_timeslots_regret) == 0)
+            {
+                outputRegretFile(nodesList, fhss);
+            }
+
+            /* Check if we need to output the throughput */
+            if ((asn % n_timeslots_throughput) == 0)
+            {
+                outputThroughputFile(nodesList, fhss);
+            }
 
             /* Finding nodes that transmit at time slot 'time' */
             for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
@@ -169,12 +178,6 @@ int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sin
 
             /* Go to the next time slot */
             asn++;
-
-            /* Check if we need to output the regret */
-            if ((asn % n_timeslots_regret) == 0)
-            {
-                outputRegretFile(nodesList);
-            }
         }
 
         /* Reading the next file */
@@ -238,19 +241,132 @@ void createBlacklist(List *blacklist, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNEL
     }
 }
 
-void outputRegretFile(List *nodesList)
+void outputRegretFile(List *nodesList, uint8_t fhss)
 {
     /* Opening file */
     FILE *fp_regret_output = NULL;
-    int res = openFile(&fp_regret_output, "regret_output.dat", "a");
+    char file_name[100];
 
-    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+    static bool first_time = true;
+
+    if (fhss == FHSS_OPENWSN)
     {
-        Node_t *node = (Node_t *)elem1->obj;
-
-        fprintf(fp_regret_output, "%d,", node->cumulative_regret);
+        snprintf(file_name, 100, "regret_fhss_openwsn.dat");
+    }
+    else if (fhss == FHSS_CENTRALIZED_BLACKLIST)
+    {
+        snprintf(file_name, 100, "regret_fhss_centralized_blacklist.dat");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
+    {
+        snprintf(file_name, 100, "regret_fhss_distributed_blacklist_best_arm.dat");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM)
+    {
+        snprintf(file_name, 100, "regret_fhss_distributed_blacklist_first_good_arm.dat");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL)
+    {
+        snprintf(file_name, 100, "regret_fhss_distributed_blacklist_optimal.dat");
+    }
+    else if (fhss == FHSS_NONE)
+    {
+        snprintf(file_name, 100, "regret_fhss_none.dat");
     }
 
-    fprintf(fp_regret_output, "\n");
+    if (first_time)
+    {
+        int res = openFile(&fp_regret_output, file_name, "w");
+
+        /* Header */
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_regret_output, "node_%d, ", node->id);
+        }
+
+        fprintf(fp_regret_output, "\n");
+        first_time = false;
+    }
+    else
+    {
+        int res = openFile(&fp_regret_output, file_name, "a");
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_regret_output, "%d, ", node->cumulative_regret);
+        }
+
+        fprintf(fp_regret_output, "\n");
+    }
+
     fclose(fp_regret_output);
+}
+
+void outputThroughputFile(List *nodesList, uint8_t fhss)
+{
+    /* Opening file */
+    FILE *fp_throughput_output = NULL;
+    char file_name[100];
+
+    static bool first_time = true;
+
+    if (fhss == FHSS_OPENWSN)
+    {
+        snprintf(file_name, 100, "throughput_fhss_openwsn.dat");
+    }
+    else if (fhss == FHSS_CENTRALIZED_BLACKLIST)
+    {
+        snprintf(file_name, 100, "throughput_fhss_centralized_blacklist.dat");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
+    {
+        snprintf(file_name, 100, "throughput_fhss_distributed_blacklist_best_arm.dat");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM)
+    {
+        snprintf(file_name, 100, "throughput_fhss_distributed_blacklist_first_good_arm.dat");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL)
+    {
+        snprintf(file_name, 100, "throughput_fhss_distributed_blacklist_optimal.dat");
+    }
+    else if (fhss == FHSS_NONE)
+    {
+        snprintf(file_name, 100, "throughput_fhss_none.dat");
+    }
+
+    if (first_time)
+    {
+        int res = openFile(&fp_throughput_output, file_name, "w");
+
+        /* Header */
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_throughput_output, "rx_suc_%d, tx_suc_%d, rx_failed_%d, tx_failed_%d, ", node->id, node->id, node->id, node->id);
+        }
+
+        fprintf(fp_throughput_output, "\n");
+        first_time = false;
+    }
+    else
+    {
+        int res = openFile(&fp_throughput_output, file_name, "a");
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_throughput_output, "%d, %d, %d, %d, ", node->pkt_rx_success, node->pkt_tx_success, node->pkt_rx_failed, node->pkt_tx_failed);
+        }
+
+        fprintf(fp_throughput_output, "\n");
+    }
+
+    fclose(fp_throughput_output);
 }

@@ -37,7 +37,7 @@ uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, ui
 {
     uint8_t freq = 0;
 
-    float draw = (rand() % 100)/100;
+    float draw = (float)(rand() % 100)/100.0;
 
     if (draw < MAB_EPSILON)
     {
@@ -70,7 +70,7 @@ uint8_t fhssDistributedBlacklistMABFirstGoodArmChan(Node_t *parent, Node_t *chil
 {
     uint8_t freq = 0;
 
-    float draw = (rand() % 100)/100;
+    float draw = (float)(rand() % 100)/100.0;
 
     if (draw < MAB_EPSILON)
     {
