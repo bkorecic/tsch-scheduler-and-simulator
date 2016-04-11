@@ -82,6 +82,8 @@ typedef struct node_t {
     uint8_t     avg_reward[MAX_NODES][NUM_CHANNELS];
     uint32_t    cumulative_regret;
     uint8_t     optimal_freq;
+    uint32_t    n_pull;
+    uint32_t    n_optimal_pull;
 /* Blacklist */
 } Node_t;
 

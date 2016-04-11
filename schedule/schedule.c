@@ -17,9 +17,9 @@
 #define FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM 5
 #define FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL 6
 
-#define FHSS FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM
+#define FHSS FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL
 
-int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint64_t n_timeslots_per_file, uint16_t n_timeslots_regret, uint16_t n_timeslots_throughput)
+int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint64_t n_timeslots_per_file, uint16_t n_timeslots_log)
 {
     List blacklist; memset(&blacklist, 0, sizeof(List)); ListInit(&blacklist);
     uint8_t prrMatrix[MAX_NODES][MAX_NODES][NUM_CHANNELS];
@@ -82,16 +82,12 @@ int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sin
         {
             uint16_t time = asn % superframe_length;
 
-            /* Check if we need to output the regret */
-            if ((asn % n_timeslots_regret) == 0)
+            /* Check if we need to output the log */
+            if ((asn % n_timeslots_log) == 0)
             {
                 outputRegretFile(nodesList, fhss);
-            }
-
-            /* Check if we need to output the throughput */
-            if ((asn % n_timeslots_throughput) == 0)
-            {
                 outputThroughputFile(nodesList, fhss);
+                outputPullArms(nodesList, fhss);
             }
 
             /* Finding nodes that transmit at time slot 'time' */
@@ -145,6 +141,14 @@ int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sin
                     /* Calculate what would be the optimal channel to be used */
                     parent->optimal_freq = fhssDistributedBlacklistOptimalChan(parent, node, prrMatrix, asn);
 
+                    /* We just pulled one arm */
+                    parent->n_pull++;
+                    node->n_pull++;
+                    if (freq == parent->optimal_freq) {
+                        parent->n_optimal_pull++;
+                        node->n_optimal_pull++;
+                    }
+
                     /* Check if transmission will succeed */
                     uint8_t draw = rand() % 100;
                     if (draw <= prrMatrix[node->id][parent->id][freq])
@@ -171,7 +175,6 @@ int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sin
                         {
                             parent->cumulative_regret += (MAB_REWARD_SUCESS - MAB_REWARD_FAILED); /* The optimal policy would have otbained MAB_REWARD_SUCESS */
                             node->cumulative_regret += (MAB_REWARD_SUCESS - MAB_REWARD_FAILED); /* The optimal policy would have otbained MAB_REWARD_SUCESS */
-
                         }
                     }
 
@@ -391,5 +394,74 @@ void outputThroughputFile(List *nodesList, uint8_t fhss)
     }
 
     fclose(fp_throughput_output);
+}
+
+void outputPullArms(List *nodesList, uint8_t fhss)
+{
+    /* Opening file */
+    FILE *fp_arms_output = NULL;
+    char file_name[100];
+
+    static bool first_time = true;
+
+    if (fhss == FHSS_OPENWSN)
+    {
+        snprintf(file_name, 100, "arms_fhss_openwsn.csv");
+    }
+    else if (fhss == FHSS_CENTRALIZED_BLACKLIST)
+    {
+        snprintf(file_name, 100, "arms_fhss_centralized_blacklist.csv");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
+    {
+        snprintf(file_name, 100, "arms_fhss_distributed_blacklist_best_arm.csv");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM)
+    {
+        snprintf(file_name, 100, "arms_fhss_distributed_blacklist_first_best_arm.csv");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM)
+    {
+        snprintf(file_name, 100, "arms_fhss_distributed_blacklist_first_good_arm.csv");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL)
+    {
+        snprintf(file_name, 100, "arms_fhss_distributed_blacklist_optimal.csv");
+    }
+    else if (fhss == FHSS_NONE)
+    {
+        snprintf(file_name, 100, "arms_fhss_none.csv");
+    }
+
+    if (first_time)
+    {
+        openFile(&fp_arms_output, file_name, "w");
+
+        /* Header */
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_arms_output, "n_pulls_%d, n_optimal_pulls_%d, perc_optimal_%d ", node->id, node->id, node->id);
+        }
+
+        fprintf(fp_arms_output, "\n");
+        first_time = false;
+    }
+    else
+    {
+        openFile(&fp_arms_output, file_name, "a");
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_arms_output, "%d, %d, %.4f, ", node->n_pull, node->n_optimal_pull, (float)node->n_optimal_pull/(float)node->n_pull);
+        }
+
+        fprintf(fp_arms_output, "\n");
+    }
+
+    fclose(fp_arms_output);
 }
 

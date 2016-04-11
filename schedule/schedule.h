@@ -16,7 +16,7 @@
  * \return Always true.
  *
  */
-int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint64_t n_timeslots_per_file, uint16_t n_timeslots_regret, uint16_t n_timeslots_throughput);
+int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint64_t n_timeslots_per_file, uint16_t n_timeslots_log);
 
 /**
  * \brief Creates a blacklist with channels where there is at least of link with PRR is below prrThreshold.

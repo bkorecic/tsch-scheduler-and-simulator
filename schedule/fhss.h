@@ -6,7 +6,7 @@
 #define THRESHOLD_REWARD_GOOD_ARM           90
 #define MAB_FIRST_BEST_ARMS                 8
 #define MAB_EPSILON_N                       10      // epsilon initially is 1/MAB_EPSILON_N
-#define MAB_EPSILON_TS_INCR_N               100000
+#define MAB_EPSILON_TS_INCR_N               1000
 #define MAB_REWARD_SUCESS_WEIGHT            0.2
 #define MAB_REWARD_SUCESS                   100.0
 #define MAB_REWARD_FAILED                   0.0

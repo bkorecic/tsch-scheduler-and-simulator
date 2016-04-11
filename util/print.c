@@ -159,28 +159,6 @@ void output(uint8_t alg, List *nodesList, Tree_t *tree, char *tree_filename, boo
     fclose(fp);
 }
 
-void printPacketTxRxperNode(List *nodesList)
-{
-    FILE *fp = NULL;
-    uint8_t res = openFile(&fp, "data/results.dat", "w");
-    if (!res)
-    {
-        EXIT("Error while writing file data/results.dat\n");
-    }
-
-    for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
-    {
-        /* Get the current node */
-        Node_t *node = (Node_t *)elem->obj;
-
-        PRINTF("Node %d, RX suc %d, TX suc %d, RX failed %d, TX failed %d.\n", \
-                    node->id, node->pkt_rx_success, node->pkt_tx_success, node->pkt_rx_failed, node->pkt_tx_failed);
-        fprintf(fp, "Node %d, RX suc %d, TX suc %d, RX failed %d, TX failed %d.\n", \
-                    node->id, node->pkt_rx_success, node->pkt_tx_success, node->pkt_rx_failed, node->pkt_tx_failed);
-    }
-    fclose(fp);
-}
-
 void printFile(char *filename, char *line)
 {
     FILE *fp = NULL;

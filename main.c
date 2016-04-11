@@ -155,8 +155,7 @@ int main(int argc, char *argv[])
     /* Execute the schedule */
     if (execute_sch)
     {
-        execute_schedule(&nodesList, linksList, tree, sink_id, links_prefix, 900000000, 9000, 9000);
-        //printPacketTxRxperNode(&nodesList);
+        execute_schedule(&nodesList, linksList, tree, sink_id, links_prefix, 1000000, 1000);
     }
 
     /* Write output to files */
