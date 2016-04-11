@@ -3,11 +3,13 @@
 
 #include <stdint.h>
 
-#define THRESHOLD_REWARD_GOOD_ARM   80
-#define MAB_EPSILON                 0.1
-#define MAB_REWARD_SUCESS_WEIGHT    0.2
-#define MAB_REWARD_SUCESS           100.0
-#define MAB_REWARD_FAILED           0.0
+#define THRESHOLD_REWARD_GOOD_ARM           90
+#define MAB_FIRST_BEST_ARMS                 8
+#define MAB_EPSILON_N                       10      // epsilon initially is 1/MAB_EPSILON_N
+#define MAB_EPSILON_TS_INCR_N               100000
+#define MAB_REWARD_SUCESS_WEIGHT            0.2
+#define MAB_REWARD_SUCESS                   100.0
+#define MAB_REWARD_FAILED                   0.0
 
 static const uint8_t chTemplate_default[] = {
    5,6,12,7,15,4,14,11,8,0,1,2,13,3,9,10
@@ -29,7 +31,7 @@ uint8_t fhssOpenwsnChan(uint8_t freq_offset, uint64_t asn);
  * \return channel (o to 15)
  *
  */
-uint8_t fhssCentralizedBlacklistChan(List *blacklist, uint8_t freq_offset, uint64_t asn);
+uint8_t fhssCentralizedBlacklistChan(Node_t *parent, List *blacklist, uint64_t asn);
 
 /**
  * \brief Calculates the channel considering MAB epsilon-greedy algorithm
@@ -41,7 +43,9 @@ uint8_t fhssCentralizedBlacklistChan(List *blacklist, uint8_t freq_offset, uint6
  *
  * In the exploitation phase pulls the best arm
  */
-uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint64_t asn);
+uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, uint64_t asn);
+
+uint8_t fhssDistributedBlacklistMABFirstBestArmChan(Node_t *parent, Node_t *child, uint64_t asn);
 
 /**
  * \brief Calculates the channel considering MAB epsilon-greedy algorithm
@@ -53,7 +57,7 @@ uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, ui
  *
  * In the exploitation phase pulls the first good arm (reward above THRESHOLD_REWARD_GOOD_ARM)
  */
-uint8_t fhssDistributedBlacklistMABFirstGoodArmChan(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint64_t asn);
+uint8_t fhssDistributedBlacklistMABFirstGoodArmChan(Node_t *parent, Node_t *child, uint64_t asn);
 
 /**
  * \brief Calculates the channel considering optimal channel (the best)

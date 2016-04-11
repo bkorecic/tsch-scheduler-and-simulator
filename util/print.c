@@ -180,3 +180,18 @@ void printPacketTxRxperNode(List *nodesList)
     }
     fclose(fp);
 }
+
+void printFile(char *filename, char *line)
+{
+    FILE *fp = NULL;
+    uint8_t res = openFile(&fp, filename, "a");
+    if (!res)
+    {
+        EXIT("Error while writing file in printFile\n");
+    }
+
+    fprintf(fp, line);
+
+    fclose(fp);
+}
+

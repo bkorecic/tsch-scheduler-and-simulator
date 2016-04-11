@@ -19,11 +19,10 @@
 #define EXECUTE_SCHEDULE        1       /* This is 1 if we are going to simulate the schedule */
 #define EXPORT_MASK_CHANNELS    1       /* This is 1 if we are going to output a mask with all channels that could be used
                                         in the schedule file. This is used for distributed FHSS implementation */
-#define ETX_THRESHOLD           0.9
+#define ETX_THRESHOLD           0.6
 
-#define DATA_FILE "data/prr_tutornet/experiment_blacklist/real_prr_1.dat"
-//#define DATA_FILE "prr_file.dat"
-#define LINKS_PREFIX "data/prr_tutornet/experiment_blacklist/real_prr"
+#define DATA_FILE "data/prr_tutornet/experiment_blacklist/prr_file_1.dat"
+#define LINKS_PREFIX "data/prr_tutornet/experiment_blacklist/prr_file"
 #define TREE_FILE "tree.dat"
 
 void readPrrFile(char *file_name, List *nodesList, List linksList[]);
@@ -34,7 +33,7 @@ void createMatrices(List *nodesList, List linksList[], float prrMatrix[][MAX_NOD
 void printHelp(void)
 {
     printf("HELP:\n");
-    printf("./Scheduling <alg> <sink_id> <channel> <execute_sch> <export_mask_channels> <ext_threshold> <file_name>:\n");
+    printf("./Scheduling <alg> <sink_id> <channel> <execute_sch> <export_mask_channels> <ext_threshold> <file_name> <links_prefix>:\n");
     printf("<alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; 4 - MODESA\n");
     printf("<sink_id>: 0 to N\n");
     printf("<channel>: 0 to 15\n");
@@ -42,6 +41,7 @@ void printHelp(void)
     printf("<export_mask_channels>: 0 or 1\n");
     printf("<etx_threshold>: 0.0 to 1.0\n");
     printf("<file_name>: file name (including extension)\n");
+    printf("<links_prefix>: prefix of file names with link information\n");
 }
 
 int main(int argc, char *argv[])
@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
     bool execute_sch, export_mask_channels;
     float etx_threshold;
     char file_name[50];
+    char links_prefix[50];
 
     /* Checking if we have user defined parameters */
     if (argc > 1)
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
         export_mask_channels = atoi(argv[5]);
         etx_threshold = atoi(argv[6]);
         strcpy(file_name,argv[7]);
+        strcpy(links_prefix,argv[7]);
     }
     /* Use hard-coded parameters */
     else
@@ -78,6 +80,7 @@ int main(int argc, char *argv[])
         export_mask_channels = EXPORT_MASK_CHANNELS;
         etx_threshold = ETX_THRESHOLD;
         strcpy(file_name, DATA_FILE);
+        strcpy(links_prefix, LINKS_PREFIX);
     }
 
     /* Initializing the RGN */
@@ -152,8 +155,8 @@ int main(int argc, char *argv[])
     /* Execute the schedule */
     if (execute_sch)
     {
-        execute_schedule(&nodesList, linksList, tree, sink_id, LINKS_PREFIX, 900000, 60000, 60000);
-        printPacketTxRxperNode(&nodesList);
+        execute_schedule(&nodesList, linksList, tree, sink_id, links_prefix, 900000000, 9000, 9000);
+        //printPacketTxRxperNode(&nodesList);
     }
 
     /* Write output to files */

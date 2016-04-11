@@ -1767,7 +1767,7 @@
 	"../util/list.h"
 	"../graphs/graphs.h"
 
-1459997172 source:/home/pedro/1_scheduling_algorithms/graphs/graphs.c
+1460306933 source:/home/pedro/1_scheduling_algorithms/graphs/graphs.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -1777,7 +1777,7 @@
 	"../util/debug.h"
 	"../mcc/time_schedule.h"
 
-1459997172 /home/pedro/1_scheduling_algorithms/graphs/graphs.h
+1460306984 /home/pedro/1_scheduling_algorithms/graphs/graphs.h
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
@@ -1793,7 +1793,7 @@
 	"../util/list.h"
 	"../graphs/graphs.h"
 
-1460056715 source:/home/pedro/1_scheduling_algorithms/main.c
+1460321576 source:/home/pedro/1_scheduling_algorithms/main.c
 	<string.h>
 	<stdio.h>
 	<stdlib.h>
@@ -1809,7 +1809,7 @@
 	"modesa/modesa.h"
 	"schedule/schedule.h"
 
-1457030963 /home/pedro/1_scheduling_algorithms/util/files.h
+1460269393 /home/pedro/1_scheduling_algorithms/util/files.h
 	<stdint.h>
 	<stdio.h>
 	<stdlib.h>
@@ -1851,7 +1851,7 @@
 	"../util/defs.h"
 	"../util/debug.h"
 
-1458314922 source:/home/pedro/1_scheduling_algorithms/mcc/graph_coloring.c
+1460322854 source:/home/pedro/1_scheduling_algorithms/mcc/graph_coloring.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -1902,20 +1902,21 @@
 
 1444284234 /home/pedro/1_scheduling_algorithms/util/glpk.h
 
-1460054435 source:/home/pedro/1_scheduling_algorithms/schedule/fhss.c
+1460323640 source:/home/pedro/1_scheduling_algorithms/schedule/fhss.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<stdint.h>
 	"../util/list.h"
+	"../util/files.h"
 	"../graphs/graphs.h"
 	"fhss.h"
 	"schedule.h"
 
-1459997172 /home/pedro/1_scheduling_algorithms/schedule/fhss.h
+1460326535 /home/pedro/1_scheduling_algorithms/schedule/fhss.h
 	<stdint.h>
 
-1460054678 source:/home/pedro/1_scheduling_algorithms/schedule/schedule.c
+1460323400 source:/home/pedro/1_scheduling_algorithms/schedule/schedule.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -1962,7 +1963,7 @@
 	"../util/defs.h"
 	"../graphs/graphs.h"
 
-1459997172 source:/home/pedro/1_scheduling_algorithms/util/files.c
+1460322852 source:/home/pedro/1_scheduling_algorithms/util/files.c
 	<sys/stat.h>
 	<stdint.h>
 	<stdlib.h>
@@ -1981,7 +1982,7 @@
 	"list.h"
 	"defs.h"
 
-1457030374 source:/home/pedro/1_scheduling_algorithms/util/print.c
+1460269501 source:/home/pedro/1_scheduling_algorithms/util/print.c
 	<sys/stat.h>
 	<stdint.h>
 	<stdlib.h>

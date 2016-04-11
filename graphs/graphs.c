@@ -75,7 +75,7 @@ Node_t *newNode(uint16_t id, NODE_TYPE type)
 /* Schedule */
 
 /* Blacklist */
-    memset(node->avg_reward, 0, NUM_CHANNELS);
+    memset(node->avg_reward, 0, MAX_NODES*NUM_CHANNELS);
     node->cumulative_regret = 0;
     node->optimal_freq = 0;
 /* Blacklist */

@@ -79,7 +79,7 @@ typedef struct node_t {
 /* Schedule */
 
 /* Blacklist */
-    uint8_t     avg_reward[NUM_CHANNELS];
+    uint8_t     avg_reward[MAX_NODES][NUM_CHANNELS];
     uint32_t    cumulative_regret;
     uint8_t     optimal_freq;
 /* Blacklist */
