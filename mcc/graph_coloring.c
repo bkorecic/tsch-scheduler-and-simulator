@@ -350,7 +350,6 @@ bool assignChannelLinks(List *nodesList, float etxMatrix[][MAX_NODES][NUM_CHANNE
 
 bool paintNodes(List *nodesSorted, bool confMatrix[][MAX_NODES][NUM_CHANNELS], int8_t channel)
 {
-    uint8_t n_nodes = ListLength(nodesSorted);
     bool paintedOneNode = false;    /* Check if you could paint at least one node */
 
     /* Paint each node */

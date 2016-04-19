@@ -71,11 +71,10 @@ Node_t *newNode(uint16_t id, NODE_TYPE type)
 
 /* Schedule */
     node->pkt_tx_failed = node->pkt_tx_success = node->pkt_rx_failed = node->pkt_rx_success = node->worst_prr = 0;
-    node->last_rx = false;
 /* Schedule */
 
 /* Blacklist */
-    memset(node->avg_reward, 0, NUM_CHANNELS);
+    memset(node->avg_reward, 0, MAX_NODES*NUM_CHANNELS);
     node->cumulative_regret = 0;
     node->optimal_freq = 0;
 /* Blacklist */

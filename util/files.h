@@ -55,7 +55,7 @@ bool readFile(FILE *fp, List *nodesList, List linksList[], Tree_t *tree, uint8_t
  */
 void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool export_mask_channels, bool use_eui64);
 
-void print_binary(FILE *fp, uint16_t number);
+void printBinary(FILE *fp, uint16_t number);
 
 /**
  * \brief Write the c file with the formed topology.
@@ -77,5 +77,7 @@ void generateTreeFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree);
  * Initially both subtree and tree should point to the root of the tree to be considered.
  */
 void generateTreeFile(FILE *fp, Tree_t *subtree, Tree_t *tree);
+
+void printFile(char *filename, char *line);
 
 #endif // _FILES_H_

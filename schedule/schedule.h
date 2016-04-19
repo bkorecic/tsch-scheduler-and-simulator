@@ -16,7 +16,7 @@
  * \return Always true.
  *
  */
-int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint64_t n_timeslots_per_file, uint16_t n_timeslots_regret);
+int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint16_t n_timeslots_log);
 
 /**
  * \brief Creates a blacklist with channels where there is at least of link with PRR is below prrThreshold.
@@ -27,11 +27,16 @@ int execute_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sin
  * \param n_channels Number of channels to be blacked
  * \return List of channels with bad quality.
  *
- * The list will have n_channels channels with at least of link with PRR below prrThreshold. The list has the wors channels,
+ * The list will have n_channels channels with at least one of link with PRR below prrThreshold. The list has the worst channels,
  * or the channel with more links with bad quality (below prrThreshold)
  */
 void createBlacklist(List *blacklist, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], List *nodesList, Tree_t *tree, uint8_t prrThreshold, uint8_t n_channels);
 
-void outputRegretFile(List *nodesList);
+void outputRegretFile(List *nodesList, uint8_t fhss, bool first_time);
+void outputThroughputFile(List *nodesList, uint8_t fhss, bool first_time);
+void outputPullArms(List *nodesList, uint8_t fhss, bool first_time);
+void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t freq, uint8_t prr, uint8_t draw, uint32_t n_rx_pkt, bool first_time);
+
+void schedulSetBlacklistSize(uint16_t new_blacklist_size);
 
 #endif // _SCHEDULE_

@@ -12,19 +12,24 @@
 #include "tasa/tasa.h"
 #include "modesa/modesa.h"
 #include "schedule/schedule.h"
+#include "schedule/fhss.h"
 
 #define PROTOCOL                MCC_ICRA
 #define SINK_NODE               0
-#define CHANNEL                 15      /* Channel to be considered for single-channel algorithms */
-#define EXECUTE_SCHEDULE        1       /* This is 1 if we are going to simulate the schedule */
-#define EXPORT_MASK_CHANNELS    1       /* This is 1 if we are going to output a mask with all channels that could be used
-                                        in the schedule file. This is used for distributed FHSS implementation */
-#define ETX_THRESHOLD           0.9
+#define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
+#define EXECUTE_SCHEDULE        1           /* This is 1 if we are going to simulate the schedule */
+#define EXPORT_MASK_CHANNELS    1           /* This is 1 if we are going to output a mask with all channels that could be used */
+#define FHSS                    FHSS_CENTRALIZED_BLACKLIST /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
 
-#define DATA_FILE "data/prr_tutornet/experiment_blacklist/real_prr_1.dat"
-//#define DATA_FILE "prr_file.dat"
-#define LINKS_PREFIX "data/prr_tutornet/experiment_blacklist/real_prr"
+#define ETX_THRESHOLD           0.6
+
+#define DATA_FILE "data/prr_tutornet/mabo-tsch/prr40_1.dat"
+#define LINKS_PREFIX "data/prr_tutornet/mabo-tsch/prr40"
 #define TREE_FILE "tree.dat"
+
+#define N_TIMESLOTS_PER_FILE    35100       // 15 minutes per file and 39 time slots for second (900 s x 39 ts = 35100 ts per file)
+#define N_TIMESLOTS_LOG         2340        // log every 1 minute (60 x 39 ts per minute = 2340)
+#define MAX_N_FILES             100
 
 void readPrrFile(char *file_name, List *nodesList, List linksList[]);
 void initializeTree(uint8_t alg, Tree_t **tree, List *nodesList, uint8_t sink_id, bool conMatrix[][MAX_NODES][NUM_CHANNELS], List linksList[], int8_t channel);
@@ -34,22 +39,26 @@ void createMatrices(List *nodesList, List linksList[], float prrMatrix[][MAX_NOD
 void printHelp(void)
 {
     printf("HELP:\n");
-    printf("./Scheduling <alg> <sink_id> <channel> <execute_sch> <export_mask_channels> <ext_threshold> <file_name>:\n");
+    printf("./Scheduling <alg> <sink_id> <channel> <export_mask_channels> <ext_threshold> <file_name> <links_prefix> <execute_sch> <fhss>:\n");
     printf("<alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; 4 - MODESA\n");
     printf("<sink_id>: 0 to N\n");
     printf("<channel>: 0 to 15\n");
-    printf("<execute_sch>: 0 or 1\n");
     printf("<export_mask_channels>: 0 or 1\n");
     printf("<etx_threshold>: 0.0 to 1.0\n");
     printf("<file_name>: file name (including extension)\n");
+    printf("<links_prefix>: prefix of file names with link information\n");
+    printf("<execute_sch>: 0 or 1\n");
+    printf("<fhss>: 0 - 10 (if execute_sch == 1)\n");
+
 }
 
 int main(int argc, char *argv[])
 {
-    uint8_t sink_id, alg, channel;
+    uint8_t sink_id, alg, channel, fhss, blacklist_size, epsilon_n, epsilon_ts_incr_n, epsilon_n_max;
     bool execute_sch, export_mask_channels;
     float etx_threshold;
     char file_name[50];
+    char links_prefix[50];
 
     /* Checking if we have user defined parameters */
     if (argc > 1)
@@ -63,10 +72,37 @@ int main(int argc, char *argv[])
         alg = atoi(argv[1]);
         sink_id = atoi(argv[2]);
         channel = atoi(argv[3]);
-        execute_sch = atoi(argv[4]);
-        export_mask_channels = atoi(argv[5]);
-        etx_threshold = atoi(argv[6]);
-        strcpy(file_name,argv[7]);
+        export_mask_channels = atoi(argv[4]);
+        etx_threshold = atoi(argv[5]);
+        strcpy(file_name,argv[6]);
+        strcpy(links_prefix,argv[7]);
+        execute_sch = atoi(argv[8]);
+        if (execute_sch)
+        {
+            fhss = atoi(argv[9]);
+
+            if (fhss == FHSS_CENTRALIZED_BLACKLIST)
+            {
+                schedulSetBlacklistSize(atoi(argv[10]));
+            }
+            else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM || \
+                     fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM || \
+                     fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
+            {
+                fhssSetEpsilonInitN(atoi(argv[10]));
+                fhssSetEpsilonTSIncrN(atoi(argv[11]));
+                fhssSetEpsilonTSIncrN(atoi(argv[12]));
+
+                if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM)
+                {
+                    fhssSetMABFirstBestArms(atoi(argv[13]));
+                }
+                else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM)
+                {
+                    fhssSetMABThreshooldGoodArm(atoi(argv[13]));
+                }
+            }
+        }
     }
     /* Use hard-coded parameters */
     else
@@ -74,10 +110,15 @@ int main(int argc, char *argv[])
         alg = PROTOCOL;
         sink_id = SINK_NODE;
         channel = CHANNEL;
-        execute_sch = EXECUTE_SCHEDULE;
         export_mask_channels = EXPORT_MASK_CHANNELS;
         etx_threshold = ETX_THRESHOLD;
         strcpy(file_name, DATA_FILE);
+        strcpy(links_prefix, LINKS_PREFIX);
+        execute_sch = EXECUTE_SCHEDULE;
+        if (execute_sch)
+        {
+            fhss = FHSS;
+        }
     }
 
     /* Initializing the RGN */
@@ -144,16 +185,32 @@ int main(int argc, char *argv[])
     {
         main_modesa(&nodesList, &linksList[channel], tree, sink_id, 1, intMatrix, confMatrix, channel);
     }
-    else if (alg == MODESA_IP)
-    {
-        main_modesa_ip(&nodesList, tree, sink_id, 1, confMatrix, channel);
-    }
 
     /* Execute the schedule */
     if (execute_sch)
     {
-        execute_schedule(&nodesList, linksList, tree, sink_id, LINKS_PREFIX, 900000, 60000);
-        printPacketTxRxperNode(&nodesList);
+        /* Generate 'n_timeslots_per_file' random numbers to be used in the recpetion decision */
+        List draws; memset(&draws, 0, sizeof(List)); ListInit(&draws);
+        ListUnlinkAll(&draws);
+        for (uint64_t i = 0; i < N_TIMESLOTS_PER_FILE*MAX_N_FILES; i++)
+        {
+            uint8_t sample = rand() % 100;
+            ListAppend(&draws, (void *)sample);
+        }
+
+        /* Run each type of FHSS algorithm */
+        if (fhss != FHSS_ALL)
+        {
+            execute_schedule(fhss, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
+        }
+        else
+        {
+            for (uint8_t i = 0; i < FHSS_ALL; i++)
+            {
+                execute_schedule(i, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
+            }
+        }
+
     }
 
     /* Write output to files */
@@ -189,7 +246,7 @@ void initializeTree(uint8_t alg, Tree_t **tree, List *nodesList, uint8_t sink_id
     /* Input file */
     FILE *fp = NULL;
 
-    if ((alg == TASA) || (alg == MODESA) || (alg == MODESA_IP))
+    if ((alg == TASA) || (alg == MODESA))
     {
         /* Opening file */
         res = openFile(&fp, TREE_FILE, "r");
@@ -200,7 +257,7 @@ void initializeTree(uint8_t alg, Tree_t **tree, List *nodesList, uint8_t sink_id
         {
             *tree = newTree(getNode(sink_id, nodesList), TASA_TREE);
         }
-        else if ((alg == MODESA) || (alg == MODESA_IP))
+        else if (alg == MODESA)
         {
             *tree = newTree(getNode(sink_id, nodesList), MODESA_TREE);
         }

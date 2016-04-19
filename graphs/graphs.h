@@ -74,14 +74,15 @@ typedef struct node_t {
     uint32_t    pkt_tx_failed;
     uint32_t    pkt_rx_success;
     uint32_t    pkt_rx_failed;
-    bool        last_rx;
     uint8_t     worst_prr;
 /* Schedule */
 
 /* Blacklist */
-    uint8_t     avg_reward[NUM_CHANNELS];
+    uint8_t     avg_reward[MAX_NODES][NUM_CHANNELS];
     uint32_t    cumulative_regret;
     uint8_t     optimal_freq;
+    uint32_t    n_pull;
+    uint32_t    n_optimal_pull;
 /* Blacklist */
 } Node_t;
 

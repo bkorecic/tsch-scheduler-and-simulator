@@ -280,12 +280,11 @@ bool readLinksFile(FILE *fp, List *nodesList, List *linksList, uint8_t maxPrr)
                 j = 0;
                 while(token != NULL)
                 {
-                    float prr, etx;
+                    float prr;
 
                     /* Scan the floating number corresponding to the PRR and calculate the ETX */
                     prr = strtof(token,NULL);
                     prr /= (float)maxPrr; /* Calculating the PRR in percentage */
-                    etx = 1.0/prr;
 
                     //PRINTF("Link %d->%d Ch %d PRR %f ETX %f\n", node->id, j, ch, prr, etx);
 
@@ -361,7 +360,7 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
                         Node_t *node_with_channels = node;
                         uint16_t mask_channels = createMaskChannels(node_with_channels);
                         fprintf(fp, "               extScheduleEntry->channelMask = %d;   // 0b", mask_channels);
-                        print_binary(fp, mask_channels);
+                        printBinary(fp, mask_channels);
                         fprintf(fp, "\n");
                     }
                     else
@@ -396,7 +395,7 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
                         Node_t *node_with_channels = getParent(tree, node);
                         uint16_t mask_channels = createMaskChannels(node_with_channels);
                         fprintf(fp, "               extScheduleEntry->channelMask = %d;   // 0b", mask_channels);
-                        print_binary(fp, mask_channels);
+                        printBinary(fp, mask_channels);
                         fprintf(fp, "\n");
                     }
                     else
@@ -463,7 +462,7 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
     fprintf(stdout, "CH = %d\n", max_freq);
 }
 
-void print_binary(FILE *fp, uint16_t number)
+void printBinary(FILE *fp, uint16_t number)
 {
     for (int8_t i = 15; i >= 0; i--)
     {

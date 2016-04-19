@@ -3,47 +3,61 @@
 #include <string.h>
 #include <stdint.h>
 #include "../util/list.h"
+#include "../util/files.h"
 #include "../graphs/graphs.h"
 #include "fhss.h"
 #include "schedule.h"
+
+uint32_t epsilon_n          = MAB_EPSILON_INIT_N;
+uint32_t epsilon_init_n     = MAB_EPSILON_INIT_N;
+uint16_t epsilon_ts_incr_n  = MAB_EPSILON_TS_INCR_N;
+uint32_t epsilon_max_n      = MAB_EPSILON_MAX_N;
+
+uint8_t mab_first_best_arms     = MAB_FIRST_BEST_ARMS;
+uint8_t mab_threshoold_good_arm = MAB_THRESHOLD_GOOD_ARM;
 
 uint8_t fhssOpenwsnChan(uint8_t freq_offset, uint64_t asn)
 {
     uint8_t ch_idx = (freq_offset + asn) % NUM_CHANNELS;
 
-    return chTemplate_default[ch_idx];
+    return (chTemplate_default[ch_idx]);
 }
 
-uint8_t fhssCentralizedBlacklistChan(List *blacklist, uint8_t freq_offset, uint64_t asn)
+uint8_t fhssCentralizedBlacklistChan(Node_t *parent, List *blacklist, uint64_t asn)
 {
-    uint8_t freq;
-    uint8_t i = 0;
-    bool flag = true;
+    uint8_t freq = 0;
 
-    while(flag == true && i < NUM_CHANNELS)
+    for (ListElem *elem = ListFirst(&parent->channels); elem != NULL; elem = ListNext(&parent->channels, elem))
     {
-        freq = fhssOpenwsnChan(freq_offset, asn + i);
+        uint8_t freq_offset = (uint8_t)elem->obj;
+
+        freq = fhssOpenwsnChan(freq_offset, asn);
         if (!ListFind(blacklist, (void *)freq))
         {
-            flag = false;
+            break;
         }
-        i++;
     }
 
     return (freq);
 }
 
-uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint64_t asn)
+uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, uint64_t asn)
 {
     uint8_t freq = 0;
 
-    float draw = (rand() % 100)/100;
+    /* Every epsilon_ts_incr_n time slots we divide increment epsilon_n */
+    if ((epsilon_ts_incr_n != 0) && ((asn + 1) % epsilon_ts_incr_n) == 0)
+    {
+        if (++epsilon_n == epsilon_max_n) {
+            epsilon_n = epsilon_init_n;
+        }
+    }
 
-    if (draw < MAB_EPSILON)
+    if ((rand() % epsilon_n) == 0)
     {
         /* We will explore all channels randomly */
 
-        return fhssDistributedBlacklistMABExplore(parent, asn);
+        return (fhssDistributedBlacklistMABExplore(parent, asn));
     }
     else
     {
@@ -55,28 +69,107 @@ uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, ui
             uint8_t freq_off = (uint8_t)elem->obj;
 
             freq = fhssOpenwsnChan(freq_off, asn);
-            if (parent->avg_reward[freq] > best_reward)
+            if (parent->avg_reward[child->id][freq] > best_reward)
             {
                 best_freq = freq;
-                best_reward = parent->avg_reward[freq];
+                best_reward = parent->avg_reward[child->id][freq];
+            }
+        }
+
+        return (best_freq);
+    }
+}
+
+uint8_t fhssDistributedBlacklistMABFirstBestArmChan(Node_t *parent, Node_t *child, uint64_t asn)
+{
+    uint8_t freq = 0;
+
+    /* Every epsilon_ts_incr_n time slots we divide increment epsilon_n */
+    if ((epsilon_ts_incr_n != 0) && ((asn + 1) % epsilon_ts_incr_n) == 0)
+    {
+        if (++epsilon_n == epsilon_max_n) {
+            epsilon_n = epsilon_init_n;
+        }
+    }
+
+    if ((rand() % epsilon_n) == 0)
+    {
+        /* We will explore all channels randomly */
+
+        return (fhssDistributedBlacklistMABExplore(parent, asn));
+    }
+    else
+    {
+        /* Lets order all channel sorting by average_reward */
+        List ordered_channel; memset(&ordered_channel, 0, sizeof(List)); ListInit(&ordered_channel);
+        for (uint8_t i = 0; i < NUM_CHANNELS; i++)
+        {
+            ListElem *elem;
+            for (elem = ListFirst(&ordered_channel); elem != NULL; elem = ListNext(&ordered_channel, elem))
+            {
+                uint8_t channel = (uint8_t)elem->obj;
+
+                if (parent->avg_reward[child->id][i] > parent->avg_reward[child->id][channel])
+                {
+                    ListInsertBefore(&ordered_channel, (void *)i, elem);
+                    break;
+                }
+            }
+
+            if (elem == NULL)
+            {
+                ListAppend(&ordered_channel, (void *)i);
+            }
+        }
+
+        /* Create a blacklist with the first best MAB_FIRST_BEST_ARMS channels */
+        uint16_t blacklist = 0;
+        uint8_t n_channels = 1;
+        for (ListElem *elem = ListFirst(&ordered_channel); elem != NULL; elem = ListNext(&ordered_channel, elem))
+        {
+            uint8_t channel = (uint8_t)elem->obj;
+            blacklist |= (1 << channel);
+
+            /* Check if we already got the MAB_FIRST_BEST_ARMS first best channels */
+            if (++n_channels > mab_first_best_arms)
+            {
+                break;
+            }
+        }
+
+        for (ListElem *elem = ListFirst(&parent->channels); elem != NULL; elem = ListNext(&parent->channels, elem))
+        {
+            uint8_t freq_off = (uint8_t)elem->obj;
+
+            freq = fhssOpenwsnChan(freq_off, asn);
+            if (blacklist & (1 << freq))
+            {
+                return (freq);
             }
         }
 
         return (freq);
     }
+    return 0;
 }
 
-uint8_t fhssDistributedBlacklistMABFirstGoodArmChan(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint64_t asn)
+uint8_t fhssDistributedBlacklistMABFirstGoodArmChan(Node_t *parent, Node_t *child, uint64_t asn)
 {
     uint8_t freq = 0;
 
-    float draw = (rand() % 100)/100;
+    /* Every epsilon_ts_incr_n time slots we divide increment epsilon_n */
+    if ((epsilon_ts_incr_n != 0) && ((asn + 1) % epsilon_ts_incr_n) == 0)
+    {
+        if (++epsilon_n == epsilon_max_n) {
+            epsilon_n = epsilon_init_n;
+        }
+    }
 
-    if (draw < MAB_EPSILON)
+    if ((rand() % epsilon_n) == 0)
     {
         /* We will explore all channels randomly */
 
-        return fhssDistributedBlacklistMABExplore(parent, asn);
+        return (fhssDistributedBlacklistMABExplore(parent, asn));
     }
     else
     {
@@ -87,7 +180,7 @@ uint8_t fhssDistributedBlacklistMABFirstGoodArmChan(Node_t *parent, Node_t *chil
             uint8_t freq_off = (uint8_t)elem->obj;
 
             freq = fhssOpenwsnChan(freq_off, asn);
-            if (parent->avg_reward[freq] > THRESHOLD_REWARD_GOOD_ARM)
+            if (parent->avg_reward[child->id][freq] >= mab_threshoold_good_arm)
             {
                 return (freq);
             }
@@ -121,6 +214,13 @@ uint8_t fhssDistributedBlacklistMABExplore(Node_t *parent, uint64_t asn)
 {
     uint8_t offset_to_explore = rand() % ListLength(&parent->channels);
 
+    /*if (parent->id == 0)
+    {
+        char line[100];
+        snprintf(line, 100, "FHSS - exploring\n");
+        printFile("fhss.dat", line);
+    }*/
+
     uint8_t i = 0;
     for (ListElem *elem = ListFirst(&parent->channels); elem != NULL; elem = ListNext(&parent->channels, elem))
     {
@@ -131,6 +231,8 @@ uint8_t fhssDistributedBlacklistMABExplore(Node_t *parent, uint64_t asn)
             return (fhssOpenwsnChan(freq_off, asn));
         }
     }
+
+    return (0);
 }
 
 uint16_t createMaskChannels(Node_t *node)
@@ -144,4 +246,29 @@ uint16_t createMaskChannels(Node_t *node)
     }
 
     return (mask);
+}
+
+void fhssSetEpsilonInitN(uint32_t new_epsilon)
+{
+    epsilon_n = new_epsilon;
+}
+
+void fhssSetEpsilonTSIncrN(uint32_t new_epsilon_ts_incr_n)
+{
+    epsilon_ts_incr_n = new_epsilon_ts_incr_n;
+}
+
+void fhssSetEpsilonMaxN(uint32_t new_epsilon_max_n)
+{
+    epsilon_max_n = new_epsilon_max_n;
+}
+
+void fhssSetMABThreshooldGoodArm(uint8_t new_threshold_good_arm)
+{
+    mab_threshoold_good_arm = new_threshold_good_arm;
+}
+
+void fhssSetMABFirstBestArms(uint8_t new_first_best_arms)
+{
+    mab_first_best_arms = new_first_best_arms;
 }
