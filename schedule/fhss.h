@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+<<<<<<< HEAD
 #define FHSS_NONE                                       0
 #define FHSS_OPENWSN                                    1
 #define FHSS_CENTRALIZED_BLACKLIST                      2
@@ -21,6 +22,15 @@
 #define MAB_REWARD_SUCESS                   100.0
 #define MAB_REWARD_FAILED                   0.0
 #define CENTRALIZED_BLACKLIST_SIZE          10
+=======
+#define THRESHOLD_REWARD_GOOD_ARM           90
+#define MAB_FIRST_BEST_ARMS                 8
+#define MAB_EPSILON_N                       10      // epsilon initially is 1/MAB_EPSILON_N
+#define MAB_EPSILON_TS_INCR_N               1000
+#define MAB_REWARD_SUCESS_WEIGHT            0.2
+#define MAB_REWARD_SUCESS                   100.0
+#define MAB_REWARD_FAILED                   0.0
+>>>>>>> 619af6e5fd4369c27c14f5747b234d38988288ff
 
 static const uint8_t chTemplate_default[] = {
    5,6,12,7,15,4,14,11,8,0,1,2,13,3,9,10
