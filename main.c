@@ -285,3 +285,7 @@ void initializeTree(uint8_t alg, Tree_t **tree, List *nodesList, uint8_t sink_id
     /* Set the type of each node properly */
     setTypeOfNodes(sink_id, *tree);
 }
+
+
+
+
