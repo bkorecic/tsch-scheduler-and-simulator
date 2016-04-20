@@ -84,7 +84,8 @@ uint8_t fhssDistributedBlacklistOptimalChan(Node_t *parent, Node_t *child, uint8
 uint8_t fhssDistributedBlacklistMABExplore(Node_t *parent, uint64_t asn);
 uint16_t createMaskChannels(Node_t *node);
 
-void fhssSetEpsilonInitN(uint32_t new_epsilon);
+void fhssSetEpsilonN(uint32_t new_epsilon_n);
+void fhssSetEpsilonInitN(uint32_t new_epsilon_init_n);
 void fhssSetEpsilonTSIncrN(uint32_t new_epsilon_ts_incr_n);
 void fhssSetEpsilonMaxN(uint32_t new_epsilon_max_n);
 

@@ -19,7 +19,7 @@
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXECUTE_SCHEDULE        1           /* This is 1 if we are going to simulate the schedule */
 #define EXPORT_MASK_CHANNELS    1           /* This is 1 if we are going to output a mask with all channels that could be used */
-#define FHSS                    FHSS_CENTRALIZED_BLACKLIST /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
+#define FHSS                    FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
 
 #define ETX_THRESHOLD           0.6
 
@@ -49,12 +49,11 @@ void printHelp(void)
     printf("<links_prefix>: prefix of file names with link information\n");
     printf("<execute_sch>: 0 or 1\n");
     printf("<fhss>: 0 - 10 (if execute_sch == 1)\n");
-
 }
 
 int main(int argc, char *argv[])
 {
-    uint8_t sink_id, alg, channel, fhss, blacklist_size, epsilon_n, epsilon_ts_incr_n, epsilon_n_max;
+    uint8_t sink_id, alg, channel, fhss;
     bool execute_sch, export_mask_channels;
     float etx_threshold;
     char file_name[50];
@@ -89,9 +88,10 @@ int main(int argc, char *argv[])
                      fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM || \
                      fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
             {
+                fhssSetEpsilonN(atoi(argv[10]));
                 fhssSetEpsilonInitN(atoi(argv[10]));
                 fhssSetEpsilonTSIncrN(atoi(argv[11]));
-                fhssSetEpsilonTSIncrN(atoi(argv[12]));
+                fhssSetEpsilonMaxN(atoi(argv[12]));
 
                 if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM)
                 {
@@ -210,7 +210,6 @@ int main(int argc, char *argv[])
                 execute_schedule(i, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
             }
         }
-
     }
 
     /* Write output to files */

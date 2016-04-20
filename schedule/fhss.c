@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "../util/list.h"
 #include "../util/files.h"
+#include "../util/debug.h"
 #include "../graphs/graphs.h"
 #include "fhss.h"
 #include "schedule.h"
@@ -50,6 +51,7 @@ uint8_t fhssDistributedBlacklistMABBestArmChan(Node_t *parent, Node_t *child, ui
     {
         if (++epsilon_n == epsilon_max_n) {
             epsilon_n = epsilon_init_n;
+            PRINTF("Reseting Epsilon to %ld at %lld\n", (long)epsilon_init_n, (long long)asn);
         }
     }
 
@@ -89,6 +91,7 @@ uint8_t fhssDistributedBlacklistMABFirstBestArmChan(Node_t *parent, Node_t *chil
     {
         if (++epsilon_n == epsilon_max_n) {
             epsilon_n = epsilon_init_n;
+            PRINTF("Reseting Epsilon to %ld at %lld\n", (long)epsilon_init_n, (long long)asn);
         }
     }
 
@@ -162,6 +165,7 @@ uint8_t fhssDistributedBlacklistMABFirstGoodArmChan(Node_t *parent, Node_t *chil
     {
         if (++epsilon_n == epsilon_max_n) {
             epsilon_n = epsilon_init_n;
+            PRINTF("Reseting Epsilon to %ld at %lld\n", (long)epsilon_init_n, (long long)asn);
         }
     }
 
@@ -214,12 +218,7 @@ uint8_t fhssDistributedBlacklistMABExplore(Node_t *parent, uint64_t asn)
 {
     uint8_t offset_to_explore = rand() % ListLength(&parent->channels);
 
-    /*if (parent->id == 0)
-    {
-        char line[100];
-        snprintf(line, 100, "FHSS - exploring\n");
-        printFile("fhss.dat", line);
-    }*/
+    //PRINTF("FHSS exploring at %lld\n", (long long)asn);
 
     uint8_t i = 0;
     for (ListElem *elem = ListFirst(&parent->channels); elem != NULL; elem = ListNext(&parent->channels, elem))
@@ -248,9 +247,14 @@ uint16_t createMaskChannels(Node_t *node)
     return (mask);
 }
 
-void fhssSetEpsilonInitN(uint32_t new_epsilon)
+void fhssSetEpsilonN(uint32_t new_epsilon_n)
 {
-    epsilon_n = new_epsilon;
+    epsilon_n = new_epsilon_n;
+}
+
+void fhssSetEpsilonInitN(uint32_t new_epsilon_init_n)
+{
+    epsilon_init_n = new_epsilon_init_n;
 }
 
 void fhssSetEpsilonTSIncrN(uint32_t new_epsilon_ts_incr_n)
