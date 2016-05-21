@@ -69,7 +69,7 @@ LineTree_t *createLineTree (List *nodesList, Tree_t *tree)
     return (lineTree);
 }
 
-bool createTimeSlotSchedule(Tree_t *cmst, List *nodesList)
+bool createOptimalTimeSlotSchedule(Tree_t *cmst, List *nodesList, bool optimal_sched)
 {
     /* Number of branches */
     uint8_t n_branches = ListLength(&cmst->subtrees_list);
@@ -263,6 +263,11 @@ bool createTimeSlotSchedule(Tree_t *cmst, List *nodesList)
     /* Print the time schedule */
     printTimeSlots(nodesList);
 
+    if (!optimal_sched)
+    {
+        changeScheduleToNonOptimal(cmst, nodesList);
+    }
+
     /* Find the maximum time slot value */
     uint16_t max_time_slot = maxTimeSlot(nodesList);
 
@@ -271,6 +276,74 @@ bool createTimeSlotSchedule(Tree_t *cmst, List *nodesList)
 
     /* Print the time schedule */
     printTimeSlots(nodesList);
+
+    return (true);
+}
+
+bool changeScheduleToNonOptimal(Tree_t *cmst, List *nodesList)
+{
+    /* Find maximum timeslot time */
+    uint16_t max_time = maxTimeSlot(nodesList);
+
+    /* For all values of 'time' get the first node with a timeslot and shift all others */
+    for (uint16_t i = 1; i <= max_time; i++)
+    {
+        /* Print the time schedule */
+        printTimeSlots(nodesList);
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *n1 = (Node_t *)elem1->obj;
+
+            /* Check all of n1's time slots */
+            for (ListElem *elem2 = ListFirst(&n1->timeslots); elem2 != NULL; elem2 = ListNext(&n1->timeslots, elem2))
+            {
+                TimeSlot_t *ts1 = (TimeSlot_t *)elem2->obj;
+
+                /* If n1 has a time slot with 'time' */
+                if (ts1->time == i && ts1->type == TS_RX)
+                {
+                    /* Get the parent and the time slot with 'time' */
+                    Node_t *n2 = getParent(cmst, n1);
+                    TimeSlot_t *ts2;
+                    for (ListElem *elem3 = ListFirst(&n2->timeslots); elem3 != NULL; elem3 = ListNext(&n2->timeslots, elem3))
+                    {
+                        ts2 = (TimeSlot_t *)elem3->obj;
+                        if (ts2->time == ts1->time && ts2->type == TS_TX)
+                        {
+                            break;
+                        }
+                    }
+
+                    /* Shift all other nodes that have a time slot with 'time' */
+                    for (ListElem *elem3 = ListFirst(nodesList); elem3 != NULL; elem3 = ListNext(nodesList, elem3))
+                    {
+                        Node_t *n3 = (Node_t *)elem3->obj;
+
+                        /* Check all n3's time slots */
+                        for (ListElem *elem4 = ListFirst(&n3->timeslots); elem4 != NULL; elem4 = ListNext(&n3->timeslots, elem4))
+                        {
+                            TimeSlot_t *ts3 = (TimeSlot_t *)elem4->obj;
+                            if (ts3->time == ts1->time)
+                            {
+                                if ((n3 != n1 && n3 != n2) || \
+                                    (n3 == n1 && ts3 != ts1) || \
+                                    (n3 == n2 && ts3 != ts2))
+                                {
+                                    ts3->time++;
+
+                                    if (ts3->time > max_time)
+                                    {
+                                        max_time = ts3->time;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     return (true);
 }
@@ -423,7 +496,7 @@ void printTimeSlots(List *nodesList)
     fflush(stdout);
 }
 
-bool shareTimeSlots(Node_t *node_i, Node_t *node_j)
+bool shareTimeSlots(Tree_t *tree, Node_t *node_i, Node_t *node_j)
 {
     for (ListElem *elem1 = ListFirst(&node_i->timeslots); elem1 != NULL; elem1 = ListNext(&node_i->timeslots, elem1))
     {
@@ -435,7 +508,14 @@ bool shareTimeSlots(Node_t *node_i, Node_t *node_j)
 
             if (ts1->time == ts2->time)
             {
-                return (true);
+                Node_t *parent_i = getParent(tree, node_i);
+                Node_t *parent_j = getParent(tree, node_j);
+
+                /* There is a conflict only if the nodes are not communicating */
+                if (parent_i != node_j && parent_j != node_i)
+                {
+                    return (true);
+                }
             }
         }
     }

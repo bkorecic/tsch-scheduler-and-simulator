@@ -531,7 +531,7 @@ bool createInterferenceMatrix(bool intMatrix[][MAX_NODES][NUM_CHANNELS], List li
     return (true);
 }
 
-bool createConflictMatrix(bool intMatrix[][MAX_NODES][NUM_CHANNELS], List nodesList[], bool confMatrix[][MAX_NODES][NUM_CHANNELS], bool withSchedule)
+bool createConflictMatrix(Tree_t *tree, bool intMatrix[][MAX_NODES][NUM_CHANNELS], List nodesList[], bool confMatrix[][MAX_NODES][NUM_CHANNELS], bool withSchedule)
 {
     uint8_t n_nodes = ListLength(nodesList);
 
@@ -569,7 +569,7 @@ bool createConflictMatrix(bool intMatrix[][MAX_NODES][NUM_CHANNELS], List nodesL
                     if (confMatrix[node_i->id][node_j->id][c])
                     {
                         /* But they do not share any time slot, we can remove the conflict */
-                        if (!shareTimeSlots(node_i, node_j))
+                        if (!shareTimeSlots(tree, node_i, node_j))
                         {
                             confMatrix[node_i->id][node_j->id][c] = false;
                             confMatrix[node_j->id][node_i->id][c] = false;

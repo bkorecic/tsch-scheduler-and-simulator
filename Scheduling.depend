@@ -2257,7 +2257,7 @@
 	"defs.h"
 	"../util/print.h"
 
-1460778330 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.c
+1463800645 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -2267,7 +2267,7 @@
 	"../util/debug.h"
 	"../mcc/time_schedule.h"
 
-1460778313 /media/Data/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.h
+1463800520 /media/Data/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.h
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
@@ -2275,11 +2275,11 @@
 
 1444284234 /media/Data/USC/4_Dev/1_scheduling_algorithms/util/list.h
 
-1461025401 /media/Data/USC/4_Dev/1_scheduling_algorithms/util/defs.h
+1463790382 /media/Data/USC/4_Dev/1_scheduling_algorithms/util/defs.h
 
 1444284233 /media/Data/USC/4_Dev/1_scheduling_algorithms/util/debug.h
 
-1444284233 /media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.h
+1463800458 /media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.h
 	"../util/list.h"
 	"../graphs/graphs.h"
 
@@ -2308,7 +2308,7 @@
 	<stdbool.h>
 	"../graphs/graphs.h"
 
-1457218085 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.c
+1463800524 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -2330,7 +2330,7 @@
 	"list.h"
 	"../graphs/graphs.h"
 
-1444284233 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.c
+1463800633 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.c
 	<stdio.h>
 	<string.h>
 	<stdlib.h>
@@ -2360,21 +2360,22 @@
 
 1444284234 /media/Data/USC/4_Dev/1_scheduling_algorithms/util/glpk.h
 
-1461042890 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.c
+1461084479 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<stdint.h>
 	"../util/list.h"
 	"../util/files.h"
+	"../util/debug.h"
 	"../graphs/graphs.h"
 	"fhss.h"
 	"schedule.h"
 
-1461043645 /media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.h
+1461083441 /media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.h
 	<stdint.h>
 
-1461042906 /media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.h
+1461260498 /media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.h
 
 1444284233 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/tasa/coloring.c
 	<string.h>
@@ -2415,7 +2416,7 @@
 	<stdint.h>
 	"../graphs/graphs.h"
 
-1460322852 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/util/files.c
+1463798502 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/util/files.c
 	<sys/stat.h>
 	<stdint.h>
 	<stdlib.h>
@@ -2434,7 +2435,7 @@
 	"list.h"
 	"defs.h"
 
-1460408763 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/util/print.c
+1463796655 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/util/print.c
 	<sys/stat.h>
 	<stdint.h>
 	<stdlib.h>
@@ -2451,7 +2452,7 @@
 	<stdlib.h>
 	<stdbool.h>
 
-1461043582 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/main.c
+1463800673 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/main.c
 	<string.h>
 	<stdio.h>
 	<stdlib.h>
@@ -2468,11 +2469,11 @@
 	"schedule/schedule.h"
 	"schedule/fhss.h"
 
-1457218019 /media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.h
+1463790481 /media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.h
 	"../util/list.h"
 	"../graphs/graphs.h"
 
-1461042575 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.c
+1461260660 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

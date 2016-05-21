@@ -370,7 +370,7 @@ bool createInterferenceMatrix (bool intMatrix[][MAX_NODES][NUM_CHANNELS], List l
  * considers all 2-hop interferences. If withSchedule is set the time schedule is considered and a few conflicts may
  * be removed, since nodes may not share any concurrent time slots
  */
-bool createConflictMatrix(bool intMatrix[][MAX_NODES][NUM_CHANNELS], List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNELS], bool withSchedule);
+bool createConflictMatrix(Tree_t *tree, bool intMatrix[][MAX_NODES][NUM_CHANNELS], List nodesList[], bool confMatrix[][MAX_NODES][NUM_CHANNELS], bool withSchedule);
 
 /**
  * \brief Returns a list with all conflicting nodes within n hops.

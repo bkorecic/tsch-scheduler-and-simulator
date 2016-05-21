@@ -122,7 +122,7 @@ void output(uint8_t alg, List *nodesList, Tree_t *tree, char *tree_filename, boo
     FILE *fp = NULL;
     uint8_t res;
 
-    if (alg == MCC_ICRA || alg == MCC_CQARA || alg == MCC_CQAA)
+    if (alg == MCC_ICRA || alg == MCC_ICRA_NONOPTIMAL || alg == MCC_CQARA || alg == MCC_CQAA)
     {
         /* Output the formed tree in a file */
         res = openFile(&fp, tree_filename, "w");

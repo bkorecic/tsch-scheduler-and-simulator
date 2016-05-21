@@ -203,7 +203,8 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
 
                     if (parent->id == 0)
                     {
-                        outputTSFile(fhss, asn, freq, prrMatrix[node->id][parent->id][freq], draw, parent->pkt_rx_success, first_ts_log);
+                        outputTSFile(fhss, asn, freq, prrMatrix[node->id][parent->id][freq], draw, parent->optimal_freq, prrMatrix[node->id][parent->id][parent->optimal_freq], \
+                                     parent->pkt_rx_success, first_ts_log);
                         first_ts_log = false;
                     }
 
@@ -482,7 +483,7 @@ void outputPullArms(List *nodesList, uint8_t fhss, bool first_time)
     fclose(fp_arms_output);
 }
 
-void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t freq, uint8_t prr, uint8_t draw, uint32_t n_rx_pkt, bool first_time)
+void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t my_freq, uint8_t prr, uint8_t draw, uint8_t optimal_freq, uint8_t optimal_prr, uint32_t n_rx_pkt, bool first_time)
 {
     /* Opening file */
     FILE *fp_ts_output = NULL;
@@ -520,12 +521,13 @@ void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t freq, uint8_t prr, uint8_t
     if (first_time)
     {
         openFile(&fp_ts_output, file_name, "w");
+        fprintf(fp_ts_output, "asn, freq, prr, draw, opt_freq, opt_prr, n_rx_pkts, \n");
         first_time = false;
     }
     else
     {
         openFile(&fp_ts_output, file_name, "a");
-        fprintf(fp_ts_output, "%lld, %d, %d, %d, %ld,\n", (long long)asn, freq, prr, draw, (long)n_rx_pkt);
+        fprintf(fp_ts_output, "%lld, %d, %d, %d, %d, %d, %ld,\n", (long long)asn, my_freq, prr, draw, optimal_freq, optimal_prr, (long)n_rx_pkt);
     }
 
     fclose(fp_ts_output);

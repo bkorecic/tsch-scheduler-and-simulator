@@ -35,7 +35,7 @@ void createBlacklist(List *blacklist, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNEL
 void outputRegretFile(List *nodesList, uint8_t fhss, bool first_time);
 void outputThroughputFile(List *nodesList, uint8_t fhss, bool first_time);
 void outputPullArms(List *nodesList, uint8_t fhss, bool first_time);
-void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t freq, uint8_t prr, uint8_t draw, uint32_t n_rx_pkt, bool first_time);
+void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t my_freq, uint8_t prr, uint8_t draw, uint8_t optimal_freq, uint8_t optimal_prr, uint32_t n_rx_pkt, bool first_time);
 
 void schedulSetBlacklistSize(uint16_t new_blacklist_size);
 

@@ -14,12 +14,12 @@
 #include "schedule/schedule.h"
 #include "schedule/fhss.h"
 
-#define PROTOCOL                MCC_ICRA
+#define PROTOCOL                MCC_ICRA//_NONOPTIMAL
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
-#define EXECUTE_SCHEDULE        1           /* This is 1 if we are going to simulate the schedule */
+#define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
 #define EXPORT_MASK_CHANNELS    1           /* This is 1 if we are going to output a mask with all channels that could be used */
-#define FHSS                    FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
+#define FHSS                    FHSS_OPENWSN /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
 
 #define ETX_THRESHOLD           0.6
 
@@ -27,8 +27,8 @@
 #define LINKS_PREFIX "data/prr_tutornet/mabo-tsch/prr40"
 #define TREE_FILE "tree.dat"
 
-#define N_TIMESLOTS_PER_FILE    35100       // 15 minutes per file and 39 time slots for second (900 s x 39 ts = 35100 ts per file)
-#define N_TIMESLOTS_LOG         2340        // log every 1 minute (60 x 39 ts per minute = 2340)
+#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
+#define N_TIMESLOTS_LOG         1560        // log every 1 minute (60 s x 39 ts / 1.5 s = 1560 ts per minute)
 #define MAX_N_FILES             100
 
 void readPrrFile(char *file_name, List *nodesList, List linksList[]);
@@ -41,7 +41,7 @@ void printHelp(void)
     printf("HELP:\n");
     printf("./Scheduling <alg> <sink_id> <channel> <export_mask_channels> <ext_threshold> <file_name> <links_prefix> <execute_sch> <fhss>:\n");
     printf("<alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; 4 - MODESA\n");
-    printf("<sink_id>: 0 to N\n");
+    printf("<sink_id>: 0 to N-1\n");
     printf("<channel>: 0 to 15\n");
     printf("<export_mask_channels>: 0 or 1\n");
     printf("<etx_threshold>: 0.0 to 1.0\n");
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
         sink_id = atoi(argv[2]);
         channel = atoi(argv[3]);
         export_mask_channels = atoi(argv[4]);
-        etx_threshold = atoi(argv[5]);
+        etx_threshold = atof(argv[5]);
         strcpy(file_name,argv[6]);
         strcpy(links_prefix,argv[7]);
         execute_sch = atoi(argv[8]);
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     /* Create the conflict matrix considering the connectivity, interference and cmsTree */
     bool confMatrix[MAX_NODES][MAX_NODES][NUM_CHANNELS];
     memset(confMatrix, false, MAX_NODES * MAX_NODES * NUM_CHANNELS * sizeof(bool));
-    createConflictMatrix(intMatrix, &nodesList, confMatrix, false);
+    createConflictMatrix(NULL, intMatrix, &nodesList, confMatrix, false);
 
     /* Create the distribution tree */
     Tree_t *tree; initializeTree(alg, &tree, &nodesList, sink_id, conMatrix, linksList, channel);
@@ -167,15 +167,19 @@ int main(int argc, char *argv[])
     /* Lets choose which protocol we want to work with */
     if (alg == MCC_ICRA)
     {
-        main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, NULL, false, false, channel, etx_threshold);
+        main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, NULL, false, false, true, channel, etx_threshold);
+    }
+    else if (alg == MCC_ICRA_NONOPTIMAL)
+    {
+        main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, NULL, false, false, false, channel, etx_threshold);
     }
     else if (alg == MCC_CQAA)
     {
-        main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, etxMatrix, false, true, -1, etx_threshold);
+        main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, etxMatrix, false, true, false, -1, etx_threshold);
     }
     else if (alg == MCC_CQARA)
     {
-        main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, etxMatrix, true, true, -1, etx_threshold);
+        main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, etxMatrix, true, true, false, -1, etx_threshold);
     }
     else if (alg == TASA)
     {
@@ -267,7 +271,7 @@ void initializeTree(uint8_t alg, Tree_t **tree, List *nodesList, uint8_t sink_id
         }
         fclose(fp);
     }
-    else if (alg == MCC_ICRA || alg == MCC_CQAA)
+    else if (alg == MCC_ICRA || alg == MCC_ICRA_NONOPTIMAL || alg == MCC_CQAA)
     {
         /* Create the Capacitated Minimum Spanning Tree */
         Node_t *sink = getNode(sink_id, nodesList);

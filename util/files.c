@@ -317,12 +317,16 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
 
     /* Calculate the slot_frame size */
     uint8_t superframe_length = 0;
-    for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
+    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
     {
-        Node_t *node = (Node_t *)elem->obj;
-        if (ListLength(&node->timeslots) > superframe_length)   /* We start the timeslots in zero */
+        Node_t *node = (Node_t *)elem1->obj;
+        for (ListElem *elem2 = ListFirst(&node->timeslots); elem2 != NULL; elem2 = ListNext(&node->timeslots, elem2))
         {
-            superframe_length = ListLength(&node->timeslots);
+            TimeSlot_t *ts = (TimeSlot_t *)elem2->obj;
+            if (ts->time > superframe_length)   /* We start the timeslots in zero */
+            {
+                superframe_length = ts->time;
+            }
         }
     }
 
@@ -456,7 +460,6 @@ void generateScheduleFileOpenWSN(FILE *fp, List *nodesList, Tree_t *tree, bool e
 
 
     fprintf(fp, "}\n");
-    //fprintf(fp,"#endif");
 
     fprintf(stdout, "SF = %d\n", superframe_length);
     fprintf(stdout, "CH = %d\n", max_freq);

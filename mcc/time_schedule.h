@@ -51,7 +51,9 @@ LineTree_t *createLineTree (List *nodesList, Tree_t *tree);
  * Creates the collection time schedule from the CMS tree provided. The schedule will be stored in each node in the
  * nodesList.
  */
-bool createTimeSlotSchedule(Tree_t *cmst, List *nodesList);
+bool createOptimalTimeSlotSchedule(Tree_t *cmst, List *nodesList, bool optimal_sched);
+
+bool changeScheduleToNonOptimal(Tree_t *cmst, List *nodesList);
 
 /**
  * \brief Convert the actions created by the distribution algorithm into real time slots.
@@ -98,6 +100,6 @@ void printTimeSlots(List *nodesList);
  *
  * Check if the nodes share at least one time slot and return the result.
  */
-bool shareTimeSlots(Node_t *node_i, Node_t *node_j);
+bool shareTimeSlots(Tree_t *tree, Node_t *node_i, Node_t *node_j);
 
 #endif // _TIME_SCHEDULE_
