@@ -14,7 +14,7 @@
 #include "schedule/schedule.h"
 #include "schedule/fhss.h"
 
-#define PROTOCOL                MCC_ICRA//_NONOPTIMAL
+#define PROTOCOL                MCC_ICRA_NONOPTIMAL
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
