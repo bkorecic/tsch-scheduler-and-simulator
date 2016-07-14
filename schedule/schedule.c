@@ -11,7 +11,7 @@
 
 uint16_t blacklist_size = CENTRALIZED_BLACKLIST_SIZE;
 
-int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint16_t n_timeslots_log)
+int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint16_t n_timeslots_log, uint8_t pkt_gen_prob)
 {
     bool first_general_log = true;
     bool first_ts_log = true;
@@ -32,18 +32,24 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
 
     /* Calculate the slotframe size and clean the information regarding # of pkts transmitted and received */
     uint8_t superframe_length = 0;
-    for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
+    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
     {
-        Node_t *node = (Node_t *)elem->obj;
-        if (ListLength(&node->timeslots) > superframe_length)   /* We start the timeslots in zero */
+        Node_t *node = (Node_t *)elem1->obj;
+
+        /* Go over all timeslots and find the one with largest timeslot offset */
+        for (ListElem *elem2 = ListFirst(&node->timeslots); elem2 != NULL; elem2 = ListNext(&node->timeslots, elem2))
         {
-            superframe_length = ListLength(&node->timeslots);
+            TimeSlot_t *ts = (TimeSlot_t *)elem2->obj;
+            if (ts->time > superframe_length)   /* We start the timeslots in zero */
+            {
+                superframe_length = ts->time;
+            }
         }
 
         /* Clean the main statistics regarding transmissions */
         node->pkt_rx_failed = node->pkt_rx_success = node->pkt_tx_failed = node->pkt_tx_success = 0;
         node->n_pull = node->n_optimal_pull = 0;
-        memset(node->avg_reward, 0, MAX_NODES*NUM_CHANNELS);
+        memset(node->avg_reward, 100, MAX_NODES*NUM_CHANNELS);
         node->cumulative_regret = 0;
         node->optimal_freq = 0;
     }
@@ -100,6 +106,7 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                 outputRegretFile(nodesList, fhss, first_general_log);
                 outputThroughputFile(nodesList, fhss, first_general_log);
                 outputPullArms(nodesList, fhss, first_general_log);
+                outputReliabilityTxPerPkt(nodesList, fhss, sink_id, first_general_log);
                 first_general_log = false;
             }
 
@@ -108,14 +115,25 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
             {
                 Node_t *node = (Node_t *)elem->obj;
 
-                /* Generate new packets */
+                /* Generate new packet if we have to */
                 if ((time % superframe_length) == 0)
                 {
-                    if (node->q == node->id) node->q = 0;
-                    else node->q = 1;
+                    /* Check if the queue is not full, if we should tx in this timeslot and if we are not the sink node */
+                    if ((ListLength(&node->packets) < NODE_QUEUE_SIZE) && ((rand() % 100) <= pkt_gen_prob) && (node->id != sink_id))
+                    {
+                        Packet_t *pkt = newPacket(node->cur_dsn, node->id);
+                        node->cur_dsn++;
+                        ListAppend(&node->packets, (void *)pkt);
+                    }
                 }
 
                 TimeSlot_t *ts = getTimeSlot(time + 1, &node->timeslots);
+
+                /* Check if we need to transmit, because it may be a relay packet and the last RX may have been lost */
+                if (ListLength(&node->packets) == 0)
+                {
+                    continue;
+                }
 
                 if (ts != NULL && ts->type == TS_TX)
                 {
@@ -153,12 +171,6 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                         freq = ts->freq;
                     }
 
-                    /* Check if we need to transmit, because it may be a relay packet and the last RX may have been lost */
-                    if (node->q == 0)
-                    {
-                        continue;
-                    }
-
                     /* Calculate what would be the optimal channel to be used */
                     parent->optimal_freq = fhssDistributedBlacklistOptimalChan(parent, node, prrMatrix, asn);
 
@@ -177,8 +189,25 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                     {
                         node->pkt_tx_success++;
                         parent->pkt_rx_success++;
-                        node->q--;
-                        parent->q++;
+
+                        /* Remove packet from node */
+                        ListElem *elem = ListFirst(&node->packets);
+                        Packet_t *pkt = (Packet_t *)elem->obj;
+                        ListUnlink(&node->packets, elem);
+
+                        /* Add packet to parent's queue */
+                        pkt->n_retries = 0;
+                        pkt->n_transmissions++;
+                        /* Check if parent can accommodate the packet */
+                        if ((ListLength(&parent->packets) < NODE_QUEUE_SIZE) || (parent->id == sink_id))
+                        {
+                            ListAppend(&parent->packets, (void *)pkt);
+                        }
+                        else
+                        {
+                            /* Packet dropped due to queue overflow */
+                            free(pkt);
+                        }
 
                         /* Update the reward for that channel with a sucessful transmission */
                         parent->avg_reward[node->id][freq] = parent->avg_reward[node->id][freq]*(1.0 - MAB_REWARD_SUCESS_WEIGHT) + MAB_REWARD_SUCESS * MAB_REWARD_SUCESS_WEIGHT;
@@ -188,7 +217,21 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                     {
                         node->pkt_tx_failed++;
                         parent->pkt_rx_failed++;
-                        node->q--;
+
+                        /* Check if we have to remove from queue (each packet can be retransmitted a few times) */
+                        ListElem *elem = ListFirst(&node->packets);
+                        Packet_t *pkt = (Packet_t *)elem->obj;
+                        if (pkt->n_retries == MAX_PKT_RETRIES)
+                        {
+                            ListUnlink(&node->packets, elem);
+                            /* Packet dropped due to max n retransmissions */
+                            free(pkt);
+                        }
+                        else
+                        {
+                            pkt->n_retries++;
+                            pkt->n_transmissions++;
+                        }
 
                         /* Update the reward for that channel with a failed transmission */
                         parent->avg_reward[node->id][freq] = parent->avg_reward[node->id][freq]*(1.0 - MAB_REWARD_SUCESS_WEIGHT) + MAB_REWARD_FAILED * MAB_REWARD_SUCESS_WEIGHT;
@@ -208,8 +251,8 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                         first_ts_log = false;
                     }
 
-                    /* We keep track of the wors prr to calculate the minimum throughput obtained in each path */
-                    if (node->worst_prr < prrMatrix[node->id][parent->id][freq])
+                    /* We keep track of the worst prr to calculate the minimum throughput obtained in each path */
+                    if (node->worst_prr > prrMatrix[node->id][parent->id][freq])
                     {
                         node->worst_prr = prrMatrix[node->id][parent->id][freq];
                     }
@@ -483,6 +526,76 @@ void outputPullArms(List *nodesList, uint8_t fhss, bool first_time)
     fclose(fp_arms_output);
 }
 
+void outputReliabilityTxPerPkt(List *nodesList, uint16_t fhss, uint16_t sink_id, bool first_time)
+{
+    /* Opening file */
+    FILE *fp_reliability_output = NULL;
+    char file_name[100];
+
+    if (fhss == FHSS_OPENWSN)
+    {
+        snprintf(file_name, 100, "reliability_fhss_openwsn.csv");
+    }
+    else if (fhss == FHSS_CENTRALIZED_BLACKLIST)
+    {
+        snprintf(file_name, 100, "reliability_fhss_centralized_blacklist.csv");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
+    {
+        snprintf(file_name, 100, "reliability_fhss_distributed_blacklist_best_arm.csv");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM)
+    {
+        snprintf(file_name, 100, "reliability_fhss_distributed_blacklist_first_best_arm.csv");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM)
+    {
+        snprintf(file_name, 100, "reliability_fhss_distributed_blacklist_first_good_arm.csv");
+    }
+    else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL)
+    {
+        snprintf(file_name, 100, "reliability_fhss_distributed_blacklist_optimal.csv");
+    }
+    else if (fhss == FHSS_NONE)
+    {
+        snprintf(file_name, 100, "reliability_fhss_none.csv");
+    }
+
+    if (first_time)
+    {
+        openFile(&fp_reliability_output, file_name, "w");
+
+        /* Header */
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_reliability_output, "reliability_%d, n_tx_per_pkt_%d, ", node->id, node->id);
+        }
+
+        fprintf(fp_reliability_output, "\n");
+        first_time = false;
+    }
+    else
+    {
+        openFile(&fp_reliability_output, file_name, "a");
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            float reliability = calculateReliability(node, nodesList, sink_id);
+            float n_tx_per_pkt = calculteNTxPerPkt(node, nodesList, sink_id);
+
+            fprintf(fp_reliability_output, "%.4f, %.4f, ", reliability, n_tx_per_pkt);
+        }
+
+        fprintf(fp_reliability_output, "\n");
+    }
+
+    fclose(fp_reliability_output);
+}
+
 void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t my_freq, uint8_t prr, uint8_t draw, uint8_t optimal_freq, uint8_t optimal_prr, uint32_t n_rx_pkt, bool first_time)
 {
     /* Opening file */
@@ -536,4 +649,94 @@ void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t my_freq, uint8_t prr, uint
 void schedulSetBlacklistSize(uint16_t new_blacklist_size)
 {
     blacklist_size = new_blacklist_size;
+}
+
+float calculateReliability(Node_t *node, List *nodesList, uint16_t sink_id)
+{
+    Node_t *aux_node;
+
+    /* Find the sink node */
+    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+    {
+        aux_node = (Node_t *)elem1->obj;
+
+        if (aux_node->id == sink_id)
+        {
+            break;
+        }
+    }
+
+    uint32_t n_rcv_pkts = 0;    /* How many packets were received from 'node' */
+    uint32_t n_tx_pkts = 0;     /* How many packets were transmitted by 'node' */
+
+    /* Look at all packets received by sink */
+    for (ListElem *elem2 = ListFirst(&aux_node->packets); elem2 != NULL; elem2 = ListNext(&aux_node->packets, elem2))
+    {
+        Packet_t *pkt = (Packet_t *)elem2->obj;
+
+        /* See if the packet is one of interest (if we are calculating for sink, all packets are of interest) */
+        if (pkt->src_id == node->id || node->id == sink_id)
+        {
+            n_rcv_pkts++;
+        }
+    }
+
+    /* Lets check the number of packets that were generated */
+    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+    {
+        aux_node = (Node_t *)elem1->obj;
+
+        if (aux_node->id == node->id || node->id == sink_id)
+        {
+            n_tx_pkts += aux_node->cur_dsn;
+        }
+    }
+
+    float reliability = 1.0;
+    if (n_tx_pkts > 0)
+    {
+        reliability = (float)n_rcv_pkts/(float)n_tx_pkts;
+    }
+
+    return reliability;
+}
+
+float calculteNTxPerPkt(Node_t *node, List *nodesList, uint16_t sink_id)
+{
+    Node_t *aux_node;
+
+    /* Find the sink node */
+    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+    {
+        aux_node = (Node_t *)elem1->obj;
+
+        if (aux_node->id == sink_id)
+        {
+            break;
+        }
+    }
+
+    uint32_t n_rcv_pkts = 0;    /* How many packets were received from 'node' */
+    uint32_t n_transmissions = 0;
+
+    /* Look at all packets received by sink */
+    for (ListElem *elem2 = ListFirst(&aux_node->packets); elem2 != NULL; elem2 = ListNext(&aux_node->packets, elem2))
+    {
+        Packet_t *pkt = (Packet_t *)elem2->obj;
+
+        /* See if the packet is one of interest (if we are calculating for sink, all packets are of interest) */
+        if (pkt->src_id == node->id || node->id == sink_id)
+        {
+            n_rcv_pkts++;
+            n_transmissions += pkt->n_transmissions;
+        }
+    }
+
+    float tx_per_pkt = 1.0;
+    if (n_rcv_pkts > 0)
+    {
+        tx_per_pkt = (float)n_transmissions/(float)n_rcv_pkts;
+    }
+
+    return tx_per_pkt;
 }

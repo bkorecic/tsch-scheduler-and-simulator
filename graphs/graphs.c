@@ -49,6 +49,7 @@ Node_t *newNode(uint16_t id, NODE_TYPE type)
     node->id = id;
     node->type = type;
     memset(&(node->timeslots), 0, sizeof(List)); ListInit(&(node->timeslots));
+    memset(&(node->packets), 0, sizeof(List)); ListInit(&(node->packets));
 
 /* MCC code */
     memset(&(node->channels), 0, sizeof(List)); ListInit(&(node->channels));
@@ -148,6 +149,26 @@ TimeSlot_t *newTimeSlot(uint16_t time, uint8_t freq, TIMESLOT_TYPE type, Node_t 
     ts->relay = relay;
 
     return (ts);
+}
+
+Packet_t *newPacket(uint16_t dsn, uint16_t src_id)
+{
+    Packet_t *pkt = (Packet_t *)malloc(sizeof(Packet_t));
+
+    if (pkt == NULL)
+    {
+        ERROR("Not enough memory.\n");
+    }
+    else
+    {
+        memset(pkt, 0, sizeof(Packet_t));
+    }
+
+    pkt->dsn = dsn;
+    pkt->n_retries = 0;
+    pkt->src_id = src_id;
+
+    return (pkt);
 }
 
 bool isNodeInTree(Node_t *node, Tree_t *tree, Node_t *avoidRoot)

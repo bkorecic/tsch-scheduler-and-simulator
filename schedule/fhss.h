@@ -23,7 +23,8 @@
 #define CENTRALIZED_BLACKLIST_SIZE          10
 
 static const uint8_t chTemplate_default[] = {
-   5,6,12,7,15,4,14,11,8,0,1,2,13,3,9,10
+   //5,6,12,7,15,4,14,11,8,0,1,2,13,3,9,10
+   15,14,9,13,12,11,10,8,7,6,5,4,3,2,1
 };
 
 /**

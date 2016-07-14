@@ -16,7 +16,7 @@
  * \return Always true.
  *
  */
-int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint16_t n_timeslots_log);
+int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint16_t n_timeslots_log, uint8_t pkt_gen_prob);
 
 /**
  * \brief Creates a blacklist with channels where there is at least of link with PRR is below prrThreshold.
@@ -35,8 +35,11 @@ void createBlacklist(List *blacklist, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNEL
 void outputRegretFile(List *nodesList, uint8_t fhss, bool first_time);
 void outputThroughputFile(List *nodesList, uint8_t fhss, bool first_time);
 void outputPullArms(List *nodesList, uint8_t fhss, bool first_time);
+void outputReliabilityTxPerPkt(List *nodesList, uint16_t fhss, uint16_t sink_id, bool first_time);
 void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t my_freq, uint8_t prr, uint8_t draw, uint8_t optimal_freq, uint8_t optimal_prr, uint32_t n_rx_pkt, bool first_time);
 
 void schedulSetBlacklistSize(uint16_t new_blacklist_size);
+float calculateReliability(Node_t *node, List *nodesList, uint16_t sink_id);
+float calculteNTxPerPkt(Node_t *node, List *nodesList, uint16_t sink_id);
 
 #endif // _SCHEDULE_

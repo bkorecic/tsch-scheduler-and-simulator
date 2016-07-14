@@ -17,11 +17,11 @@
 #define PROTOCOL                MCC_ICRA_NONOPTIMAL
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
-#define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
+#define EXECUTE_SCHEDULE        1           /* This is 1 if we are going to simulate the schedule */
 #define EXPORT_MASK_CHANNELS    1           /* This is 1 if we are going to output a mask with all channels that could be used */
-#define FHSS                    FHSS_OPENWSN /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
-
-#define ETX_THRESHOLD           0.6
+#define FHSS                    FHSS_ALL /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
+#define PKT_PROB                1
+#define ETX_THRESHOLD           0.5
 
 #define DATA_FILE "data/prr_tutornet/mabo-tsch/prr40_1.dat"
 #define LINKS_PREFIX "data/prr_tutornet/mabo-tsch/prr40"
@@ -49,11 +49,12 @@ void printHelp(void)
     printf("<links_prefix>: prefix of file names with link information\n");
     printf("<execute_sch>: 0 or 1\n");
     printf("<fhss>: 0 - 10 (if execute_sch == 1)\n");
+    printf("<pkt_prob>: 0 - 100 (if execute_sch == 1)\n");
 }
 
 int main(int argc, char *argv[])
 {
-    uint8_t sink_id, alg, channel, fhss;
+    uint8_t sink_id, alg, channel, fhss, pkt_prob;
     bool execute_sch, export_mask_channels;
     float etx_threshold;
     char file_name[50];
@@ -79,19 +80,20 @@ int main(int argc, char *argv[])
         if (execute_sch)
         {
             fhss = atoi(argv[9]);
+            pkt_prob = atoi(argv[10]);
 
             if (fhss == FHSS_CENTRALIZED_BLACKLIST)
             {
-                schedulSetBlacklistSize(atoi(argv[10]));
+                schedulSetBlacklistSize(atoi(argv[11]));
             }
             else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM || \
                      fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM || \
                      fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
             {
-                fhssSetEpsilonN(atoi(argv[10]));
-                fhssSetEpsilonInitN(atoi(argv[10]));
-                fhssSetEpsilonTSIncrN(atoi(argv[11]));
-                fhssSetEpsilonMaxN(atoi(argv[12]));
+                fhssSetEpsilonN(atoi(argv[11]));
+                fhssSetEpsilonInitN(atoi(argv[11]));
+                fhssSetEpsilonTSIncrN(atoi(argv[12]));
+                fhssSetEpsilonMaxN(atoi(argv[13]));
 
                 if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM)
                 {
@@ -118,6 +120,7 @@ int main(int argc, char *argv[])
         if (execute_sch)
         {
             fhss = FHSS;
+            pkt_prob = PKT_PROB;
         }
     }
 
@@ -205,13 +208,13 @@ int main(int argc, char *argv[])
         /* Run each type of FHSS algorithm */
         if (fhss != FHSS_ALL)
         {
-            execute_schedule(fhss, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
+            execute_schedule(fhss, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG, pkt_prob);
         }
         else
         {
             for (uint8_t i = 0; i < FHSS_ALL; i++)
             {
-                execute_schedule(i, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
+                execute_schedule(i, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG, pkt_prob);
             }
         }
     }

@@ -10,6 +10,8 @@
 #define MAX_NODES 50
 #define MAX_HOP_COUNT MAX_NODES
 #define MAX_TIMESLOTS 256
+#define MAX_PKT_RETRIES 3
+#define NODE_QUEUE_SIZE 10
 
 #define NUM_CHANNELS 16
 
@@ -47,6 +49,8 @@ typedef struct node_t {
 	uint64_t    eui64;              /* IPv6 address */
 	NODE_TYPE	type;               /* Type of node */
 	uint8_t     q;                  /* Queue (number of packets) */
+	uint16_t    cur_dsn;            /* Current Data Sequence Number */
+	List        packets;            /* List of packets */
 	List        timeslots;          /* List of timeslots */
 
 /* MCC code */
@@ -105,9 +109,9 @@ typedef struct tree_t {
     uint16_t    weight;
     List        children_list;  /* List of children nodes */
     List        subtrees_list;  /* List of Tree_t * to the subtrees */
-    TREE_TYPE type;
+    TREE_TYPE   type;
 /* TASA code */
-    bool valid;
+    bool        valid;
 /* TASA code */
 } Tree_t;
 
@@ -131,6 +135,13 @@ typedef struct timeslot_t {
     Node_t          *neighbor;
     TIMESLOT_TYPE   type;
 } TimeSlot_t;
+
+typedef struct packet_t {
+    uint16_t        dsn;
+    uint16_t        src_id;
+    uint8_t         n_retries;          /* Current number of transmission retries */
+    uint8_t         n_transmissions;    /* Number of times the packets was transmitted (or retransmitted) */
+} Packet_t;
 
 /**
  * \brief Creates a new link.
@@ -186,6 +197,8 @@ LineTree_t *newLineTree(uint8_t hop_count);
  * Allocates memory and creates a new object of TimeSlot_t type
  */
 TimeSlot_t *newTimeSlot(uint16_t time, uint8_t freq, TIMESLOT_TYPE type, Node_t *neighbor, bool relay);
+
+Packet_t *newPacket(uint16_t dsn, uint16_t src_id);
 
 /**
  * \brief Checks if the node is in a particular tree, avoiding a specific root node.
