@@ -52,6 +52,16 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
         memset(node->avg_reward, 100, MAX_NODES*NUM_CHANNELS);
         node->cumulative_regret = 0;
         node->optimal_freq = 0;
+        /* Go over all packets and unlink and free them */
+        ListElem *elem3 = ListFirst(&node->packets);
+        while (elem3 != NULL)
+        {
+            Packet_t *pkt = (Packet_t *)elem3->obj;
+            ListUnlink(&node->packets, elem3);
+            elem3 = ListFirst(&node->packets);
+            free(pkt);
+        }
+        node->cur_dsn = 0;
     }
 
     /* Calculate which file to use - It must start at 1*/
@@ -70,10 +80,6 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
 
         /* Print the time schedule */
         printTimeSlots(nodesList);
-
-        /* Initializing the RGN */
-        time_t t;
-        srand((unsigned) time(&t));
 
         /* Freeing the linksList */
         ListUnlinkAll(&linksList);
@@ -119,7 +125,8 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                 if ((time % superframe_length) == 0)
                 {
                     /* Check if the queue is not full, if we should tx in this timeslot and if we are not the sink node */
-                    if ((ListLength(&node->packets) < NODE_QUEUE_SIZE) && ((rand() % 100) <= pkt_gen_prob) && (node->id != sink_id))
+                    uint8_t tx_attempty = rand() % 100;
+                    if ((ListLength(&node->packets) < NODE_QUEUE_SIZE) && (tx_attempty < pkt_gen_prob) && (node->id != sink_id))
                     {
                         Packet_t *pkt = newPacket(node->cur_dsn, node->id);
                         node->cur_dsn++;
@@ -183,6 +190,7 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                     }
 
                     uint8_t draw = (uint8_t)drawElem->obj;
+                    drawElem = ListNext(draws, drawElem);
 
                     /* Check if transmission will succeed */
                     if (draw <= prrMatrix[node->id][parent->id][freq])
@@ -198,6 +206,7 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                         /* Add packet to parent's queue */
                         pkt->n_retries = 0;
                         pkt->n_transmissions++;
+                        pkt->n_hops++;
                         /* Check if parent can accommodate the packet */
                         if ((ListLength(&parent->packets) < NODE_QUEUE_SIZE) || (parent->id == sink_id))
                         {
@@ -250,18 +259,11 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
                                      parent->pkt_rx_success, first_ts_log);
                         first_ts_log = false;
                     }
-
-                    /* We keep track of the worst prr to calculate the minimum throughput obtained in each path */
-                    if (node->worst_prr > prrMatrix[node->id][parent->id][freq])
-                    {
-                        node->worst_prr = prrMatrix[node->id][parent->id][freq];
-                    }
                 }
             }
 
             /* Go to the next time slot */
             asn++;
-            drawElem = ListNext(draws, drawElem);
         }
 
         /* Reading next file */
@@ -570,7 +572,7 @@ void outputReliabilityTxPerPkt(List *nodesList, uint16_t fhss, uint16_t sink_id,
         {
             Node_t *node = (Node_t *)elem1->obj;
 
-            fprintf(fp_reliability_output, "reliability_%d, n_tx_per_pkt_%d, ", node->id, node->id);
+            fprintf(fp_reliability_output, "reliability_%d, n_tx_per_pkt_%d, n_rtx_per_pkt_%d, ", node->id, node->id, node->id);
         }
 
         fprintf(fp_reliability_output, "\n");
@@ -586,8 +588,9 @@ void outputReliabilityTxPerPkt(List *nodesList, uint16_t fhss, uint16_t sink_id,
 
             float reliability = calculateReliability(node, nodesList, sink_id);
             float n_tx_per_pkt = calculteNTxPerPkt(node, nodesList, sink_id);
+            float n_rtx_per_pkt = calculteNRTxPerPkt(node, nodesList, sink_id);
 
-            fprintf(fp_reliability_output, "%.4f, %.4f, ", reliability, n_tx_per_pkt);
+            fprintf(fp_reliability_output, "%.4f, %.4f, %.4f, ", reliability, n_tx_per_pkt, n_rtx_per_pkt);
         }
 
         fprintf(fp_reliability_output, "\n");
@@ -675,7 +678,7 @@ float calculateReliability(Node_t *node, List *nodesList, uint16_t sink_id)
         Packet_t *pkt = (Packet_t *)elem2->obj;
 
         /* See if the packet is one of interest (if we are calculating for sink, all packets are of interest) */
-        if (pkt->src_id == node->id || node->id == sink_id)
+        if ((pkt->src_id == node->id) || (node->id == sink_id))
         {
             n_rcv_pkts++;
         }
@@ -686,13 +689,13 @@ float calculateReliability(Node_t *node, List *nodesList, uint16_t sink_id)
     {
         aux_node = (Node_t *)elem1->obj;
 
-        if (aux_node->id == node->id || node->id == sink_id)
+        if ((aux_node->id == node->id) || (node->id == sink_id))
         {
             n_tx_pkts += aux_node->cur_dsn;
         }
     }
 
-    float reliability = 1.0;
+    float reliability = 0.0;
     if (n_tx_pkts > 0)
     {
         reliability = (float)n_rcv_pkts/(float)n_tx_pkts;
@@ -725,17 +728,57 @@ float calculteNTxPerPkt(Node_t *node, List *nodesList, uint16_t sink_id)
         Packet_t *pkt = (Packet_t *)elem2->obj;
 
         /* See if the packet is one of interest (if we are calculating for sink, all packets are of interest) */
-        if (pkt->src_id == node->id || node->id == sink_id)
+        if ((pkt->src_id == node->id) || (node->id == sink_id))
         {
             n_rcv_pkts++;
             n_transmissions += pkt->n_transmissions;
         }
     }
 
-    float tx_per_pkt = 1.0;
+    float tx_per_pkt = 0.0;
     if (n_rcv_pkts > 0)
     {
         tx_per_pkt = (float)n_transmissions/(float)n_rcv_pkts;
+    }
+
+    return tx_per_pkt;
+}
+
+float calculteNRTxPerPkt(Node_t *node, List *nodesList, uint16_t sink_id)
+{
+    Node_t *aux_node;
+
+    /* Find the sink node */
+    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+    {
+        aux_node = (Node_t *)elem1->obj;
+
+        if (aux_node->id == sink_id)
+        {
+            break;
+        }
+    }
+
+    uint32_t n_rcv_pkts = 0;    /* How many packets were received from 'node' */
+    uint32_t n_retransmissions = 0;
+
+    /* Look at all packets received by sink */
+    for (ListElem *elem2 = ListFirst(&aux_node->packets); elem2 != NULL; elem2 = ListNext(&aux_node->packets, elem2))
+    {
+        Packet_t *pkt = (Packet_t *)elem2->obj;
+
+        /* See if the packet is one of interest (if we are calculating for sink, all packets are of interest) */
+        if ((pkt->src_id == node->id) || (node->id == sink_id))
+        {
+            n_rcv_pkts++;
+            n_retransmissions += pkt->n_transmissions - pkt->n_hops;
+        }
+    }
+
+    float tx_per_pkt = 0.0;
+    if (n_rcv_pkts > 0)
+    {
+        tx_per_pkt = (float)n_retransmissions/(float)n_rcv_pkts;
     }
 
     return tx_per_pkt;

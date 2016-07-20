@@ -539,12 +539,7 @@ void generateTreeFile(FILE *fp, Tree_t *subtree, Tree_t *tree)
     Node_t *parent = getParent(tree, node);
 
     /* Printing the number of nodes */
-    fprintf(fp, "p%d=%d", node->id, (parent != NULL)?parent->id:-1);
-    if (node->worst_prr > 0)
-    {
-        fprintf(fp, "=%d", node->worst_prr);
-    }
-    fprintf(fp, "\n");
+    fprintf(fp, "p%d=%d\n", node->id, (parent != NULL)?parent->id:-1);
 
     for (ListElem *elem = ListFirst(&subtree->subtrees_list); elem != NULL; elem = ListNext(&subtree->subtrees_list, elem))
     {

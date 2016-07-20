@@ -196,9 +196,12 @@ int main(int argc, char *argv[])
     /* Execute the schedule */
     if (execute_sch)
     {
+        /* Initializing the RGN */
+        time_t t;
+        srand((unsigned) time(&t));
+
         /* Generate 'n_timeslots_per_file' random numbers to be used in the recpetion decision */
         List draws; memset(&draws, 0, sizeof(List)); ListInit(&draws);
-        ListUnlinkAll(&draws);
         for (uint64_t i = 0; i < N_TIMESLOTS_PER_FILE*MAX_N_FILES; i++)
         {
             uint8_t sample = rand() % 100;

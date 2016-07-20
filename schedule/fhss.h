@@ -13,8 +13,8 @@
 #define FHSS_ALL                                        7 /* Used to test all cases */
 
 #define MAB_THRESHOLD_GOOD_ARM              90
-#define MAB_FIRST_BEST_ARMS                 8
-#define MAB_EPSILON_INIT_N                  10      // epsilon initially is 1/MAB_EPSILON_N
+#define MAB_FIRST_BEST_ARMS                 10
+#define MAB_EPSILON_INIT_N                  20      // epsilon initially is 1/MAB_EPSILON_N
 #define MAB_EPSILON_TS_INCR_N               100
 #define MAB_EPSILON_MAX_N                   1000
 #define MAB_REWARD_SUCESS_WEIGHT            0.2

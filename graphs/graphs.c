@@ -71,7 +71,7 @@ Node_t *newNode(uint16_t id, NODE_TYPE type)
 /* MODESA IP code */
 
 /* Schedule */
-    node->pkt_tx_failed = node->pkt_tx_success = node->pkt_rx_failed = node->pkt_rx_success = node->worst_prr = 0;
+    node->pkt_tx_failed = node->pkt_tx_success = node->pkt_rx_failed = node->pkt_rx_success = 0;
 /* Schedule */
 
 /* Blacklist */
@@ -165,7 +165,6 @@ Packet_t *newPacket(uint16_t dsn, uint16_t src_id)
     }
 
     pkt->dsn = dsn;
-    pkt->n_retries = 0;
     pkt->src_id = src_id;
 
     return (pkt);

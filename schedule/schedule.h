@@ -41,5 +41,6 @@ void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t my_freq, uint8_t prr, uint
 void schedulSetBlacklistSize(uint16_t new_blacklist_size);
 float calculateReliability(Node_t *node, List *nodesList, uint16_t sink_id);
 float calculteNTxPerPkt(Node_t *node, List *nodesList, uint16_t sink_id);
+float calculteNRTxPerPkt(Node_t *node, List *nodesList, uint16_t sink_id);
 
 #endif // _SCHEDULE_

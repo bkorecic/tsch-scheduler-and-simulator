@@ -78,7 +78,6 @@ typedef struct node_t {
     uint32_t    pkt_tx_failed;
     uint32_t    pkt_rx_success;
     uint32_t    pkt_rx_failed;
-    uint8_t     worst_prr;
 /* Schedule */
 
 /* Blacklist */
@@ -140,7 +139,8 @@ typedef struct packet_t {
     uint16_t        dsn;
     uint16_t        src_id;
     uint8_t         n_retries;          /* Current number of transmission retries */
-    uint8_t         n_transmissions;    /* Number of times the packets was transmitted (or retransmitted) */
+    uint8_t         n_transmissions;    /* Number of times the packet was transmitted (or re-transmitted) */
+    uint8_t         n_hops;             /* Number of hops the packet passed thru */
 } Packet_t;
 
 /**
