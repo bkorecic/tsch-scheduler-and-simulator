@@ -89,8 +89,8 @@ bool assignChannelNodes(List *nodesList, bool confMatrix[][MAX_NODES][NUM_CHANNE
     /* Keep painting the nodes until there is no more colors to be used */
     while(paintNodes(&nodesSorted, confMatrix, channel))
     {
-        PRINTF("New coloring:\n");
-        printListNodes(nodesList);
+        //PRINTF("New coloring:\n");
+        //printListNodes(nodesList);
     }
 
     /* We have painted all nodes, but we actually need to paint their time slots */

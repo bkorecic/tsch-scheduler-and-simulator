@@ -36,7 +36,7 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Linker>
-			<Add option="-lglpk -lm" />
+			<Add option="-lm" />
 		</Linker>
 		<Unit filename="graphs/graphs.c">
 			<Option compilerVar="CC" />
@@ -65,9 +65,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="modesa/modesa.h" />
-		<Unit filename="modesa/modesa_ip.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="schedule/fhss.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -260,9 +260,6 @@ bool createOptimalTimeSlotSchedule(Tree_t *cmst, List *nodesList, bool optimal_s
     /* Find the times slot (transmission times) from the actions list */
     actionsToTimeSlots(&actionsList, multiLineNetwork, cmst);
 
-    /* Print the time schedule */
-    printTimeSlots(nodesList);
-
     if (!optimal_sched)
     {
         changeScheduleToNonOptimal(cmst, nodesList);

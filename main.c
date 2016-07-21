@@ -14,16 +14,16 @@
 #include "schedule/schedule.h"
 #include "schedule/fhss.h"
 
-#define PROTOCOL                MCC_ICRA_NONOPTIMAL
+#define PROTOCOL                MCC_ICRA
 #define SINK_NODE               0
-#define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
-#define EXECUTE_SCHEDULE        1           /* This is 1 if we are going to simulate the schedule */
-#define EXPORT_MASK_CHANNELS    1           /* This is 1 if we are going to output a mask with all channels that could be used */
+#define CHANNEL                 0          /* Channel to be considered for single-channel algorithms */
+#define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
+#define EXPORT_MASK_CHANNELS    0           /* This is 1 if we are going to output a mask with all channels that could be used */
 #define FHSS                    FHSS_ALL /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
 #define PKT_PROB                1
 #define ETX_THRESHOLD           0.5
 
-#define DATA_FILE "data/prr_tutornet/mabo-tsch/prr40_1.dat"
+#define DATA_FILE "data/orc/01/prr40_1.dat"
 #define LINKS_PREFIX "data/prr_tutornet/mabo-tsch/prr40"
 #define TREE_FILE "tree.dat"
 
@@ -39,15 +39,15 @@ void createMatrices(List *nodesList, List linksList[], float prrMatrix[][MAX_NOD
 void printHelp(void)
 {
     printf("HELP:\n");
-    printf("./Scheduling <alg> <sink_id> <channel> <export_mask_channels> <ext_threshold> <file_name> <links_prefix> <execute_sch> <fhss>:\n");
+    printf("./Scheduling <alg> <sink_id> <channel> <export_mask_channels> <ext_threshold> <file_name> <execute_sch> <links_prefix> <fhss>:\n");
     printf("<alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; 4 - MODESA\n");
     printf("<sink_id>: 0 to N-1\n");
     printf("<channel>: 0 to 15\n");
     printf("<export_mask_channels>: 0 or 1\n");
     printf("<etx_threshold>: 0.0 to 1.0\n");
     printf("<file_name>: file name (including extension)\n");
-    printf("<links_prefix>: prefix of file names with link information\n");
     printf("<execute_sch>: 0 or 1\n");
+    printf("<links_prefix>: prefix of file names with link information\n");
     printf("<fhss>: 0 - 10 (if execute_sch == 1)\n");
     printf("<pkt_prob>: 0 - 100 (if execute_sch == 1)\n");
 }
@@ -75,10 +75,10 @@ int main(int argc, char *argv[])
         export_mask_channels = atoi(argv[4]);
         etx_threshold = atof(argv[5]);
         strcpy(file_name,argv[6]);
-        strcpy(links_prefix,argv[7]);
-        execute_sch = atoi(argv[8]);
+        execute_sch = atoi(argv[7]);
         if (execute_sch)
         {
+            strcpy(links_prefix,argv[8]);
             fhss = atoi(argv[9]);
             pkt_prob = atoi(argv[10]);
 
@@ -115,10 +115,10 @@ int main(int argc, char *argv[])
         export_mask_channels = EXPORT_MASK_CHANNELS;
         etx_threshold = ETX_THRESHOLD;
         strcpy(file_name, DATA_FILE);
-        strcpy(links_prefix, LINKS_PREFIX);
         execute_sch = EXECUTE_SCHEDULE;
         if (execute_sch)
         {
+            strcpy(links_prefix, LINKS_PREFIX);
             fhss = FHSS;
             pkt_prob = PKT_PROB;
         }

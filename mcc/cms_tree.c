@@ -80,7 +80,8 @@ Tree_t *constructCMSTreeSingleChannel(Node_t *sink, List *nodesList, bool conMat
                 /* If node has one single candidate parent, connect it to the tree */
                 if (ListLength(&node->candidate_parents) == 1)
                 {
-                    connectToTree(node, (Node_t *)ListFirst(&node->candidate_parents)->obj, cmst);
+                    Node_t *parent = (Node_t *)ListFirst(&node->candidate_parents)->obj;
+                    connectToTree(node, parent, cmst);
                 }
                 /* Else, insert into the list of unconnected nodes */
                 else
@@ -165,7 +166,7 @@ Tree_t *constructCMSTreeSingleChannel(Node_t *sink, List *nodesList, bool conMat
                 Node_t *ss_node = (Node_t *)elem3->obj;
 
                 /* Connect ss_node to branch b */
-                connectToTreeAnyParent(ss_node, b);
+                Node_t *parent = connectToTreeAnyParent(ss_node, b);
                 cmst->weight++; /* We need to add one manually the CMST root weigth */
 
                 /* Remove all other connections in the fat tree to that node */
