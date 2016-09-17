@@ -14,6 +14,7 @@
 #include "schedule/schedule.h"
 #include "schedule/no-schedule.h"
 #include "schedule/fhss.h"
+#include "rpl/rpl.h"
 
 #define PROTOCOL                NO_SCHEDULE
 #define SINK_NODE               0
@@ -197,7 +198,7 @@ int main(int argc, char *argv[])
     else if (alg == NO_SCHEDULE)
     {
         main_no_schedule(&nodesList, &linksList[channel], tree, sink_id, channel);
-        execute_rpl(&nodesList, tree, sink_id, fhss, links_prefix, N_TIMESLOTS_PER_FILE);
+        execute_rpl(&nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO);
     }
 
     /* Execute the schedule */
