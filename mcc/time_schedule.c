@@ -487,6 +487,10 @@ void printTimeSlots(List *nodesList)
             {
                 PRINTF("TX) ");
             }
+            else if (ts->type == TS_SHARED)
+            {
+                PRINTF("SH) ");
+            }
         }
         PRINTF("]\n");
     }

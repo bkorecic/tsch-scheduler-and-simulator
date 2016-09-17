@@ -12,18 +12,19 @@
 #include "tasa/tasa.h"
 #include "modesa/modesa.h"
 #include "schedule/schedule.h"
+#include "schedule/no-schedule.h"
 #include "schedule/fhss.h"
 
-#define PROTOCOL                MCC_ICRA
+#define PROTOCOL                NO_SCHEDULE
 #define SINK_NODE               0
-#define CHANNEL                 0          /* Channel to be considered for single-channel algorithms */
+#define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
 #define EXPORT_MASK_CHANNELS    0           /* This is 1 if we are going to output a mask with all channels that could be used */
-#define FHSS                    FHSS_ALL /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
+#define FHSS                    FHSS_OPENWSN    /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
 #define PKT_PROB                1
 #define ETX_THRESHOLD           0.5
 
-#define DATA_FILE "data/orc/01/prr40_1.dat"
+#define DATA_FILE "data/prr_tutornet/mabo-tsch/prr40_1.dat"
 #define LINKS_PREFIX "data/prr_tutornet/mabo-tsch/prr40"
 #define TREE_FILE "tree.dat"
 
@@ -40,16 +41,17 @@ void printHelp(void)
 {
     printf("HELP:\n");
     printf("./Scheduling <alg> <sink_id> <channel> <export_mask_channels> <ext_threshold> <file_name> <execute_sch> <links_prefix> <fhss>:\n");
-    printf("<alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; 4 - MODESA\n");
+    printf("<alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; \n\t4 - MODESA; 5 - MCC_ICRA_NONOPTIMAL; 6 - NO_SCHEDULE\n");
     printf("<sink_id>: 0 to N-1\n");
     printf("<channel>: 0 to 15\n");
     printf("<export_mask_channels>: 0 or 1\n");
     printf("<etx_threshold>: 0.0 to 1.0\n");
     printf("<file_name>: file name (including extension)\n");
+    printf("<fhss>: 0 - 10 \n");
     printf("<execute_sch>: 0 or 1\n");
-    printf("<links_prefix>: prefix of file names with link information\n");
-    printf("<fhss>: 0 - 10 (if execute_sch == 1)\n");
-    printf("<pkt_prob>: 0 - 100 (if execute_sch == 1)\n");
+    printf("if execute_sch == 1\n");
+    printf("- <links_prefix>: prefix of file names with link information\n");
+    printf("- <pkt_prob>: 0 - 100 (if execute_sch == 1)\n");
 }
 
 int main(int argc, char *argv[])
@@ -75,11 +77,11 @@ int main(int argc, char *argv[])
         export_mask_channels = atoi(argv[4]);
         etx_threshold = atof(argv[5]);
         strcpy(file_name,argv[6]);
-        execute_sch = atoi(argv[7]);
+        fhss = atoi(argv[7]);
+        execute_sch = atoi(argv[8]);
         if (execute_sch)
         {
-            strcpy(links_prefix,argv[8]);
-            fhss = atoi(argv[9]);
+            strcpy(links_prefix,argv[9]);
             pkt_prob = atoi(argv[10]);
 
             if (fhss == FHSS_CENTRALIZED_BLACKLIST)
@@ -115,11 +117,11 @@ int main(int argc, char *argv[])
         export_mask_channels = EXPORT_MASK_CHANNELS;
         etx_threshold = ETX_THRESHOLD;
         strcpy(file_name, DATA_FILE);
+        fhss = FHSS;
         execute_sch = EXECUTE_SCHEDULE;
+        strcpy(links_prefix, LINKS_PREFIX);
         if (execute_sch)
         {
-            strcpy(links_prefix, LINKS_PREFIX);
-            fhss = FHSS;
             pkt_prob = PKT_PROB;
         }
     }
@@ -191,6 +193,11 @@ int main(int argc, char *argv[])
     else if (alg == MODESA)
     {
         main_modesa(&nodesList, &linksList[channel], tree, sink_id, 1, intMatrix, confMatrix, channel);
+    }
+    else if (alg == NO_SCHEDULE)
+    {
+        main_no_schedule(&nodesList, &linksList[channel], tree, sink_id, channel);
+        execute_rpl(&nodesList, tree, sink_id, fhss, links_prefix, N_TIMESLOTS_PER_FILE);
     }
 
     /* Execute the schedule */
@@ -290,6 +297,11 @@ void initializeTree(uint8_t alg, Tree_t **tree, List *nodesList, uint8_t sink_id
         Node_t *sink = getNode(sink_id, nodesList);
         sink->type = SINK;
         *tree = constructCMSTreeMultipleChannel(sink, nodesList, conMatrix, linksList);
+    }
+    else if (alg == NO_SCHEDULE)
+    {
+        // Lets just initialize the tree, we dont need to create it
+        *tree = newTree(getNode(sink_id, nodesList), NO_SCHEDULE);
     }
 
     /* Set the type of each node properly */

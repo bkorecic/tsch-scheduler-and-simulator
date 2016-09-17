@@ -87,6 +87,13 @@ typedef struct node_t {
     uint32_t    n_pull;
     uint32_t    n_optimal_pull;
 /* Blacklist */
+
+/* RPL */
+    uint16_t    dagRank;
+    bool        synced;
+    uint64_t    nextAsnToTxDIO;
+/* RPL */
+
 } Node_t;
 
 typedef struct link_t {
@@ -443,6 +450,8 @@ void generateLinksList(Tree_t *tree, List *linksList);
  * Traverse the list of nodes and populate the list of interfering nodes according to the confMatrix.
  */
 void generateNodesInterfering(bool confMatrix[][MAX_NODES][NUM_CHANNELS], List *nodesList, int8_t channel);
+
+Node_t *getSink(List *nodesList);
 
 #endif // _GRAPHS_H_
 

@@ -8,6 +8,7 @@
 #define TASA                3
 #define MODESA              4
 #define MCC_ICRA_NONOPTIMAL 5
+#define NO_SCHEDULE         6
 
 /* Distributed algorithms */
 #define DETAS       10

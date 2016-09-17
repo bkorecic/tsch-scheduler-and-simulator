@@ -65,10 +65,18 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="modesa/modesa.h" />
+		<Unit filename="rpl/rpl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rpl/rpl.h" />
 		<Unit filename="schedule/fhss.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="schedule/fhss.h" />
+		<Unit filename="schedule/no-schedule.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="schedule/no-schedule.h" />
 		<Unit filename="schedule/schedule.c">
 			<Option compilerVar="CC" />
 		</Unit>

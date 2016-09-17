@@ -822,7 +822,6 @@ void connectToParentMaxChannelVar(Node_t *node, Tree_t *cmst, bool conMatrix[][M
     connectToTree(node, parentToConnect, cmst);
 }
 
-
 void checkAllNodesHaveParents(List *nodesList)
 {
     for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))

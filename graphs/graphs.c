@@ -145,7 +145,10 @@ TimeSlot_t *newTimeSlot(uint16_t time, uint8_t freq, TIMESLOT_TYPE type, Node_t 
     ts->time = time;
     ts->freq = freq;
     ts->type = type;
-    ts->neighbor = neighbor;
+    if ((type != TS_SHARED) && (type != TS_BEACON))
+    {
+        ts->neighbor = neighbor;
+    }
     ts->relay = relay;
 
     return (ts);
@@ -296,7 +299,14 @@ void setTypeOfNodes(uint8_t sink_id, Tree_t *tree)
 {
     if (ListLength(&tree->subtrees_list) == 0)
     {
-        tree->root->type = LEAF;
+        if (tree->root->id == sink_id)
+        {
+            tree->root->type = SINK;
+        }
+        else
+        {
+            tree->root->type = LEAF;
+        }
     }
     else
     {
