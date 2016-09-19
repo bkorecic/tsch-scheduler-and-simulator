@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
     else if (alg == NO_SCHEDULE)
     {
         main_no_schedule(&nodesList, &linksList[channel], tree, sink_id, channel);
-        execute_rpl(&nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO);
+        execute_rpl(&nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA);
     }
 
     /* Execute the schedule */
@@ -230,8 +230,11 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* Write output to files */
-    output(alg, &nodesList, tree, TREE_FILE, export_mask_channels, false);
+    if (alg != NO_SCHEDULE)
+    {
+        /* Write output to files */
+        output(alg, &nodesList, tree, TREE_FILE, export_mask_channels, false);
+    }
 
     return (0);
 }

@@ -91,7 +91,8 @@ typedef struct node_t {
 /* RPL */
     uint16_t    dagRank;
     bool        synced;
-    uint64_t    nextAsnToTxDIO;
+    uint64_t    nextAsnToTxDIO;     /* Next ASN to transmit a DIO message */
+    uint64_t    nextAsnToTxKA;      /* Next ASN to transmit a Keep Alive message */
 /* RPL */
 
 } Node_t;
