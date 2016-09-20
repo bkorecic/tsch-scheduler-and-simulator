@@ -81,11 +81,11 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
             uint8_t freq = fhssOpenwsnChan(channel, asn);
 
             /* Check if we have to start a new round of sampling on TAMU_RPL */
-            uint16_t cur_tamu_sample_round = asn % N_TIMESLOTS_TAMU_RPL;
-            if (rpl_alg == RPL_TAMU && cur_tamu_sample_round > tamu_sample_round)
+            uint16_t cur_tamu_sample_round = asn / N_TIMESLOTS_TAMU_RPL;
+            if (rpl_alg == RPL_TAMU && cur_tamu_sample_round >= tamu_sample_round)
             {
                 tamuUpdateParents(nodesList);
-                tamu_sample_round = cur_tamu_sample_round;
+                tamu_sample_round = cur_tamu_sample_round + 1;
             }
 
             /* Find who is the next node to TX a DIO */
@@ -157,6 +157,7 @@ void init_rpl(List *nodesList, uint8_t sink_id)
         {
             node->dagRank = MINHOPRANKINCREASE;
             node->synced = true;
+            node->hop_count = 0;
         }
         else
         {
@@ -249,15 +250,20 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
                 /* Packet was succesfully received */
                 rplRxDIO(rpl_alg, rxNode, txNode, prrMatrix[txNode->id][rxNode->id][freq]);
 
+                bool updateDag;
                 if (rpl_alg == RPL_MRHOF)
                 {
                     /* Update all DAG rank calculations and return if there was a change in the tree*/
-                    bool updateDag = mrhofUpdateDAGRanks(rxNode);
+                    updateDag = mrhofUpdateDAGRanks(rxNode);
+                }
+                else if (rpl_alg == RPL_TAMU)
+                {
+                    updateDag = tamuRxDio(rxNode);
+                }
 
-                    if (!flag && updateDag)
-                    {
-                        flag = true;
-                    }
+                if (!flag && updateDag)
+                {
+                    flag = true;
                 }
             }
         }
@@ -269,20 +275,16 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
 void rplRxDIO(uint8_t rpl_alg, Node_t *rxNode, Node_t *txNode, uint8_t prr)
 {
     RPL_Neighbor_t *neighbor = findNeighbor(rxNode, txNode->id);
-    if (neighbor != NULL)
-    {
-        /* The txNode is already a neighbor, just update the DAGrank of the neighbor */
-        neighbor->dagRank = txNode->dagRank;
-        neighbor->hop_count = txNode->hop_count;
-    }
-    else
+
+    if (neighbor == NULL)
     {
         /* The txNode is a new neighbor, create a new entry on the candidate parents list */
         neighbor = newNeighbor(txNode->id);
-        neighbor->dagRank = txNode->dagRank;
-        neighbor->hop_count = txNode->hop_count;
         ListAppend(&rxNode->candidate_parents, (void *)neighbor);
     }
+
+    neighbor->dagRank = txNode->dagRank;
+    neighbor->hop_count = txNode->hop_count;
 
     if (prr >= STABLE_NEIGHBOR_THRESHOLD)
     {
@@ -349,7 +351,8 @@ void rplRxKA(Node_t *txNode, Node_t *rxNode, bool succes, uint8_t prr)
         neighbor->rx_failed++;
     }
 
-    neighbor->estimated_etx = (float)neighbor->rx_success / (float)(neighbor->rx_failed + neighbor->rx_success);
+    /* ETX = 1/PRR */
+    neighbor->estimated_etx = (float)(neighbor->rx_failed + neighbor->rx_success) / (float)neighbor->rx_success;
 
     if (prr >= STABLE_NEIGHBOR_THRESHOLD)
     {
