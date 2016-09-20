@@ -17,7 +17,7 @@
 #include "rpl/rpl.h"
 
 #define TSCH_PROTOCOL           NO_SCHEDULE
-#define RPL_PROTOCOL            RPL_MRHOF
+#define RPL_PROTOCOL            RPL_TAMU
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
