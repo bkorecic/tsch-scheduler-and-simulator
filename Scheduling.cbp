@@ -65,10 +65,18 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="modesa/modesa.h" />
+		<Unit filename="rpl/mrhof_rpl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rpl/mrhof_rpl.h" />
 		<Unit filename="rpl/rpl.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="rpl/rpl.h" />
+		<Unit filename="rpl/tamu_rpl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rpl/tamu_rpl.h" />
 		<Unit filename="schedule/fhss.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -99,6 +107,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="util/files.h" />
+		<Unit filename="util/gen_beta.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="util/gen_beta.h" />
 		<Unit filename="util/glpk.h" />
 		<Unit filename="util/list.c">
 			<Option compilerVar="CC" />

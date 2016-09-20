@@ -16,7 +16,8 @@
 #include "schedule/fhss.h"
 #include "rpl/rpl.h"
 
-#define PROTOCOL                NO_SCHEDULE
+#define TSCH_PROTOCOL           NO_SCHEDULE
+#define RPL_PROTOCOL            RPL_MRHOF
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
@@ -42,7 +43,7 @@ void printHelp(void)
 {
     printf("HELP:\n");
     printf("./Scheduling <alg> <sink_id> <channel> <export_mask_channels> <ext_threshold> <file_name> <execute_sch> <links_prefix> <fhss>:\n");
-    printf("<alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; \n\t4 - MODESA; 5 - MCC_ICRA_NONOPTIMAL; 6 - NO_SCHEDULE\n");
+    printf("<tsch_alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; \n\t4 - MODESA; 5 - MCC_ICRA_NONOPTIMAL; 6 - NO_SCHEDULE\n");
     printf("<sink_id>: 0 to N-1\n");
     printf("<channel>: 0 to 15\n");
     printf("<export_mask_channels>: 0 or 1\n");
@@ -57,7 +58,7 @@ void printHelp(void)
 
 int main(int argc, char *argv[])
 {
-    uint8_t sink_id, alg, channel, fhss, pkt_prob;
+    uint8_t sink_id, tsch_alg, channel, fhss, pkt_prob, rpl_alg;
     bool execute_sch, export_mask_channels;
     float etx_threshold;
     char file_name[50];
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        alg = atoi(argv[1]);
+        tsch_alg = atoi(argv[1]);
         sink_id = atoi(argv[2]);
         channel = atoi(argv[3]);
         export_mask_channels = atoi(argv[4]);
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
     /* Use hard-coded parameters */
     else
     {
-        alg = PROTOCOL;
+        tsch_alg = TSCH_PROTOCOL;
         sink_id = SINK_NODE;
         channel = CHANNEL;
         export_mask_channels = EXPORT_MASK_CHANNELS;
@@ -125,6 +126,7 @@ int main(int argc, char *argv[])
         {
             pkt_prob = PKT_PROB;
         }
+        rpl_alg = RPL_PROTOCOL;
     }
 
     /* Initializing the RGN */
@@ -165,40 +167,40 @@ int main(int argc, char *argv[])
     createConflictMatrix(NULL, intMatrix, &nodesList, confMatrix, false);
 
     /* Create the distribution tree */
-    Tree_t *tree; initializeTree(alg, &tree, &nodesList, sink_id, conMatrix, linksList, channel);
+    Tree_t *tree; initializeTree(tsch_alg, &tree, &nodesList, sink_id, conMatrix, linksList, channel);
 
     /* Print network parameters */
     printNetworkParameters(tree, linksList, &nodesList, conMatrix, intMatrix, confMatrix, etxMatrix);
 
     /* Lets choose which protocol we want to work with */
-    if (alg == MCC_ICRA)
+    if (tsch_alg == MCC_ICRA)
     {
         main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, NULL, false, false, true, channel, etx_threshold);
     }
-    else if (alg == MCC_ICRA_NONOPTIMAL)
+    else if (tsch_alg == MCC_ICRA_NONOPTIMAL)
     {
         main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, NULL, false, false, false, channel, etx_threshold);
     }
-    else if (alg == MCC_CQAA)
+    else if (tsch_alg == MCC_CQAA)
     {
         main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, etxMatrix, false, true, false, -1, etx_threshold);
     }
-    else if (alg == MCC_CQARA)
+    else if (tsch_alg == MCC_CQARA)
     {
         main_mcc(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, etxMatrix, true, true, false, -1, etx_threshold);
     }
-    else if (alg == TASA)
+    else if (tsch_alg == TASA)
     {
         main_tasa(&nodesList, &linksList[channel], tree, sink_id, intMatrix, confMatrix, channel);
     }
-    else if (alg == MODESA)
+    else if (tsch_alg == MODESA)
     {
         main_modesa(&nodesList, &linksList[channel], tree, sink_id, 1, intMatrix, confMatrix, channel);
     }
-    else if (alg == NO_SCHEDULE)
+    else if (tsch_alg == NO_SCHEDULE)
     {
         main_no_schedule(&nodesList, &linksList[channel], tree, sink_id, channel);
-        execute_rpl(&nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA);
+        execute_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA);
     }
 
     /* Execute the schedule */
@@ -230,10 +232,10 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (alg != NO_SCHEDULE)
+    if (tsch_alg != NO_SCHEDULE)
     {
         /* Write output to files */
-        output(alg, &nodesList, tree, TREE_FILE, export_mask_channels, false);
+        output(tsch_alg, &nodesList, tree, TREE_FILE, export_mask_channels, false);
     }
 
     return (0);

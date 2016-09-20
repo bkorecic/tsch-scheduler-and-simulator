@@ -2267,7 +2267,7 @@
 	"../util/debug.h"
 	"../mcc/time_schedule.h"
 
-1474130535 /media/Data/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.h
+1474346786 /media/Data/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.h
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
@@ -2452,7 +2452,7 @@
 	<stdlib.h>
 	<stdbool.h>
 
-1474176312 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/main.c
+1474340522 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/main.c
 	<string.h>
 	<stdio.h>
 	<stdlib.h>
@@ -3204,7 +3204,29 @@
 	"fhss.h"
 	"no-schedule.h"
 
-1474174941 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.c
+1474344133 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	"rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"mrhof_rpl.h"
+	"tamu_rpl.h"
+	"../mcc/time_schedule.h"
+	"../schedule/fhss.h"
+
+1474346889 /media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1474341007 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3217,10 +3239,36 @@
 	"../mcc/time_schedule.h"
 	"../schedule/fhss.h"
 
-1474177082 /media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.h
+1474341013 /media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.h
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
 	"../util/defs.h"
-	"../graphs/graphs.h"
+
+1474347734 /media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.h
+	<stdint.h>
+	<stdbool.h>
+	"rpl.h"
+
+1474347553 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	<float.h>
+	"tamu_rpl.h"
+	"rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+
+1474346855 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.c
+	<math.h>
+	<stdlib.h>
+	<assert.h>
+	<float.h>
+	"gen_beta.h"
+
+1474346777 /media/Data/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.h
 
