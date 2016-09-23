@@ -26,11 +26,12 @@
 #define PKT_PROB                1
 #define ETX_THRESHOLD           0.5
 
-#define DATA_FILE "data/prr_tutornet/mabo-tsch/prr40_1.dat"
-#define LINKS_PREFIX "data/prr_tutornet/mabo-tsch/prr40"
+#define DATA_FILE "data/prr_tutornet/rpl-tamu/prr40_1.dat"
+#define LINKS_PREFIX "data/prr_tutornet/rpl-tamu/prr40"
 #define TREE_FILE "tree.dat"
 
-#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
+//#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
+#define N_TIMESLOTS_PER_FILE    90000       // 15 minutes per file with 10ms each = 15*60*1000/10
 #define N_TIMESLOTS_LOG         1560        // log every 1 minute (60 s x 39 ts / 1.5 s = 1560 ts per minute)
 #define MAX_N_FILES             100
 
@@ -171,6 +172,9 @@ int main(int argc, char *argv[])
 
     /* Print network parameters */
     printNetworkParameters(tree, linksList, &nodesList, conMatrix, intMatrix, confMatrix, etxMatrix);
+
+    /* Test the beta rng */
+    testBeta();
 
     /* Lets choose which protocol we want to work with */
     if (tsch_alg == MCC_ICRA)
@@ -313,7 +317,6 @@ void initializeTree(uint8_t alg, Tree_t **tree, List *nodesList, uint8_t sink_id
     /* Set the type of each node properly */
     setTypeOfNodes(sink_id, *tree);
 }
-
 
 
 

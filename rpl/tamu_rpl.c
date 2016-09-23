@@ -9,8 +9,10 @@
 #include "../util/defs.h"
 #include "../util/gen_beta.h"
 
-void tamuUpdateParents(List *nodesList)
+bool tamuUpdateParents(List *nodesList)
 {
+    bool ret = false;
+
     /* Update the information for all nodes */
     for(ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
     {
@@ -18,18 +20,26 @@ void tamuUpdateParents(List *nodesList)
 
         if (node->type != SINK && node->synced)
         {
-            tamuSampleNode(node);
+            if (tamuSampleNode(node))
+            {
+                ret = true;
+            }
         }
     }
+
+    return (ret);
 }
 
-void tamuSampleNode(Node_t *node)
+bool tamuSampleNode(Node_t *node)
 {
     uint8_t min_hop_count = 255;
     double max_beta_sample = 0;
     RPL_Neighbor_t *max_beta_neighbor = NULL;
+    RPL_Neighbor_t *oldPreferedParent = NULL;
 
-    /* Create a list with neighbors closer to the sink */
+    node->synced = false;
+
+    /* Create a list with stable neighbors closer to the sink */
     List neighborsSmallHopCount;
     memset(&neighborsSmallHopCount, 0, sizeof(List)); ListInit(&neighborsSmallHopCount);
 
@@ -38,9 +48,14 @@ void tamuSampleNode(Node_t *node)
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
 
-        if (neighbor->hop_count < min_hop_count)
+        if (neighbor->stable && neighbor->hop_count < min_hop_count)
         {
             min_hop_count = neighbor->hop_count;
+        }
+
+        if (neighbor->prefered_parent)
+        {
+            oldPreferedParent = neighbor;
         }
 
         /* Reset the parent preference to all neighbors */
@@ -52,7 +67,7 @@ void tamuSampleNode(Node_t *node)
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
 
-        if (neighbor->hop_count == min_hop_count)
+        if (neighbor->stable && neighbor->hop_count == min_hop_count)
         {
             ListAppend(&neighborsSmallHopCount, (void *)neighbor);
         }
@@ -63,11 +78,12 @@ void tamuSampleNode(Node_t *node)
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
 
-        if (!neighbor->already_sampled)
+        if (neighbor->n_sampled == 0)
         {
             /* This is the new parent */
-            tamuSetPreferedParent(neighbor);
-            return;
+            tamuSetPreferedParent(node, neighbor);
+
+            return (true);
         }
 
         /* Generate the corresponding Beta(1+S_t, 1 + F_t) */
@@ -83,13 +99,25 @@ void tamuSampleNode(Node_t *node)
     /* Set the new prefered parent */
     if (max_beta_neighbor != NULL)
     {
-        tamuSetPreferedParent(max_beta_neighbor);
+        tamuSetPreferedParent(node, max_beta_neighbor);
+    }
+
+    if (oldPreferedParent != max_beta_neighbor)
+    {
+        return (true);
+    }
+    else
+    {
+        return (false);
     }
 }
 
-void tamuSetPreferedParent(RPL_Neighbor_t *neighbor)
+void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor)
 {
-    neighbor->already_sampled = true;
+    node->synced = true;
+    node->hop_count = neighbor->hop_count + 1;
+
+    neighbor->n_sampled++;
     neighbor->prefered_parent = true;
 }
 
@@ -104,10 +132,7 @@ bool tamuRxDio(Node_t *node)
 
             if (neighbor->stable)
             {
-                tamuSetPreferedParent(neighbor);
-                node->synced = true;
-                node->hop_count = neighbor->hop_count + 1;
-
+                tamuSetPreferedParent(node, neighbor);
                 return (true);
             }
         }

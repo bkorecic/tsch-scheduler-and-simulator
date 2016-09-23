@@ -1,3 +1,11 @@
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include "../util/list.h"
+#include "../util/defs.h"
+#include "debug.h"
+#include "files.h"
 #include "gen_beta.h"
 
 float gen_beta(uint32_t a, uint32_t b)
@@ -34,11 +42,62 @@ float gen_beta(uint32_t a, uint32_t b)
     ListElem *elem = ListFirst(&listUniform);
     for (uint32_t i = 0; i < a; i++)
     {
-        float *num = (float *)elem->obj;
         elem = ListNext(&listUniform, elem);
     }
 
     float *beta_number = (float *)elem->obj;
 
 	return (*beta_number);
+}
+
+void testBeta(void)
+{
+    #define N 1000
+
+    FILE *fp = NULL;
+    openFile(&fp, "beta.csv", "w");
+
+    /* Testing Beta(1,1) */
+    for (uint16_t i = 0; i < N; i++)
+    {
+        fprintf(fp, "%f,",gen_beta(1,1));
+    }
+    fprintf(fp, "\n");
+
+    /* Testing Beta(3,3) */
+    for (uint16_t i = 0; i < N; i++)
+    {
+        fprintf(fp, "%f,",gen_beta(3,3));
+    }
+    fprintf(fp, "\n");
+
+    /* Testing Beta(1,2) */
+    for (uint16_t i = 0; i < N; i++)
+    {
+        fprintf(fp, "%f,",gen_beta(1,2));
+    }
+    fprintf(fp, "\n");
+
+    /* Testing Beta(5,7) */
+    for (uint16_t i = 0; i < N; i++)
+    {
+        fprintf(fp, "%f,",gen_beta(5,7));
+    }
+    fprintf(fp, "\n");
+
+    /* Testing Beta(7,10) */
+    for (uint16_t i = 0; i < N; i++)
+    {
+        fprintf(fp, "%f,",gen_beta(7,10));
+    }
+    fprintf(fp, "\n");
+
+    /* Testing Beta(15,20) */
+    for (uint16_t i = 0; i < N; i++)
+    {
+        fprintf(fp, "%f,",gen_beta(15,20));
+    }
+    fprintf(fp, "\n");
+
+    fclose(fp);
 }

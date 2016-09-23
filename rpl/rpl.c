@@ -82,10 +82,15 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
 
             /* Check if we have to start a new round of sampling on TAMU_RPL */
             uint16_t cur_tamu_sample_round = asn / N_TIMESLOTS_TAMU_RPL;
+            static counter = 0;
             if (rpl_alg == RPL_TAMU && cur_tamu_sample_round >= tamu_sample_round)
             {
-                tamuUpdateParents(nodesList);
+                if (tamuUpdateParents(nodesList))
+                {
+                    rplPrintTree(nodesList);
+                }
                 tamu_sample_round = cur_tamu_sample_round + 1;
+                printf("\nCounter %d\n", counter++);
             }
 
             /* Find who is the next node to TX a DIO */
@@ -171,7 +176,7 @@ uint64_t rplGetNextDIOASN(Node_t *node, uint32_t min_asn_per_dio)
 {
     /* Lets set the next DIO interval to be average_asn_per_dio + randomness */
 
-    uint64_t nextDIO = min_asn_per_dio + (rand() % min_asn_per_dio) / 10;
+    uint64_t nextDIO = min_asn_per_dio + 22;//(rand() % min_asn_per_dio) / 10;
 
     return (nextDIO);
 }
@@ -180,53 +185,53 @@ uint64_t rplGetNextKAASN(Node_t *node, uint32_t min_asn_per_ka)
 {
     /* Lets set the next DIO interval to be average_asn_per_dio + randomness */
 
-    uint64_t nextKA = min_asn_per_ka + (rand() % min_asn_per_ka) / 10;
+    uint64_t nextKA = min_asn_per_ka + 23;//(rand() % min_asn_per_ka) / 10;
 
     return (nextKA);
 }
 
-void rplScheduleDIO(List *dio_to_transmit, Node_t *node, uint64_t asn)
+void rplScheduleDIO(List *dio_to_transmit, Node_t *txNode, uint64_t asn)
 {
-    node->nextAsnToTxDIO = asn;
+    txNode->nextAsnToTxDIO = asn;
 
     /* Check where to insert the new DIO on the list of transmissions */
     for (ListElem *elem = ListFirst(dio_to_transmit); elem != NULL; elem = ListNext(dio_to_transmit, elem))
     {
         /* Get the current node */
-        Node_t *n = (Node_t *)elem->obj;
+        Node_t *node = (Node_t *)elem->obj;
 
-        if (n->nextAsnToTxDIO >= asn)
+        if (node->nextAsnToTxDIO >= asn)
         {
-            ListInsertBefore(dio_to_transmit, (void *)node, elem);
+            ListInsertBefore(dio_to_transmit, (void *)txNode, elem);
 
             return;
         }
     }
 
-    ListAppend(dio_to_transmit, (void *)node);
+    ListAppend(dio_to_transmit, (void *)txNode);
 
     return;
 }
 
-void rplScheduleKA(List *ka_to_transmit, Node_t *node, uint64_t asn)
+void rplScheduleKA(List *ka_to_transmit, Node_t *txNode, uint64_t asn)
 {
-    node->nextAsnToTxKA = asn;
+    txNode->nextAsnToTxKA = asn;
 
     /* Check where to insert the new KA on the list of transmissions */
     for (ListElem *elem = ListFirst(ka_to_transmit); elem != NULL; elem = ListNext(ka_to_transmit, elem))
     {
         /* Get the current node */
-        Node_t *n = (Node_t *)elem->obj;
+        Node_t *node = (Node_t *)elem->obj;
 
-        if (n->nextAsnToTxKA >= asn)
+        if (node->nextAsnToTxKA >= asn)
         {
-            ListInsertBefore(ka_to_transmit, (void *)node, elem);
+            ListInsertBefore(ka_to_transmit, (void *)txNode, elem);
 
             return;
         }
     }
 
-    ListAppend(ka_to_transmit, (void *)node);
+    ListAppend(ka_to_transmit, (void *)txNode);
 
     return;
 }
@@ -243,12 +248,12 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
         if (rxNode->id != txNode->id && rxNode->type != SINK)
         {
             /* Probability of packet reception */
-            uint8_t probRx = rand() % 100;
+            uint8_t probRx = 45;//rand() % 100;
 
             if (prrMatrix[txNode->id][rxNode->id][freq] > probRx)
             {
                 /* Packet was succesfully received */
-                rplRxDIO(rpl_alg, rxNode, txNode, prrMatrix[txNode->id][rxNode->id][freq]);
+                rplRxDIO(rpl_alg, txNode, rxNode, prrMatrix[txNode->id][rxNode->id][freq]);
 
                 bool updateDag;
                 if (rpl_alg == RPL_MRHOF)
@@ -272,7 +277,7 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
     return (flag);
 }
 
-void rplRxDIO(uint8_t rpl_alg, Node_t *rxNode, Node_t *txNode, uint8_t prr)
+void rplRxDIO(uint8_t rpl_alg, Node_t *txNode, Node_t *rxNode, uint8_t prr)
 {
     RPL_Neighbor_t *neighbor = findNeighbor(rxNode, txNode->id);
 
@@ -299,18 +304,24 @@ void rplRxDIO(uint8_t rpl_alg, Node_t *rxNode, Node_t *txNode, uint8_t prr)
 bool rplProcessTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq)
 {
     /* Probability of packet reception */
-    uint8_t probRx = rand() % 100;
+    uint8_t probRx = 55;//rand() % 100;
 
     Node_t *parentNode = rplPreferedParent(txNode, nodesList);
+    if (parentNode == NULL)
+    {
+        /* Maybe the neighbor just became unstable */
+        return (false);
+    }
+
     if (prrMatrix[txNode->id][parentNode->id][freq] > probRx)
     {
         /* KA succesfully received */
-        rplRxKA(txNode, parentNode, true, prrMatrix[txNode->id][parentNode->id][freq]);
+        rplRxKA(txNode, parentNode, true);
     }
     else
     {
         /* KA failed */
-        rplRxKA(txNode, parentNode, false, prrMatrix[txNode->id][parentNode->id][freq]);
+        rplRxKA(txNode, parentNode, false);
     }
     if (rpl_alg == RPL_MRHOF)
     {
@@ -331,14 +342,19 @@ Node_t *rplPreferedParent(Node_t *node, List *nodesList)
 
         if (neighbor->prefered_parent)
         {
-            return (getNode(neighbor->id, nodesList));
+            Node_t *n = getNode(neighbor->id, nodesList);
+            if (n == NULL)
+            {
+                return (NULL);
+            }
+            return (n);
         }
     }
 
     return (NULL);
 }
 
-void rplRxKA(Node_t *txNode, Node_t *rxNode, bool succes, uint8_t prr)
+void rplRxKA(Node_t *txNode, Node_t *rxNode, bool succes)
 {
     RPL_Neighbor_t *neighbor = findNeighbor(txNode, rxNode->id);
 
@@ -353,15 +369,6 @@ void rplRxKA(Node_t *txNode, Node_t *rxNode, bool succes, uint8_t prr)
 
     /* ETX = 1/PRR */
     neighbor->estimated_etx = (float)(neighbor->rx_failed + neighbor->rx_success) / (float)neighbor->rx_success;
-
-    if (prr >= STABLE_NEIGHBOR_THRESHOLD)
-    {
-        neighbor->stable = true;
-    }
-    else
-    {
-        neighbor->stable = false;
-    }
 }
 
 RPL_Neighbor_t *newNeighbor(uint16_t node_id)
@@ -397,10 +404,10 @@ RPL_Neighbor_t *findNeighbor (Node_t *node, uint16_t neighborID)
     return (NULL);
 }
 
-void rplTXDIO(uint8_t rpl_alg, Node_t *dioNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t cur_asn, List *dio_to_transmit, List *ka_to_transmit, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka)
+void rplTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t cur_asn, List *dio_to_transmit, List *ka_to_transmit, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka)
 {
     /* Process the transmission of an DIO */
-    if (rplProcessTXDIO(rpl_alg, dioNode, nodesList, prrMatrix, freq, dio_to_transmit, ka_to_transmit, min_asn_per_dio, min_asn_per_ka))
+    if (rplProcessTXDIO(rpl_alg, txNode, nodesList, prrMatrix, freq, dio_to_transmit, ka_to_transmit, min_asn_per_dio, min_asn_per_ka))
     {
         /* Print the new tree */
         rplPrintTree(nodesList);
@@ -423,17 +430,20 @@ void rplTXDIO(uint8_t rpl_alg, Node_t *dioNode, List *nodesList, uint8_t prrMatr
     }
 }
 
-void rplTXKA(uint8_t rpl_alg, Node_t *kaNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t cur_asn, List *ka_to_transmit, uint32_t min_asn_per_ka)
+void rplTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t cur_asn, List *ka_to_transmit, uint32_t min_asn_per_ka)
 {
     /* Process the transmission of an KA */
-    if (rplProcessTXKA(rpl_alg, kaNode, nodesList, prrMatrix, freq))
+    if (rplProcessTXKA(rpl_alg, txNode, nodesList, prrMatrix, freq))
     {
         /* Print the new tree */
         rplPrintTree(nodesList);
     }
 
     /* Schedule the next KA message for that node */
-    rplScheduleKA(ka_to_transmit, kaNode, cur_asn + rplGetNextKAASN(kaNode, min_asn_per_ka));
+    if (txNode->synced && !ListFind(ka_to_transmit, (void *)txNode))
+    {
+        rplScheduleKA(ka_to_transmit, txNode, cur_asn + rplGetNextKAASN(txNode, min_asn_per_ka));
+    }
 }
 
 void rplPrintTree(List *nodesList)

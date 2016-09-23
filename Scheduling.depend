@@ -2452,7 +2452,7 @@
 	<stdlib.h>
 	<stdbool.h>
 
-1474397697 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/main.c
+1474655853 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/main.c
 	<string.h>
 	<stdio.h>
 	<stdlib.h>
@@ -3204,7 +3204,7 @@
 	"fhss.h"
 	"no-schedule.h"
 
-1474402635 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.c
+1474655933 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3219,14 +3219,14 @@
 	"../mcc/time_schedule.h"
 	"../schedule/fhss.h"
 
-1474346889 /media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.h
+1474655828 /media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.h
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
 	"../util/defs.h"
 	"../graphs/graphs.h"
 
-1474397521 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.c
+1474433627 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3245,12 +3245,12 @@
 	"../util/list.h"
 	"../util/defs.h"
 
-1474347734 /media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.h
+1474655659 /media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.h
 	<stdint.h>
 	<stdbool.h>
 	"rpl.h"
 
-1474403036 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.c
+1474652420 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3262,13 +3262,16 @@
 	"../util/defs.h"
 	"../util/gen_beta.h"
 
-1474407268 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.c
-	"gen_beta.h"
-
-1474406401 /media/Data/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.h
+1474429466 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.c
 	<stdint.h>
 	<stdlib.h>
+	<string.h>
 	<stdbool.h>
 	"../util/list.h"
 	"../util/defs.h"
+	"debug.h"
+	"files.h"
+	"gen_beta.h"
+
+1474429318 /media/Data/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.h
 

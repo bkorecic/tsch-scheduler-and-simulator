@@ -18,6 +18,9 @@ bool mrhofUpdateDAGRanks(Node_t *node)
     RPL_Neighbor_t *preferedParent = NULL;
     RPL_Neighbor_t *oldPreferedParent = NULL;
 
+    /* Set the synced flag */
+    node->synced = false;
+
     /* Go over all neighbors and check which should be our prefered parent */
     for (ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
     {
