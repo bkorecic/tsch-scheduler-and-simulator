@@ -11,5 +11,7 @@ bool tamuUpdateParents(List *nodesList);
 bool tamuSampleNode(Node_t *node);
 void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor);
 
+bool tamuRxDio(Node_t *node);
+
 #endif // _TAMU_RPL_H_
 

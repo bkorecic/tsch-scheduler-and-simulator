@@ -109,10 +109,10 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
             /* Check if we need to output the log */
             if ((asn % n_timeslots_log) == 0)
             {
-                outputRegretFile(nodesList, fhss, first_general_log);
-                outputThroughputFile(nodesList, fhss, first_general_log);
-                outputPullArms(nodesList, fhss, first_general_log);
-                outputReliabilityTxPerPkt(nodesList, fhss, sink_id, first_general_log);
+                scheduleOutputRegretFile(nodesList, fhss, first_general_log);
+                scheduleOutputThroughputFile(nodesList, fhss, first_general_log);
+                scheduleOutputPullArms(nodesList, fhss, first_general_log);
+                scheduleOutputReliabilityTxPerPkt(nodesList, fhss, sink_id, first_general_log);
                 first_general_log = false;
             }
 
@@ -255,7 +255,7 @@ int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, u
 
                     if (parent->id == 0)
                     {
-                        outputTSFile(fhss, asn, freq, prrMatrix[node->id][parent->id][freq], draw, parent->optimal_freq, prrMatrix[node->id][parent->id][parent->optimal_freq], \
+                        scheduleOutputTSFile(fhss, asn, freq, prrMatrix[node->id][parent->id][freq], draw, parent->optimal_freq, prrMatrix[node->id][parent->id][parent->optimal_freq], \
                                      parent->pkt_rx_success, first_ts_log);
                         first_ts_log = false;
                     }
@@ -327,7 +327,7 @@ void createBlacklist(List *blacklist, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNEL
     }
 }
 
-void outputRegretFile(List *nodesList, uint8_t fhss, bool first_time)
+void scheduleOutputRegretFile(List *nodesList, uint8_t fhss, bool first_time)
 {
     /* Opening file */
     FILE *fp_regret_output = NULL;
@@ -394,7 +394,7 @@ void outputRegretFile(List *nodesList, uint8_t fhss, bool first_time)
     fclose(fp_regret_output);
 }
 
-void outputThroughputFile(List *nodesList, uint8_t fhss, bool first_time)
+void scheduleOutputThroughputFile(List *nodesList, uint8_t fhss, bool first_time)
 {
     /* Opening file */
     FILE *fp_throughput_output = NULL;
@@ -461,7 +461,7 @@ void outputThroughputFile(List *nodesList, uint8_t fhss, bool first_time)
     fclose(fp_throughput_output);
 }
 
-void outputPullArms(List *nodesList, uint8_t fhss, bool first_time)
+void scheduleOutputPullArms(List *nodesList, uint8_t fhss, bool first_time)
 {
     /* Opening file */
     FILE *fp_arms_output = NULL;
@@ -528,7 +528,7 @@ void outputPullArms(List *nodesList, uint8_t fhss, bool first_time)
     fclose(fp_arms_output);
 }
 
-void outputReliabilityTxPerPkt(List *nodesList, uint16_t fhss, uint16_t sink_id, bool first_time)
+void scheduleOutputReliabilityTxPerPkt(List *nodesList, uint16_t fhss, uint16_t sink_id, bool first_time)
 {
     /* Opening file */
     FILE *fp_reliability_output = NULL;
@@ -599,7 +599,7 @@ void outputReliabilityTxPerPkt(List *nodesList, uint16_t fhss, uint16_t sink_id,
     fclose(fp_reliability_output);
 }
 
-void outputTSFile(uint8_t fhss, uint64_t asn, uint8_t my_freq, uint8_t prr, uint8_t draw, uint8_t optimal_freq, uint8_t optimal_prr, uint32_t n_rx_pkt, bool first_time)
+void scheduleOutputTSFile(uint8_t fhss, uint64_t asn, uint8_t my_freq, uint8_t prr, uint8_t draw, uint8_t optimal_freq, uint8_t optimal_prr, uint32_t n_rx_pkt, bool first_time)
 {
     /* Opening file */
     FILE *fp_ts_output = NULL;

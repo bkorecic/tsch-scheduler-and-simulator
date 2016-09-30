@@ -14,8 +14,8 @@ float gen_beta(uint32_t a, uint32_t b)
     List listUniform;
     memset(&listUniform, 0, sizeof(List)); ListInit(&listUniform);
 
-    /* Generate a + b + 1 uniform U(0,1) */
-    for (uint32_t i = 0; i < a + b + 1; i++)
+    /* Generate a + b - 1 uniform U(0,1) */
+    for (uint32_t i = 0; i < a + b - 1; i++)
     {
         float *sample = (float *)malloc(sizeof(float));
         *sample = (float)(rand() % 100)/100.0;
@@ -40,19 +40,19 @@ float gen_beta(uint32_t a, uint32_t b)
     }
 
     ListElem *elem = ListFirst(&listUniform);
-    for (uint32_t i = 0; i < a; i++)
+    for (uint32_t i = 1; i < a; i++)
     {
         elem = ListNext(&listUniform, elem);
     }
 
     float *beta_number = (float *)elem->obj;
 
-	return (*beta_number);
+    return (*beta_number);
 }
 
 void testBeta(void)
 {
-    #define N 1000
+    #define N 5000
 
     FILE *fp = NULL;
     openFile(&fp, "beta.csv", "w");
@@ -96,6 +96,13 @@ void testBeta(void)
     for (uint16_t i = 0; i < N; i++)
     {
         fprintf(fp, "%f,",gen_beta(15,20));
+    }
+    fprintf(fp, "\n");
+
+    /* Testing Beta(1000,200) */
+    for (uint16_t i = 0; i < N; i++)
+    {
+        fprintf(fp, "%f,",gen_beta(1000,200));
     }
     fprintf(fp, "\n");
 

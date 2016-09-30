@@ -17,7 +17,7 @@
 #include "rpl/rpl.h"
 
 #define TSCH_PROTOCOL           NO_SCHEDULE
-#define RPL_PROTOCOL            RPL_TAMU
+#define RPL_PROTOCOL            RPL_MRHOF
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
@@ -31,8 +31,9 @@
 #define TREE_FILE "tree.dat"
 
 //#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
-#define N_TIMESLOTS_PER_FILE    90000       // 15 minutes per file with 10ms each = 15*60*1000/10
-#define N_TIMESLOTS_LOG         1560        // log every 1 minute (60 s x 39 ts / 1.5 s = 1560 ts per minute)
+#define N_TIMESLOTS_PER_FILE    90000
+//#define N_TIMESLOTS_LOG         1560        // log every 1 minute (60 s x 39 ts / 1.5 s = 1560 ts per minute)
+#define N_TIMESLOTS_LOG         6000        // log every 30 seconds
 #define MAX_N_FILES             100
 
 void readPrrFile(char *file_name, List *nodesList, List linksList[]);
@@ -174,7 +175,7 @@ int main(int argc, char *argv[])
     printNetworkParameters(tree, linksList, &nodesList, conMatrix, intMatrix, confMatrix, etxMatrix);
 
     /* Test the beta rng */
-    testBeta();
+    //testBeta();
 
     /* Lets choose which protocol we want to work with */
     if (tsch_alg == MCC_ICRA)
@@ -204,7 +205,7 @@ int main(int argc, char *argv[])
     else if (tsch_alg == NO_SCHEDULE)
     {
         main_no_schedule(&nodesList, &linksList[channel], tree, sink_id, channel);
-        execute_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA);
+        execute_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, N_TIMESLOTS_LOG);
     }
 
     /* Execute the schedule */
