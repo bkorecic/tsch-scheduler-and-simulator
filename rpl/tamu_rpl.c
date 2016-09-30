@@ -9,7 +9,7 @@
 #include "../util/defs.h"
 #include "../util/gen_beta.h"
 
-bool tamuUpdateParents(List *nodesList)
+bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo)
 {
     bool ret = false;
 
@@ -20,9 +20,19 @@ bool tamuUpdateParents(List *nodesList)
 
         if (node->type != SINK && node->synced)
         {
-            if (tamuSampleNode(node))
+            if (rpl_algo == RPL_TAMU_GREEDY)
             {
-                ret = true;
+                if (tamuSampleNodeMinHop(node))
+                {
+                    ret = true;
+                }
+            }
+            else if (rpl_algo == RPL_TAMU_MULTIHOP)
+            {
+                if (tamuSampleNodeMultiHop(node))
+                {
+                    ret = true;
+                }
             }
         }
     }
@@ -30,7 +40,12 @@ bool tamuUpdateParents(List *nodesList)
     return (ret);
 }
 
-bool tamuSampleNode(Node_t *node)
+bool tamuSampleNodeMultiHop(Node_t *node)
+{
+    return (false);
+}
+
+bool tamuSampleNodeMinHop(Node_t *node)
 {
     uint8_t min_hop_count = 255;
     double max_beta_sample = 0;
@@ -114,11 +129,12 @@ bool tamuSampleNode(Node_t *node)
 
 void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor)
 {
-    node->synced = true;
-    node->hop_count = neighbor->hop_count + 1;
-
     neighbor->n_sampled++;
     neighbor->prefered_parent = true;
+
+    node->synced = true;
+    node->hop_count = neighbor->hop_count + 1;
+    node->dagRank = neighbor->dagRank + neighbor->beta_sample;
 }
 
 bool tamuRxDio(Node_t *node)
@@ -132,6 +148,7 @@ bool tamuRxDio(Node_t *node)
 
             if (neighbor->stable)
             {
+                neighbor->beta_sample = gen_beta(1 + neighbor->rx_success,1 + neighbor->rx_failed);
                 tamuSetPreferedParent(node, neighbor);
                 return (true);
             }

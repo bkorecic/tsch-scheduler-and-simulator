@@ -9,7 +9,8 @@
 #include "../graphs/graphs.h"
 
 #define RPL_MRHOF                 1
-#define RPL_TAMU                  2
+#define RPL_TAMU_GREEDY           2
+#define RPL_TAMU_MULTIHOP         3
 
 // From OpenWSN
 #define MAXDAGRANK                0xffff
@@ -52,7 +53,7 @@ typedef struct rpl_neighbor_t {
 } RPL_Neighbor_t;
 
 int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uint8_t channel, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka, uint32_t n_timeslots_per_log);
-void init_rpl(List *nodesList, uint8_t sink_id);
+void init_rpl(List *nodesList, uint8_t sink_id, uint8_t rpl_algo);
 
 void rplTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t cur_asn, List *dio_to_transmit, List *ka_to_transmit, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka);
 void rplRxDIO(uint8_t rpl_alg, Node_t *txNode, Node_t *rxNode, uint8_t prr);

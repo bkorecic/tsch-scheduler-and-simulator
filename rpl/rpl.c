@@ -32,7 +32,7 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
     memset(&ka_to_transmit, 0, sizeof(List)); ListInit(&ka_to_transmit);
 
     /* Initialize the RPL fields for all nodes */
-    init_rpl(nodesList, sink_id);
+    init_rpl(nodesList, sink_id, rpl_alg);
 
     /* Schedule first TX of DIO (from sink) */
     Node_t *sink = getNode(sink_id, nodesList);
@@ -85,9 +85,9 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
 
             /* Check if we have to start a new round of sampling on TAMU_RPL */
             static int counter = 0;
-            if (rpl_alg == RPL_TAMU && (asn / N_TIMESLOTS_TAMU_RPL) >= tamu_sample_round)
+            if ((rpl_alg == RPL_TAMU_GREEDY || rpl_alg == RPL_TAMU_MULTIHOP) && (asn / N_TIMESLOTS_TAMU_RPL) >= tamu_sample_round)
             {
-                if (tamuUpdateParents(nodesList))
+                if (tamuUpdateParents(nodesList, rpl_alg))
                 {
                     rplPrintTree(nodesList);
                 }
@@ -163,7 +163,7 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
     return (true);
 }
 
-void init_rpl(List *nodesList, uint8_t sink_id)
+void init_rpl(List *nodesList, uint8_t sink_id, uint8_t rpl_algo)
 {
     /* Create the list of timeslots for all nodes */
     for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
@@ -173,7 +173,15 @@ void init_rpl(List *nodesList, uint8_t sink_id)
 
         if (node->id == sink_id)
         {
-            node->dagRank = MINHOPRANKINCREASE;
+            if (rpl_algo == RPL_MRHOF)
+            {
+                node->dagRank = MINHOPRANKINCREASE;
+            }
+            else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
+            {
+                /* Consider Rank just as the sum of ETXs */
+                node->dagRank = 0;
+            }
             node->synced = true;
             node->hop_count = 0;
         }
@@ -274,7 +282,7 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
                     /* Update all DAG rank calculations and return if there was a change in the tree*/
                     updateDag = mrhofUpdateDAGRanks(rxNode);
                 }
-                else if (rpl_alg == RPL_TAMU)
+                else if (rpl_alg == RPL_TAMU_GREEDY || rpl_alg == RPL_TAMU_MULTIHOP)
                 {
                     updateDag = tamuRxDio(rxNode);
                 }
@@ -506,7 +514,7 @@ void rplOutputRegretFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "regret_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU)
+    else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
     {
         snprintf(file_name, 100, "regret_rpl_tamu.csv");
     }
@@ -552,7 +560,7 @@ void rplOutputPullArms(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "arms_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU)
+    else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
     {
         snprintf(file_name, 100, "arms_rpl_tamu.csv");
     }
@@ -602,7 +610,7 @@ void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX
         {
             snprintf(file_name, 100, "full_rpl_mrhof_%d.csv", node->id);
         }
-        else if (rpl_algo == RPL_TAMU)
+        else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
         {
             snprintf(file_name, 100, "full_rpl_tamu_%d.csv", node->id);
         }
@@ -644,7 +652,7 @@ void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX
         for (ListElem *elem2 = ListFirst(&stableNeighbors); elem2 != NULL; elem2 = ListNext(&stableNeighbors, elem2))
         {
             RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem2->obj;
-            if (rpl_algo == RPL_TAMU)
+            if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
             {
                 fprintf(fp_full_output, "(id=%d,hc=%d,bs=%.2f,ns=%d,ap=%.2f);", neighbor->id, neighbor->hop_count, neighbor->beta_sample, neighbor->n_sampled, (float)neighbor->average_prr/100.0);
             }
@@ -669,7 +677,7 @@ void rplOutputThroughputFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "throughput_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU)
+    else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
     {
         snprintf(file_name, 100, "throughput_rpl_tamu.csv");
     }
