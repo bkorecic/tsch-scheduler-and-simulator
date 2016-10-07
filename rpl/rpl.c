@@ -85,7 +85,7 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
 
             /* Check if we have to start a new round of sampling on TAMU_RPL */
             static int counter = 0;
-            if ((rpl_alg == RPL_TAMU_GREEDY || rpl_alg == RPL_TAMU_MULTIHOP) && (asn / N_TIMESLOTS_TAMU_RPL) >= tamu_sample_round)
+            if ((rpl_alg == RPL_TAMU_MULTIHOP_RANK) && (asn / N_TIMESLOTS_TAMU_RPL) >= tamu_sample_round)
             {
                 if (tamuUpdateParents(nodesList, rpl_alg))
                 {
@@ -177,7 +177,7 @@ void init_rpl(List *nodesList, uint8_t sink_id, uint8_t rpl_algo)
             {
                 node->dagRank = MINHOPRANKINCREASE;
             }
-            else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
+            else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
             {
                 /* Consider Rank just as the sum of ETXs */
                 node->dagRank = 0;
@@ -282,7 +282,7 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
                     /* Update all DAG rank calculations and return if there was a change in the tree*/
                     updateDag = mrhofUpdateDAGRanks(rxNode);
                 }
-                else if (rpl_alg == RPL_TAMU_GREEDY || rpl_alg == RPL_TAMU_MULTIHOP)
+                else if (rpl_alg == RPL_TAMU_MULTIHOP_RANK)
                 {
                     updateDag = tamuRxDio(rxNode);
                 }
@@ -514,13 +514,9 @@ void rplOutputRegretFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "regret_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU_GREEDY)
+    else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
     {
-        snprintf(file_name, 100, "regret_rpl_tamu_greedy.csv");
-    }
-    else if (rpl_algo == RPL_TAMU_MULTIHOP)
-    {
-        snprintf(file_name, 100, "regret_rpl_tamu_multihop.csv");
+        snprintf(file_name, 100, "regret_rpl_tamu_multihop_rank.csv");
     }
 
     if (first_time)
@@ -564,13 +560,9 @@ void rplOutputPullArms(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "arms_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU_GREEDY)
+    else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
     {
-        snprintf(file_name, 100, "arms_rpl_tamu_greedy.csv");
-    }
-    else if (rpl_algo == RPL_TAMU_MULTIHOP)
-    {
-        snprintf(file_name, 100, "arms_rpl_tamu_multihop.csv");
+        snprintf(file_name, 100, "arms_rpl_tamu_multihop_rank.csv");
     }
 
     if (first_time)
@@ -618,13 +610,9 @@ void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX
         {
             snprintf(file_name, 100, "full_rpl_mrhof_%d.csv", node->id);
         }
-        else if (rpl_algo == RPL_TAMU_GREEDY)
+        else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
         {
-            snprintf(file_name, 100, "full_rpl_tamu_greedy_%d.csv", node->id);
-        }
-        else if (rpl_algo == RPL_TAMU_MULTIHOP)
-        {
-            snprintf(file_name, 100, "full_rpl_tamu_multihop_%d.csv", node->id);
+            snprintf(file_name, 100, "full_rpl_tamu_multihop_rank_%d.csv", node->id);
         }
 
         if (first_time)
@@ -664,7 +652,7 @@ void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX
         for (ListElem *elem2 = ListFirst(&stableNeighbors); elem2 != NULL; elem2 = ListNext(&stableNeighbors, elem2))
         {
             RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem2->obj;
-            if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
+            if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
             {
                 fprintf(fp_full_output, "(id=%d,hc=%d,bs=%.2f,ns=%d,ap=%.2f);", neighbor->id, neighbor->hop_count, neighbor->beta_sample, neighbor->n_sampled, (float)neighbor->average_prr/100.0);
             }
@@ -689,13 +677,9 @@ void rplOutputThroughputFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "throughput_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU_GREEDY)
+    else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
     {
-        snprintf(file_name, 100, "throughput_rpl_tamu_greedy.csv");
-    }
-    else if (rpl_algo == RPL_TAMU_MULTIHOP)
-    {
-        snprintf(file_name, 100, "throughput_rpl_tamu_multihop.csv");
+        snprintf(file_name, 100, "throughput_rpl_tamu_multihop_rank.csv");
     }
 
     if (first_time)

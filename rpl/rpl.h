@@ -9,8 +9,9 @@
 #include "../graphs/graphs.h"
 
 #define RPL_MRHOF                 1
-#define RPL_TAMU_GREEDY           2
-#define RPL_TAMU_MULTIHOP         3
+//#define RPL_TAMU_GREEDY           2
+//#define RPL_TAMU_MULTIHOP_ETX     3
+#define RPL_TAMU_MULTIHOP_RANK    4
 
 // From OpenWSN
 #define MAXDAGRANK                0xffff

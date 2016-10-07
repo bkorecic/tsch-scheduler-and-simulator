@@ -10,7 +10,8 @@
 bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo);
 
 bool tamuSampleNodeMinHop(Node_t *node);
-bool tamuSampleNodeMultiHop(Node_t *node);
+bool tamuSampleNodeMultiHopEtx(Node_t *node);
+bool tamuSampleNodeMultiHopRank(Node_t *node);
 
 void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor);
 

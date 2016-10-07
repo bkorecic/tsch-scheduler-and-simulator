@@ -10,7 +10,7 @@
 #include "../mcc/time_schedule.h"
 #include "../schedule/fhss.h"
 
-uint16_t getRank(RPL_Neighbor_t *neighbor);
+uint16_t rplMrhofGetRank(RPL_Neighbor_t *neighbor);
 
 bool mrhofUpdateDAGRanks(Node_t *node)
 {
@@ -26,7 +26,7 @@ bool mrhofUpdateDAGRanks(Node_t *node)
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
 
-        uint16_t neighborRank = getRank(neighbor);
+        uint16_t neighborRank = rplMrhofGetRank(neighbor);
         if (neighbor->stable && neighborRank < min_dagRank)
         {
             /* This neighbor has a lower Rank */
@@ -66,7 +66,7 @@ bool mrhofUpdateDAGRanks(Node_t *node)
     }
 }
 
-uint16_t getRank(RPL_Neighbor_t *neighbor)
+uint16_t rplMrhofGetRank(RPL_Neighbor_t *neighbor)
 {
     uint16_t rank_increase = 0;
 

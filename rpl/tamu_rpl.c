@@ -9,6 +9,8 @@
 #include "../util/defs.h"
 #include "../util/gen_beta.h"
 
+uint16_t rplTamuGetRank(RPL_Neighbor_t *neighbor);
+
 bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo)
 {
     bool ret = false;
@@ -20,19 +22,9 @@ bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo)
 
         if (node->type != SINK && node->synced)
         {
-            if (rpl_algo == RPL_TAMU_GREEDY)
+            if (tamuSampleNodeMultiHopRank(node))
             {
-                if (tamuSampleNodeMinHop(node))
-                {
-                    ret = true;
-                }
-            }
-            else if (rpl_algo == RPL_TAMU_MULTIHOP)
-            {
-                if (tamuSampleNodeMultiHop(node))
-                {
-                    ret = true;
-                }
+                ret = true;
             }
         }
     }
@@ -40,7 +32,7 @@ bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo)
     return (ret);
 }
 
-bool tamuSampleNodeMultiHop(Node_t *node)
+bool tamuSampleNodeMultiHopRank(Node_t *node)
 {
     double min_rank_beta_sample = MAXDAGRANK;
     RPL_Neighbor_t *min_rank_beta_neighbor = NULL;
@@ -81,9 +73,9 @@ bool tamuSampleNodeMultiHop(Node_t *node)
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
 
-        if (neighbor->stable && (neighbor->dagRank + neighbor->beta_sample) < min_rank_beta_sample)
+        if (neighbor->stable && rplTamuGetRank(neighbor) < min_rank_beta_sample)
         {
-            min_rank_beta_sample = neighbor->dagRank + neighbor->beta_sample;
+            min_rank_beta_sample = rplTamuGetRank(neighbor);
             min_rank_beta_neighbor = neighbor;
         }
     }
@@ -104,88 +96,6 @@ bool tamuSampleNodeMultiHop(Node_t *node)
     }
 }
 
-bool tamuSampleNodeMinHop(Node_t *node)
-{
-    uint8_t min_hop_count = 255;
-    double max_beta_sample = 0;
-    RPL_Neighbor_t *max_beta_neighbor = NULL;
-    RPL_Neighbor_t *oldPreferedParent = NULL;
-
-    node->synced = false;
-
-    /* Create a list with stable neighbors closer to the sink */
-    List neighborsSmallHopCount;
-    memset(&neighborsSmallHopCount, 0, sizeof(List)); ListInit(&neighborsSmallHopCount);
-
-    /* Calculate the minimum hop count */
-    for(ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
-    {
-        RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
-
-        if (neighbor->stable && neighbor->hop_count < min_hop_count)
-        {
-            min_hop_count = neighbor->hop_count;
-        }
-
-        if (neighbor->prefered_parent)
-        {
-            oldPreferedParent = neighbor;
-        }
-
-        /* Reset the parent preference to all neighbors */
-        neighbor->prefered_parent = false;
-    }
-
-    /* Update the list with all neighbors with minimum hop count */
-    for(ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
-    {
-        RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
-
-        if (neighbor->stable && neighbor->hop_count == min_hop_count)
-        {
-            ListAppend(&neighborsSmallHopCount, (void *)neighbor);
-        }
-    }
-
-    /* Lets check if any of these neighbors were not sampled yet */
-    for(ListElem *elem = ListFirst(&neighborsSmallHopCount); elem != NULL; elem = ListNext(&neighborsSmallHopCount, elem))
-    {
-        RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
-
-        if (neighbor->n_sampled == 0)
-        {
-            /* This is the new parent */
-            tamuSetPreferedParent(node, neighbor);
-
-            return (true);
-        }
-
-        /* Generate the corresponding Beta(1+S_t, 1 + F_t) */
-        neighbor->beta_sample = gen_beta(1 + neighbor->rx_success,1 + neighbor->rx_failed);
-
-        if (neighbor->beta_sample > max_beta_sample)
-        {
-            max_beta_sample = neighbor->beta_sample;
-            max_beta_neighbor = neighbor;
-        }
-    }
-
-    /* Set the new prefered parent */
-    if (max_beta_neighbor != NULL)
-    {
-        tamuSetPreferedParent(node, max_beta_neighbor);
-    }
-
-    if (oldPreferedParent != max_beta_neighbor)
-    {
-        return (true);
-    }
-    else
-    {
-        return (false);
-    }
-}
-
 void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor)
 {
     neighbor->n_sampled++;
@@ -193,7 +103,7 @@ void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor)
 
     node->synced = true;
     node->hop_count = neighbor->hop_count + 1;
-    node->dagRank = neighbor->dagRank + 1.0/neighbor->beta_sample;
+    node->dagRank = rplTamuGetRank(neighbor);
 }
 
 bool tamuRxDio(Node_t *node)
@@ -215,4 +125,20 @@ bool tamuRxDio(Node_t *node)
     }
 
     return (false);
+}
+
+uint16_t rplTamuGetRank(RPL_Neighbor_t *neighbor)
+{
+    uint16_t rank_increase = 0;
+
+    if (neighbor->beta_sample == 0)
+    {
+        rank_increase = DEFAULTLINKCOST * 2 * MINHOPRANKINCREASE;
+    }
+    else
+    {
+        rank_increase = (uint16_t)(1.0/neighbor->beta_sample * 2.0 * (float)MINHOPRANKINCREASE);
+    }
+
+    return (neighbor->dagRank + rank_increase);
 }
