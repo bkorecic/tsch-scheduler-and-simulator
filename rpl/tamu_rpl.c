@@ -42,7 +42,66 @@ bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo)
 
 bool tamuSampleNodeMultiHop(Node_t *node)
 {
-    return (false);
+    double min_rank_beta_sample = MAXDAGRANK;
+    RPL_Neighbor_t *min_rank_beta_neighbor = NULL;
+    RPL_Neighbor_t *oldPreferedParent = NULL;
+
+    node->synced = false;
+
+    /* Clean the prefered parent field of all neighbors */
+    for(ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
+    {
+        RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
+        if (neighbor->prefered_parent)
+        {
+            oldPreferedParent = neighbor;
+        }
+        neighbor->prefered_parent = false;
+    }
+
+    /* Lets sample all neighbors */
+    for(ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
+    {
+        RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
+
+        /* Generate the corresponding Beta(1+S_t, 1 + F_t) */
+        neighbor->beta_sample = gen_beta(1 + neighbor->rx_success,1 + neighbor->rx_failed);
+
+        if (neighbor->n_sampled == 0)
+        {
+            /* This is the new parent */
+            tamuSetPreferedParent(node, neighbor);
+
+            return (true);
+        }
+    }
+
+    /* Lets find what is the stable neighbor with minimum Rank + Beta */
+    for(ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
+    {
+        RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
+
+        if (neighbor->stable && (neighbor->dagRank + neighbor->beta_sample) < min_rank_beta_sample)
+        {
+            min_rank_beta_sample = neighbor->dagRank + neighbor->beta_sample;
+            min_rank_beta_neighbor = neighbor;
+        }
+    }
+
+    /* Set the new prefered parent */
+    if (min_rank_beta_neighbor != NULL)
+    {
+        tamuSetPreferedParent(node, min_rank_beta_neighbor);
+    }
+
+    if (oldPreferedParent != min_rank_beta_neighbor)
+    {
+        return (true);
+    }
+    else
+    {
+        return (false);
+    }
 }
 
 bool tamuSampleNodeMinHop(Node_t *node)
@@ -134,7 +193,7 @@ void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor)
 
     node->synced = true;
     node->hop_count = neighbor->hop_count + 1;
-    node->dagRank = neighbor->dagRank + neighbor->beta_sample;
+    node->dagRank = neighbor->dagRank + 1.0/neighbor->beta_sample;
 }
 
 bool tamuRxDio(Node_t *node)

@@ -40,7 +40,7 @@ typedef struct rpl_neighbor_t {
     float       estimated_etx;
     uint8_t     average_prr;
 
-    uint16_t    dagRank;
+    float       dagRank;
     uint8_t     hop_count;
 
     bool        prefered_parent;
@@ -48,7 +48,7 @@ typedef struct rpl_neighbor_t {
 
 /* TAMU_RPL */
     uint16_t    n_sampled;    /* Number of times the neighbor has been sampled */
-    double      beta_sample;
+    float      beta_sample;
 
 } RPL_Neighbor_t;
 

@@ -514,9 +514,13 @@ void rplOutputRegretFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "regret_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
+    else if (rpl_algo == RPL_TAMU_GREEDY)
     {
-        snprintf(file_name, 100, "regret_rpl_tamu.csv");
+        snprintf(file_name, 100, "regret_rpl_tamu_greedy.csv");
+    }
+    else if (rpl_algo == RPL_TAMU_MULTIHOP)
+    {
+        snprintf(file_name, 100, "regret_rpl_tamu_multihop.csv");
     }
 
     if (first_time)
@@ -560,9 +564,13 @@ void rplOutputPullArms(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "arms_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
+    else if (rpl_algo == RPL_TAMU_GREEDY)
     {
-        snprintf(file_name, 100, "arms_rpl_tamu.csv");
+        snprintf(file_name, 100, "arms_rpl_tamu_greedy.csv");
+    }
+    else if (rpl_algo == RPL_TAMU_MULTIHOP)
+    {
+        snprintf(file_name, 100, "arms_rpl_tamu_multihop.csv");
     }
 
     if (first_time)
@@ -610,9 +618,13 @@ void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX
         {
             snprintf(file_name, 100, "full_rpl_mrhof_%d.csv", node->id);
         }
-        else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
+        else if (rpl_algo == RPL_TAMU_GREEDY)
         {
-            snprintf(file_name, 100, "full_rpl_tamu_%d.csv", node->id);
+            snprintf(file_name, 100, "full_rpl_tamu_greedy_%d.csv", node->id);
+        }
+        else if (rpl_algo == RPL_TAMU_MULTIHOP)
+        {
+            snprintf(file_name, 100, "full_rpl_tamu_multihop_%d.csv", node->id);
         }
 
         if (first_time)
@@ -677,9 +689,13 @@ void rplOutputThroughputFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "throughput_rpl_mrhof.csv");
     }
-    else if (rpl_algo == RPL_TAMU_GREEDY || rpl_algo == RPL_TAMU_MULTIHOP)
+    else if (rpl_algo == RPL_TAMU_GREEDY)
     {
-        snprintf(file_name, 100, "throughput_rpl_tamu.csv");
+        snprintf(file_name, 100, "throughput_rpl_tamu_greedy.csv");
+    }
+    else if (rpl_algo == RPL_TAMU_MULTIHOP)
+    {
+        snprintf(file_name, 100, "throughput_rpl_tamu_multihop.csv");
     }
 
     if (first_time)
