@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "rpl.h"
 
-#define N_TIMESLOTS_TAMU_RPL  (N_TIMESLOTS_PER_KA * 15)   // Number of timeslot for each Thompson Sampling round.
+#define N_TIMESLOTS_TAMU_RPL  (N_TIMESLOTS_PER_KA * 5)   // Number of timeslot for each Thompson Sampling round.
                                                           // It should be much greater than KA interval to receive packets
 bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo);
 

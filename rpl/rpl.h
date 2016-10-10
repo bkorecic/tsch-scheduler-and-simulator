@@ -19,8 +19,8 @@
 #define MINHOPRANKINCREASE        256  //default value in RPL and Minimal 6TiSCH draft
 #define DEFAULTLINKCOST           15
 
-#define DIO_PERIOD_MS             10000 // 10 seconds
-#define KA_PERIOD_MS              2000 // 2 seconds
+#define DIO_PERIOD_MS             1000 // 10 seconds
+#define KA_PERIOD_MS              500 // 2 seconds
 
 #define N_TIMESLOTS_PER_DIO       (DIO_PERIOD_MS / 10)    // timeslots of 10 ms
 #define N_TIMESLOTS_PER_KA        (KA_PERIOD_MS / 10)     // timeslots of 10 ms

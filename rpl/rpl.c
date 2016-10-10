@@ -20,6 +20,7 @@ uint8_t probOptimalNeighbor(Node_t *txNode, uint8_t prrMatrix[][MAX_NODES][NUM_C
 int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uint8_t channel, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka, uint32_t n_timeslots_per_log)
 {
     uint32_t tamu_sample_round = 0;
+    uint32_t mrhof_sample_round = 0;
     uint32_t log_round = 0;
     bool first_general_log = true;
 
@@ -93,6 +94,9 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
                 }
                 tamu_sample_round++;
                 printf("\nCounter %d\n", counter++);
+            }
+            else if ((rpl_alg == RPL_MRHOF) && (asn / N_TIMESLOTS_MRHOF_RPL) >= mrhof_sample_round)
+            {
             }
 
             /* Check if we need to log the execution */
@@ -654,11 +658,11 @@ void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX
             RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem2->obj;
             if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
             {
-                fprintf(fp_full_output, "(id=%d,hc=%d,bs=%.2f,ns=%d,ap=%.2f);", neighbor->id, neighbor->hop_count, neighbor->beta_sample, neighbor->n_sampled, (float)neighbor->average_prr/100.0);
+                fprintf(fp_full_output, "(id=%d,dr==%.0f,bs=%.2f,ns=%d,r_pdr=%.2f);", neighbor->id, neighbor->dagRank, neighbor->beta_sample, neighbor->n_sampled, (float)neighbor->average_prr/100.0);
             }
             else if (rpl_algo == RPL_MRHOF)
             {
-                fprintf(fp_full_output, "(%d,%d,%.2f,%.2f);", neighbor->id, neighbor->dagRank, 1/neighbor->estimated_etx, (float)neighbor->average_prr/100.0);
+                fprintf(fp_full_output, "(id=%d,dr=%.0f,e_pdr=%.2f,r_pdr=%.2f);", neighbor->id, neighbor->dagRank, 1.0/neighbor->estimated_etx, (float)neighbor->average_prr/100.0);
             }
         }
 
