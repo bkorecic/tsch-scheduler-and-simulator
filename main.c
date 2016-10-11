@@ -17,7 +17,7 @@
 #include "rpl/rpl.h"
 
 #define TSCH_PROTOCOL           NO_SCHEDULE
-#define RPL_PROTOCOL            RPL_MRHOF
+#define RPL_PROTOCOL            RPL_WITH_DIJKSTRA
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
@@ -31,7 +31,7 @@
 #define TREE_FILE "tree.dat"
 
 //#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
-#define N_TIMESLOTS_PER_FILE    9000
+#define N_TIMESLOTS_PER_FILE    90000
 //#define N_TIMESLOTS_LOG         1560        // log every 1 minute (60 s x 39 ts / 1.5 s = 1560 ts per minute)
 #define N_TIMESLOTS_LOG         1000        // log every 30 seconds
 #define MAX_N_FILES             100

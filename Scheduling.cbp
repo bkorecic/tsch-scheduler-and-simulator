@@ -65,6 +65,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="modesa/modesa.h" />
+		<Unit filename="rpl/dijkstra_rpl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rpl/dijkstra_rpl.h" />
 		<Unit filename="rpl/mrhof_rpl.c">
 			<Option compilerVar="CC" />
 		</Unit>

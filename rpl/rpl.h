@@ -72,6 +72,7 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
 bool rplProcessTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq);
 
 Node_t *rplPreferedParent(Node_t *node, List *nodesList);
+RPL_Neighbor_t *getNeighbor(uint16_t node_id, List *neighborsList);
 
 void rplOutputPullArms(List *nodesList, uint8_t rpl_algo, bool first_time);
 void rplOutputRegretFile(List *nodesList, uint8_t rpl_algo, bool first_time);

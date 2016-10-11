@@ -9,12 +9,13 @@
 #include "../util/files.h"
 #include "mrhof_rpl.h"
 #include "tamu_rpl.h"
+#include "dijkstra_rpl.h"
 #include "../mcc/time_schedule.h"
 #include "../schedule/fhss.h"
 
 RPL_Neighbor_t *newNeighbor(uint16_t node_id);
 RPL_Neighbor_t *findNeighbor (Node_t *node, uint16_t neighborID);
-void rplPrintTree(List *nodesList);
+void rplPrintTree(List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS]);
 uint8_t probOptimalNeighbor(Node_t *txNode, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq);
 
 int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uint8_t channel, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka, uint32_t n_timeslots_per_log)
@@ -82,18 +83,12 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
 
         while(asn < n)
         {
-            count++;
-            //printf("Count=%d\n", count);
-
-            /* Calculate the current channel */
-            uint8_t freq = fhssOpenwsnChan(channel, asn);
-
             /* Check if we have to update the prefered parent */
             if ((rpl_alg == RPL_TAMU_MULTIHOP_RANK) && (asn / N_TIMESLOTS_TAMU_RPL) >= tamu_sample_round)
             {
                 if (tamuUpdateParents(nodesList, rpl_alg))
                 {
-                    rplPrintTree(nodesList);
+                    rplPrintTree(nodesList, prrMatrix);
                 }
                 tamu_sample_round++;
             }
@@ -101,9 +96,14 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
             {
                 if (mrhofUpdateParents(nodesList, rpl_alg))
                 {
-                    rplPrintTree(nodesList);
+                    rplPrintTree(nodesList, prrMatrix);
                 }
                 mrhof_sample_round++;
+            }
+            else if (rpl_alg == RPL_WITH_DIJKSTRA)
+            {
+                dijkstraCalculateTree(nodesList, prrMatrix);
+                rplPrintTree(nodesList, prrMatrix);
             }
 
             /* Check if we need to log the execution */
@@ -116,7 +116,16 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
                 rplOutputDAGRankFile(nodesList, rpl_alg, first_general_log);
                 log_round++;
                 first_general_log = false;
+
+                /* For Dijkstra we dont need to run RPL */
+                if (rpl_alg == RPL_WITH_DIJKSTRA)
+                {
+                    return (true);
+                }
             }
+
+            /* Calculate the current channel */
+            uint8_t freq = fhssOpenwsnChan(channel, asn);
 
             /* Find who is the next node to TX a DIO */
             ListElem *dio_elem = ListFirst(&dio_to_transmit);
@@ -444,7 +453,7 @@ void rplTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatri
     if (rplProcessTXDIO(rpl_alg, txNode, nodesList, prrMatrix, freq, dio_to_transmit, ka_to_transmit, min_asn_per_dio, min_asn_per_ka))
     {
         /* Print the new tree */
-        rplPrintTree(nodesList);
+        rplPrintTree(nodesList, prrMatrix);
     }
 
     /* Re-schedule the next DIO for all nodes that are synced and are not on the list of scheduled DIOs */
@@ -470,7 +479,7 @@ void rplTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix
     if (rplProcessTXKA(rpl_alg, txNode, nodesList, prrMatrix, freq))
     {
         /* Print the new tree */
-        rplPrintTree(nodesList);
+        rplPrintTree(nodesList, prrMatrix);
     }
 
     /* Schedule the next KA message for that node */
@@ -480,7 +489,7 @@ void rplTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix
     }
 }
 
-void rplPrintTree(List *nodesList)
+void rplPrintTree(List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS])
 {
     PRINTF("\nNew RPL tree:\n");
     for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
@@ -492,7 +501,7 @@ void rplPrintTree(List *nodesList)
             RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem2->obj;
             if (neighbor->prefered_parent)
             {
-                PRINTF("%d <- %d\n", neighbor->id, node->id);
+                PRINTF("%d <- %d (%d)\n", neighbor->id, node->id, rplAveragPRR(node->id, neighbor->id, prrMatrix));
             }
         }
     }
@@ -512,6 +521,10 @@ void rplOutputRegretFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
     {
         snprintf(file_name, 100, "regret_rpl_tamu_multihop_rank.csv");
+    }
+    else if (rpl_algo == RPL_WITH_DIJKSTRA)
+    {
+        snprintf(file_name, 100, "regret_rpl_dijkstra.csv");
     }
 
     if (first_time)
@@ -558,6 +571,10 @@ void rplOutputPullArms(List *nodesList, uint8_t rpl_algo, bool first_time)
     else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
     {
         snprintf(file_name, 100, "arms_rpl_tamu_multihop_rank.csv");
+    }
+    else if (rpl_algo == RPL_WITH_DIJKSTRA)
+    {
+        snprintf(file_name, 100, "arms_rpl_dijkstra.csv");
     }
 
     if (first_time)
@@ -608,6 +625,10 @@ void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX
         else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
         {
             snprintf(file_name, 100, "full_rpl_tamu_multihop_rank_%d.csv", node->id);
+        }
+        else if (rpl_algo == RPL_WITH_DIJKSTRA)
+        {
+            snprintf(file_name, 100, "full_rpl_dijkstra_%d.csv", node->id);
         }
 
         if (first_time)
@@ -676,6 +697,10 @@ void rplOutputThroughputFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "throughput_rpl_tamu_multihop_rank.csv");
     }
+    else if (rpl_algo == RPL_WITH_DIJKSTRA)
+    {
+        snprintf(file_name, 100, "throughput_rpl_dijkstra.csv");
+    }
 
     if (first_time)
     {
@@ -729,6 +754,10 @@ void rplOutputDAGRankFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     {
         snprintf(file_name, 100, "dagrank_rpl_tamu_multihop_rank.csv");
     }
+    else if (rpl_algo == RPL_WITH_DIJKSTRA)
+    {
+        snprintf(file_name, 100, "dagrank_rpl_dijkstra.csv");
+    }
 
     if (first_time)
     {
@@ -754,16 +783,16 @@ void rplOutputDAGRankFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     else
     {
         openFile(&fp_dagrank_output, file_name, "a");
-
-        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
-        {
-            Node_t *node = (Node_t *)elem1->obj;
-
-            fprintf(fp_dagrank_output, "%d, ", node->dagRank);
-        }
-
-        fprintf(fp_dagrank_output, "\n");
     }
+
+    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+    {
+        Node_t *node = (Node_t *)elem1->obj;
+
+        fprintf(fp_dagrank_output, "%d, ", node->dagRank);
+    }
+
+    fprintf(fp_dagrank_output, "\n");
 
     fclose(fp_dagrank_output);
 }
@@ -798,4 +827,18 @@ uint8_t rplAveragPRR(uint8_t txID, uint8_t rxID, uint8_t prrMatrix[][MAX_NODES][
         average_prr += prrMatrix[txID][rxID][i];
     }
     return ((uint8_t)(average_prr/16));
+}
+
+RPL_Neighbor_t *getNeighbor(uint16_t node_id, List *neighborsList)
+{
+    for (ListElem *elem = ListFirst(neighborsList); elem != NULL; elem = ListNext(neighborsList, elem))
+    {
+        /* Get the current Node */
+        RPL_Neighbor_t *n = (RPL_Neighbor_t *)elem->obj;
+        if (n->id == node_id)
+        {
+            return n;
+        }
+    }
+    return (NULL);
 }
