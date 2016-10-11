@@ -60,6 +60,7 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
     /* Opening file */
     FILE *fp_prr_file = NULL;
     int res = openFile(&fp_prr_file, prr_filename, "r");
+    uint64_t count = 0;
     while (res)
     {
         PRINTF("Processing file %s\n", prr_filename);
@@ -81,11 +82,13 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
 
         while(asn < n)
         {
+            count++;
+            //printf("Count=%d\n", count);
+
             /* Calculate the current channel */
             uint8_t freq = fhssOpenwsnChan(channel, asn);
 
-            /* Check if we have to start a new round of sampling on TAMU_RPL */
-            static int counter = 0;
+            /* Check if we have to update the prefered parent */
             if ((rpl_alg == RPL_TAMU_MULTIHOP_RANK) && (asn / N_TIMESLOTS_TAMU_RPL) >= tamu_sample_round)
             {
                 if (tamuUpdateParents(nodesList, rpl_alg))
@@ -93,19 +96,24 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
                     rplPrintTree(nodesList);
                 }
                 tamu_sample_round++;
-                printf("\nCounter %d\n", counter++);
             }
             else if ((rpl_alg == RPL_MRHOF) && (asn / N_TIMESLOTS_MRHOF_RPL) >= mrhof_sample_round)
             {
+                if (mrhofUpdateParents(nodesList, rpl_alg))
+                {
+                    rplPrintTree(nodesList);
+                }
+                mrhof_sample_round++;
             }
 
             /* Check if we need to log the execution */
             if ((asn / n_timeslots_per_log) >= log_round)
             {
-                rplOutputRegretFile(nodesList, rpl_alg, first_general_log);
-                rplOutputPullArms(nodesList, rpl_alg, first_general_log);
+                //rplOutputRegretFile(nodesList, rpl_alg, first_general_log);
+                //rplOutputPullArms(nodesList, rpl_alg, first_general_log);
                 rplOutputFullLog(nodesList, rpl_alg, prrMatrix, first_general_log);
                 rplOutputThroughputFile(nodesList, rpl_alg, first_general_log);
+                rplOutputDAGRankFile(nodesList, rpl_alg, first_general_log);
                 log_round++;
                 first_general_log = false;
             }
@@ -130,7 +138,7 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
                 asn_ka = kaNode->nextAsnToTxKA;
             }
 
-            if (asn_dio < asn_ka)
+            if (asn_dio <= asn_ka)
             {
                 asn = asn_dio;
 
@@ -143,16 +151,6 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
                 asn = asn_ka;
 
                 /* Lets transmit a KA message */
-                ListUnlink(&ka_to_transmit, ka_elem);
-                rplTXKA(rpl_alg, kaNode, nodesList, prrMatrix, freq, asn, &ka_to_transmit, min_asn_per_ka);
-            }
-            else
-            {
-                asn = asn_dio;
-
-                /* Lets transmit both messages */
-                ListUnlink(&dio_to_transmit, dio_elem);
-                rplTXDIO(rpl_alg, dioNode, nodesList, prrMatrix, freq, asn, &dio_to_transmit, &ka_to_transmit, min_asn_per_dio, min_asn_per_ka);
                 ListUnlink(&ka_to_transmit, ka_elem);
                 rplTXKA(rpl_alg, kaNode, nodesList, prrMatrix, freq, asn, &ka_to_transmit, min_asn_per_ka);
             }
@@ -177,15 +175,7 @@ void init_rpl(List *nodesList, uint8_t sink_id, uint8_t rpl_algo)
 
         if (node->id == sink_id)
         {
-            if (rpl_algo == RPL_MRHOF)
-            {
-                node->dagRank = MINHOPRANKINCREASE;
-            }
-            else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
-            {
-                /* Consider Rank just as the sum of ETXs */
-                node->dagRank = 0;
-            }
+            node->dagRank = MINHOPRANKINCREASE;
             node->synced = true;
             node->hop_count = 0;
         }
@@ -280,11 +270,12 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
                 /* Packet was succesfully received */
                 rplRxDIO(rpl_alg, txNode, rxNode, rplAveragPRR(txNode->id, rxNode->id, prrMatrix));
 
+                /* Check if DIO was received from a new neighbor */
                 bool updateDag;
                 if (rpl_alg == RPL_MRHOF)
                 {
-                    /* Update all DAG rank calculations and return if there was a change in the tree*/
-                    updateDag = mrhofUpdateDAGRanks(rxNode);
+                    //updateDag = mrhofUpdateDAGRanks(rxNode);
+                    updateDag = mrhofRxDio(rxNode);
                 }
                 else if (rpl_alg == RPL_TAMU_MULTIHOP_RANK)
                 {
@@ -362,15 +353,15 @@ bool rplProcessTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t pr
         txNode->n_optimal_pull++;
     }
 
-    if (rpl_alg == RPL_MRHOF)
-    {
+    //if (rpl_alg == RPL_MRHOF)
+    //{
         /* Update all DAG rank calculations and return if there was a change in the tree */
-        return (mrhofUpdateDAGRanks(txNode));
-    }
-    else
-    {
+        //return (mrhofUpdateDAGRanks(txNode));
+    //}
+    //else
+    //{
         return (false);
-    }
+    //}
 }
 
 Node_t *rplPreferedParent(Node_t *node, List *nodesList)
@@ -722,6 +713,59 @@ void rplOutputThroughputFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     }
 
     fclose(fp_throughput_output);
+}
+
+void rplOutputDAGRankFile(List *nodesList, uint8_t rpl_algo, bool first_time)
+{
+    /* Opening file */
+    FILE *fp_dagrank_output = NULL;
+    char file_name[100];
+
+    if (rpl_algo == RPL_MRHOF)
+    {
+        snprintf(file_name, 100, "dagrank_rpl_mrhof.csv");
+    }
+    else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
+    {
+        snprintf(file_name, 100, "dagrank_rpl_tamu_multihop_rank.csv");
+    }
+
+    if (first_time)
+    {
+        openFile(&fp_dagrank_output, file_name, "w");
+    }
+    else
+    {
+        openFile(&fp_dagrank_output, file_name, "a");
+    }
+
+    if (first_time)
+    {
+        /* Header */
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_dagrank_output, "dagrank_%d, ", node->id);
+        }
+
+        fprintf(fp_dagrank_output, "\n");
+    }
+    else
+    {
+        openFile(&fp_dagrank_output, file_name, "a");
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_dagrank_output, "%d, ", node->dagRank);
+        }
+
+        fprintf(fp_dagrank_output, "\n");
+    }
+
+    fclose(fp_dagrank_output);
 }
 
 uint8_t probOptimalNeighbor(Node_t *txNode, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq)

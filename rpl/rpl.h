@@ -12,6 +12,7 @@
 //#define RPL_TAMU_GREEDY           2
 //#define RPL_TAMU_MULTIHOP_ETX     3
 #define RPL_TAMU_MULTIHOP_RANK    4
+#define RPL_WITH_DIJKSTRA         5
 
 // From OpenWSN
 #define MAXDAGRANK                0xffff
@@ -25,7 +26,7 @@
 #define N_TIMESLOTS_PER_DIO       (DIO_PERIOD_MS / 10)    // timeslots of 10 ms
 #define N_TIMESLOTS_PER_KA        (KA_PERIOD_MS / 10)     // timeslots of 10 ms
 
-#define STABLE_NEIGHBOR_THRESHOLD 50
+#define STABLE_NEIGHBOR_THRESHOLD 30
 
 typedef enum {
     MRHOF_ETX,
@@ -76,6 +77,7 @@ void rplOutputPullArms(List *nodesList, uint8_t rpl_algo, bool first_time);
 void rplOutputRegretFile(List *nodesList, uint8_t rpl_algo, bool first_time);
 void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], bool first_time);
 void rplOutputThroughputFile(List *nodesList, uint8_t rpl_algo, bool first_time);
+void rplOutputDAGRankFile(List *nodesList, uint8_t rpl_algo, bool first_time);
 
 uint8_t rplAveragPRR(uint8_t txID, uint8_t rxID, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS]);
 
