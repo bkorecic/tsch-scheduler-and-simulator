@@ -11,7 +11,8 @@
 #include "../mcc/time_schedule.h"
 #include "../schedule/fhss.h"
 
-uint16_t rplMrhofGetRank(RPL_Neighbor_t *neighbor);
+uint16_t mrhofGetRank(RPL_Neighbor_t *neighbor);
+void mrhofSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor);
 
 bool mrhofUpdateParents(List *nodesList, uint8_t rpl_algo)
 {
@@ -24,7 +25,7 @@ bool mrhofUpdateParents(List *nodesList, uint8_t rpl_algo)
 
         if (node->type != SINK && node->synced)
         {
-            if (mrhofUpdateDAGRanks(node))
+            if (mrhofUpdateDAGRanks(node, nodesList))
             {
                 ret = true;
             }
@@ -34,7 +35,7 @@ bool mrhofUpdateParents(List *nodesList, uint8_t rpl_algo)
     return (ret);
 }
 
-bool mrhofRxDio(Node_t *node)
+bool mrhofRxDio(Node_t *node, List *nodesList)
 {
     /* We check if the DIO received was the first one, in this case we have to set new neighbor as prefered parent */
     if (!node->synced)
@@ -45,9 +46,7 @@ bool mrhofRxDio(Node_t *node)
 
             if (neighbor->stable)
             {
-                node->synced = true;
-                node->dagRank = rplMrhofGetRank(neighbor);
-                neighbor->prefered_parent = true;
+                mrhofSetPreferedParent(node, neighbor);
                 return (true);
             }
         }
@@ -56,11 +55,12 @@ bool mrhofRxDio(Node_t *node)
     return (false);
 }
 
-bool mrhofUpdateDAGRanks(Node_t *node)
+bool mrhofUpdateDAGRanks(Node_t *node, List *nodesList)
 {
-    uint16_t min_dagRank = MAXDAGRANK;
+    float min_dagRank = MAXDAGRANK;
     RPL_Neighbor_t *preferedParent = NULL;
     RPL_Neighbor_t *oldPreferedParent = NULL;
+    float oldPreferedDagrank;
 
     /* Set the synced flag */
     node->synced = false;
@@ -70,8 +70,8 @@ bool mrhofUpdateDAGRanks(Node_t *node)
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
 
-        uint16_t neighborRank = rplMrhofGetRank(neighbor);
-        if (neighbor->stable && neighborRank < min_dagRank)
+        uint16_t neighborRank = mrhofGetRank(neighbor);
+        if (neighbor->stable && neighborRank < min_dagRank && !rplDetectLoop(node, neighbor, nodesList))
         {
             /* This neighbor has a lower Rank */
             min_dagRank = neighborRank;
@@ -81,36 +81,33 @@ bool mrhofUpdateDAGRanks(Node_t *node)
         if (neighbor->prefered_parent)
         {
             oldPreferedParent = neighbor;
+            oldPreferedDagrank = neighborRank;
         }
 
         /* Clean the preferedparent field */
         neighbor->prefered_parent = false;
     }
 
-    if (min_dagRank < MAXDAGRANK)
+    if (preferedParent != NULL)
     {
-        /* Set the new Rank for the node */
-        node->dagRank = min_dagRank;
+        /* Hysteresis */
+        if (min_dagRank < HYSTERESIS_PERCENTUAL*oldPreferedDagrank)
+        {
+            mrhofSetPreferedParent(node, preferedParent);
 
-        /* Set the synced flag */
-        node->synced = true;
-
-        /* Set the new prefered parent */
-        preferedParent->prefered_parent = true;
+            /* Changed the prefered parent */
+            return (true);
+        }
+        else
+        {
+            mrhofSetPreferedParent(node, oldPreferedParent);
+        }
     }
 
-    if (oldPreferedParent != preferedParent)
-    {
-        /* Changed the prefered parent */
-        return (true);
-    }
-    else
-    {
-        return (false);
-    }
+    return (false);
 }
 
-uint16_t rplMrhofGetRank(RPL_Neighbor_t *neighbor)
+uint16_t mrhofGetRank(RPL_Neighbor_t *neighbor)
 {
     uint16_t rank_increase = 0;
 
@@ -124,4 +121,12 @@ uint16_t rplMrhofGetRank(RPL_Neighbor_t *neighbor)
     }
 
     return (neighbor->dagRank + rank_increase);
+}
+
+void mrhofSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor)
+{
+    neighbor->prefered_parent = true;
+    node->synced = true;
+    node->hop_count = neighbor->hop_count + 1;
+    node->dagRank = mrhofGetRank(neighbor);
 }

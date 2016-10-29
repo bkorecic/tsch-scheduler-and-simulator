@@ -11,7 +11,7 @@
 
 uint16_t blacklist_size = CENTRALIZED_BLACKLIST_SIZE;
 
-int execute_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint16_t n_timeslots_log, uint8_t pkt_gen_prob)
+int run_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, uint8_t sink_id, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint16_t n_timeslots_log, uint8_t pkt_gen_prob)
 {
     bool first_general_log = true;
     bool first_ts_log = true;

@@ -39,7 +39,7 @@ Node_t *newNode(uint16_t id, NODE_TYPE type)
 
     if (node == NULL)
     {
-        ERROR_RET("Not enough memory.\n");
+        EXIT("Not enough memory.\n");
     }
     else
     {

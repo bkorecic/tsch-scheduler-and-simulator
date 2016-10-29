@@ -21,6 +21,7 @@
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
+#define EXECUTE_RPL             1
 #define EXPORT_MASK_CHANNELS    0           /* This is 1 if we are going to output a mask with all channels that could be used */
 #define FHSS                    FHSS_OPENWSN    /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
 #define PKT_PROB                1
@@ -55,13 +56,19 @@ void printHelp(void)
     printf("<execute_sch>: 0 or 1\n");
     printf("if execute_sch == 1\n");
     printf("- <links_prefix>: prefix of file names with link information\n");
-    printf("- <pkt_prob>: 0 - 100 (if execute_sch == 1)\n");
+    printf("- <pkt_prob>: 0 - 100\n");
+    printf("if execute_sch == 0\n");
+    printf("- <execute_rpl>: 0 or 1\n");
+    printf("- if execute_rpl == 1\n");
+    printf("-- <links_prefix>: prefix of file names with link information\n");
+    printf("-- <rpl_alg>: 1 - RPL_MRHOF; 2 - RPL_TAMU_MULTIHOP_RANK; 5 - RPL_WITH_DIJKSTRA\n");
+    printf("-- <rank_interval>: interval in timeslots to calculate the rank on RPL\n");
 }
 
 int main(int argc, char *argv[])
 {
     uint8_t sink_id, tsch_alg, channel, fhss, pkt_prob, rpl_alg;
-    bool execute_sch, export_mask_channels;
+    bool execute_sch, export_mask_channels, execute_rpl;
     float etx_threshold;
     char file_name[50];
     char links_prefix[50];
@@ -111,6 +118,16 @@ int main(int argc, char *argv[])
                 }
             }
         }
+        else
+        {
+            execute_rpl = atoi(argv[9]);
+            if (execute_rpl)
+            {
+                strcpy(links_prefix,argv[10]);
+                rpl_alg = atoi(argv[11]);
+                rplSetRankInterval(atoi(argv[12]));
+            }
+        }
     }
     /* Use hard-coded parameters */
     else
@@ -124,10 +141,8 @@ int main(int argc, char *argv[])
         fhss = FHSS;
         execute_sch = EXECUTE_SCHEDULE;
         strcpy(links_prefix, LINKS_PREFIX);
-        if (execute_sch)
-        {
-            pkt_prob = PKT_PROB;
-        }
+        pkt_prob = PKT_PROB;
+        execute_rpl = EXECUTE_RPL;
         rpl_alg = RPL_PROTOCOL;
     }
 
@@ -205,7 +220,10 @@ int main(int argc, char *argv[])
     else if (tsch_alg == NO_SCHEDULE)
     {
         main_no_schedule(&nodesList, &linksList[channel], tree, sink_id, channel);
-        execute_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, N_TIMESLOTS_LOG);
+    }
+    else
+    {
+        EXIT("Invalid TSCH algorithm %d\n", tsch_alg);
     }
 
     /* Execute the schedule */
@@ -226,14 +244,21 @@ int main(int argc, char *argv[])
         /* Run each type of FHSS algorithm */
         if (fhss != FHSS_ALL)
         {
-            execute_schedule(fhss, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG, pkt_prob);
+            run_schedule(fhss, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG, pkt_prob);
         }
         else
         {
             for (uint8_t i = 0; i < FHSS_ALL; i++)
             {
-                execute_schedule(i, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG, pkt_prob);
+                run_schedule(i, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG, pkt_prob);
             }
+        }
+    }
+    else
+    {
+        if (execute_rpl)
+        {
+            run_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, N_TIMESLOTS_LOG);
         }
     }
 

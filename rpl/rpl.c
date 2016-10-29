@@ -3,6 +3,7 @@
 #include <string.h>
 #include <float.h>
 #include <limits.h>
+#include <math.h>
 #include "rpl.h"
 #include "../util/defs.h"
 #include "../util/debug.h"
@@ -17,11 +18,14 @@ RPL_Neighbor_t *newNeighbor(uint16_t node_id);
 RPL_Neighbor_t *findNeighbor (Node_t *node, uint16_t neighborID);
 void rplPrintTree(List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS]);
 uint8_t probOptimalNeighbor(Node_t *txNode, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq);
+float getEndToEndETX(Node_t *node, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS]);
+RPL_Neighbor_t *rplGetPreferedParent(Node_t *node);
 
-int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uint8_t channel, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka, uint32_t n_timeslots_per_log)
+uint32_t rpl_rank_interval  = RPL_RANK_INTERVAL;
+
+int run_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uint8_t channel, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka, uint32_t n_timeslots_per_log)
 {
-    uint32_t tamu_sample_round = 0;
-    uint32_t mrhof_sample_round = 0;
+    uint32_t rpl_rank_round = 0;
     uint32_t log_round = 0;
     bool first_general_log = true;
 
@@ -84,26 +88,28 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
         while(asn < n)
         {
             /* Check if we have to update the prefered parent */
-            if ((rpl_alg == RPL_TAMU_MULTIHOP_RANK) && (asn / N_TIMESLOTS_TAMU_RPL) >= tamu_sample_round)
+            if ((asn / rpl_rank_interval) > rpl_rank_round)
             {
-                if (tamuUpdateParents(nodesList, rpl_alg))
+                if (rpl_alg == RPL_TAMU_MULTIHOP_RANK)
                 {
+                    if (tamuUpdateParents(nodesList, rpl_alg))
+                    {
+                        rplPrintTree(nodesList, prrMatrix);
+                    }
+                }
+                else if (rpl_alg == RPL_MRHOF)
+                {
+                    if (mrhofUpdateParents(nodesList, rpl_alg))
+                    {
+                        rplPrintTree(nodesList, prrMatrix);
+                    }
+                }
+                else if (rpl_alg == RPL_WITH_DIJKSTRA)
+                {
+                    dijkstraCalculateTree(nodesList, prrMatrix);
                     rplPrintTree(nodesList, prrMatrix);
                 }
-                tamu_sample_round++;
-            }
-            else if ((rpl_alg == RPL_MRHOF) && (asn / N_TIMESLOTS_MRHOF_RPL) >= mrhof_sample_round)
-            {
-                if (mrhofUpdateParents(nodesList, rpl_alg))
-                {
-                    rplPrintTree(nodesList, prrMatrix);
-                }
-                mrhof_sample_round++;
-            }
-            else if (rpl_alg == RPL_WITH_DIJKSTRA)
-            {
-                dijkstraCalculateTree(nodesList, prrMatrix);
-                rplPrintTree(nodesList, prrMatrix);
+                rpl_rank_round = asn / rpl_rank_interval;
             }
 
             /* Check if we need to log the execution */
@@ -111,16 +117,17 @@ int execute_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id,
             {
                 //rplOutputRegretFile(nodesList, rpl_alg, first_general_log);
                 //rplOutputPullArms(nodesList, rpl_alg, first_general_log);
-                rplOutputFullLog(nodesList, rpl_alg, prrMatrix, first_general_log);
-                rplOutputThroughputFile(nodesList, rpl_alg, first_general_log);
+                //rplOutputFullLog(nodesList, rpl_alg, prrMatrix, first_general_log);
+                //rplOutputThroughputFile(nodesList, rpl_alg, first_general_log);
                 rplOutputDAGRankFile(nodesList, rpl_alg, first_general_log);
+                rplOutputETXFile(nodesList, rpl_alg, prrMatrix, first_general_log);
                 log_round++;
                 first_general_log = false;
 
                 /* For Dijkstra we dont need to run RPL */
                 if (rpl_alg == RPL_WITH_DIJKSTRA)
                 {
-                    return (true);
+                    continue;
                 }
             }
 
@@ -200,7 +207,8 @@ uint64_t rplGetNextDIOASN(Node_t *node, uint32_t min_asn_per_dio)
 {
     /* Lets set the next DIO interval to be average_asn_per_dio + randomness */
 
-    uint64_t nextDIO = min_asn_per_dio + (rand() % min_asn_per_dio) / 10;
+    //uint64_t nextDIO = min_asn_per_dio + (rand() % min_asn_per_dio) / 10;
+    uint64_t nextDIO = min_asn_per_dio;
 
     return (nextDIO);
 }
@@ -209,7 +217,8 @@ uint64_t rplGetNextKAASN(Node_t *node, uint32_t min_asn_per_ka)
 {
     /* Lets set the next DIO interval to be average_asn_per_dio + randomness */
 
-    uint64_t nextKA = min_asn_per_ka + (rand() % min_asn_per_ka) / 10;
+    //uint64_t nextKA = min_asn_per_ka + (rand() % min_asn_per_ka) / 10;
+    uint64_t nextKA = min_asn_per_ka;
 
     return (nextKA);
 }
@@ -272,7 +281,8 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
         if (rxNode->id != txNode->id && rxNode->type != SINK)
         {
             /* Probability of packet reception */
-            uint8_t probRx = rand() % 100;
+            //uint8_t probRx = rand() % 100;
+            uint8_t probRx = 50;
 
             if (prrMatrix[txNode->id][rxNode->id][freq] > probRx)
             {
@@ -284,11 +294,11 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
                 if (rpl_alg == RPL_MRHOF)
                 {
                     //updateDag = mrhofUpdateDAGRanks(rxNode);
-                    updateDag = mrhofRxDio(rxNode);
+                    updateDag = mrhofRxDio(rxNode, nodesList);
                 }
                 else if (rpl_alg == RPL_TAMU_MULTIHOP_RANK)
                 {
-                    updateDag = tamuRxDio(rxNode);
+                    updateDag = tamuRxDio(rxNode, nodesList);
                 }
 
                 if (!flag && updateDag)
@@ -329,7 +339,8 @@ void rplRxDIO(uint8_t rpl_alg, Node_t *txNode, Node_t *rxNode, uint8_t prr)
 bool rplProcessTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq)
 {
     /* Probability of packet reception */
-    uint8_t probRx = rand() % 100;
+    //uint8_t probRx = rand() % 100;
+    uint8_t probRx = 50;
 
     Node_t *parentNode = rplPreferedParent(txNode, nodesList);
     if (parentNode == NULL)
@@ -412,6 +423,14 @@ void rplRxKA(Node_t *txNode, Node_t *rxNode, bool succes)
 
     /* ETX = 1/PRR */
     neighbor->estimated_etx = (float)(neighbor->rx_failed + neighbor->rx_success) / (float)neighbor->rx_success;
+
+    /* If neighbor->rx_success OR neighbor->rx_failed > 256, divide both by two to avoid overhead when generating beta */
+    /* We just need the ratio of them */
+    if (neighbor->rx_success > 256 || neighbor->rx_failed > 256)
+    {
+        neighbor->rx_success /= 2;
+        neighbor->rx_failed /= 2;
+    }
 }
 
 RPL_Neighbor_t *newNeighbor(uint16_t node_id)
@@ -453,7 +472,7 @@ void rplTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatri
     if (rplProcessTXDIO(rpl_alg, txNode, nodesList, prrMatrix, freq, dio_to_transmit, ka_to_transmit, min_asn_per_dio, min_asn_per_ka))
     {
         /* Print the new tree */
-        rplPrintTree(nodesList, prrMatrix);
+//        rplPrintTree(nodesList, prrMatrix);
     }
 
     /* Re-schedule the next DIO for all nodes that are synced and are not on the list of scheduled DIOs */
@@ -479,7 +498,7 @@ void rplTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix
     if (rplProcessTXKA(rpl_alg, txNode, nodesList, prrMatrix, freq))
     {
         /* Print the new tree */
-        rplPrintTree(nodesList, prrMatrix);
+//        rplPrintTree(nodesList, prrMatrix);
     }
 
     /* Schedule the next KA message for that node */
@@ -543,7 +562,10 @@ void rplOutputRegretFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     }
     else
     {
-        openFile(&fp_regret_output, file_name, "a");
+        if (!openFile(&fp_regret_output, file_name, "a"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
 
         for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
         {
@@ -579,7 +601,10 @@ void rplOutputPullArms(List *nodesList, uint8_t rpl_algo, bool first_time)
 
     if (first_time)
     {
-        openFile(&fp_arms_output, file_name, "w");
+        if (!openFile(&fp_arms_output, file_name, "w"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
 
         /* Header */
         for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
@@ -593,7 +618,10 @@ void rplOutputPullArms(List *nodesList, uint8_t rpl_algo, bool first_time)
     }
     else
     {
-        openFile(&fp_arms_output, file_name, "a");
+        if (!openFile(&fp_arms_output, file_name, "a"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
 
         for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
         {
@@ -633,11 +661,17 @@ void rplOutputFullLog(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX
 
         if (first_time)
         {
-            openFile(&fp_full_output, file_name, "w");
+            if (!openFile(&fp_full_output, file_name, "w"))
+            {
+                EXIT("Unable to open file %s.\n", file_name);
+            }
         }
         else
         {
-            openFile(&fp_full_output, file_name, "a");
+            if (!openFile(&fp_full_output, file_name, "a"))
+            {
+                EXIT("Unable to open file %s.\n", file_name);
+            }
         }
 
         /* Lets get all stable neighbors with minimum hop count */
@@ -704,15 +738,11 @@ void rplOutputThroughputFile(List *nodesList, uint8_t rpl_algo, bool first_time)
 
     if (first_time)
     {
-        openFile(&fp_throughput_output, file_name, "w");
-    }
-    else
-    {
-        openFile(&fp_throughput_output, file_name, "a");
-    }
+        if (!openFile(&fp_throughput_output, file_name, "w"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
 
-    if (first_time)
-    {
         /* Header */
         for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
         {
@@ -725,7 +755,10 @@ void rplOutputThroughputFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     }
     else
     {
-        openFile(&fp_throughput_output, file_name, "a");
+        if (!openFile(&fp_throughput_output, file_name, "a"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
 
         for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
         {
@@ -761,15 +794,11 @@ void rplOutputDAGRankFile(List *nodesList, uint8_t rpl_algo, bool first_time)
 
     if (first_time)
     {
-        openFile(&fp_dagrank_output, file_name, "w");
-    }
-    else
-    {
-        openFile(&fp_dagrank_output, file_name, "a");
-    }
+        if (!openFile(&fp_dagrank_output, file_name, "w"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
 
-    if (first_time)
-    {
         /* Header */
         for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
         {
@@ -782,7 +811,10 @@ void rplOutputDAGRankFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     }
     else
     {
-        openFile(&fp_dagrank_output, file_name, "a");
+        if (!openFile(&fp_dagrank_output, file_name, "a"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
     }
 
     for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
@@ -795,6 +827,62 @@ void rplOutputDAGRankFile(List *nodesList, uint8_t rpl_algo, bool first_time)
     fprintf(fp_dagrank_output, "\n");
 
     fclose(fp_dagrank_output);
+}
+
+void rplOutputETXFile(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], bool first_time)
+{
+    /* Opening file */
+    FILE *fp_etx_output = NULL;
+    char file_name[100];
+
+    if (rpl_algo == RPL_MRHOF)
+    {
+        snprintf(file_name, 100, "etx_rpl_mrhof.csv");
+    }
+    else if (rpl_algo == RPL_TAMU_MULTIHOP_RANK)
+    {
+        snprintf(file_name, 100, "etx_rpl_tamu_multihop_rank.csv");
+    }
+    else if (rpl_algo == RPL_WITH_DIJKSTRA)
+    {
+        snprintf(file_name, 100, "etx_rpl_dijkstra.csv");
+    }
+
+    if (first_time)
+    {
+        if (!openFile(&fp_etx_output, file_name, "w"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
+
+        /* Header */
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_etx_output, "etx_%d, ", node->id);
+        }
+
+        fprintf(fp_etx_output, "\n");
+    }
+    else
+    {
+        if (!openFile(&fp_etx_output, file_name, "a"))
+        {
+            EXIT("Unable to open file %s.\n", file_name);
+        }
+    }
+
+    for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+    {
+        Node_t *node = (Node_t *)elem1->obj;
+
+        fprintf(fp_etx_output, "%f, ", getEndToEndETX(node, nodesList, prrMatrix));
+    }
+
+    fprintf(fp_etx_output, "\n");
+
+    fclose(fp_etx_output);
 }
 
 uint8_t probOptimalNeighbor(Node_t *txNode, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq)
@@ -841,4 +929,65 @@ RPL_Neighbor_t *getNeighbor(uint16_t node_id, List *neighborsList)
         }
     }
     return (NULL);
+}
+
+void rplSetRankInterval(uint32_t new_rpl_rank_interval)
+{
+    rpl_rank_interval = new_rpl_rank_interval;
+}
+
+float getEndToEndETX(Node_t *node, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS])
+{
+    if (node->type == SINK)
+    {
+        return (0);
+    }
+    else
+    {
+        RPL_Neighbor_t *prefered_parent = rplGetPreferedParent(node);
+
+        float etx;
+        if (prefered_parent != NULL)
+        {
+            etx = 100.0/(float)rplAveragPRR(node->id, prefered_parent->id, prrMatrix);
+        }
+        else
+        {
+            return (1000.0);
+        }
+
+        return (etx + getEndToEndETX(getNode(prefered_parent->id, nodesList), nodesList, prrMatrix));
+    }
+}
+
+bool rplDetectLoop(Node_t* node, RPL_Neighbor_t *neighbor, List *nodesList)
+{
+    Node_t *neighborNode = getNode(neighbor->id, nodesList);
+
+    while (neighborNode->type != SINK)
+    {
+        RPL_Neighbor_t *parent = rplGetPreferedParent(neighborNode);
+        if (parent->id == node->id)
+        {
+            return (true);
+        }
+        neighborNode = getNode(parent->id, nodesList);
+    }
+
+    return (false);
+}
+
+RPL_Neighbor_t *rplGetPreferedParent(Node_t *node)
+{
+    RPL_Neighbor_t *prefered_parent = NULL;
+    for (ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
+    {
+        prefered_parent = (RPL_Neighbor_t *)elem->obj;
+        if (prefered_parent->prefered_parent == true)
+        {
+            break;
+        }
+    }
+
+    return (prefered_parent);
 }

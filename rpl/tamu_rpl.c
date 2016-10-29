@@ -22,7 +22,7 @@ bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo)
 
         if (node->type != SINK && node->synced)
         {
-            if (tamuSampleNodeMultiHopRank(node))
+            if (tamuSampleNodeMultiHopRank(node, nodesList))
             {
                 ret = true;
             }
@@ -32,11 +32,12 @@ bool tamuUpdateParents(List *nodesList, uint8_t rpl_algo)
     return (ret);
 }
 
-bool tamuSampleNodeMultiHopRank(Node_t *node)
+bool tamuSampleNodeMultiHopRank(Node_t *node, List *nodesList)
 {
-    double min_rank_beta_sample = MAXDAGRANK;
+    float min_rank_beta_sample = MAXDAGRANK;
     RPL_Neighbor_t *min_rank_beta_neighbor = NULL;
     RPL_Neighbor_t *oldPreferedParent = NULL;
+    float oldPreferedDagrank;
 
     node->synced = false;
 
@@ -47,6 +48,7 @@ bool tamuSampleNodeMultiHopRank(Node_t *node)
         if (neighbor->prefered_parent)
         {
             oldPreferedParent = neighbor;
+            oldPreferedDagrank = rplTamuGetRank(neighbor);
         }
         neighbor->prefered_parent = false;
     }
@@ -59,7 +61,7 @@ bool tamuSampleNodeMultiHopRank(Node_t *node)
         /* Generate the corresponding Beta(1+S_t, 1 + F_t) */
         neighbor->beta_sample = gen_beta(1 + neighbor->rx_success,1 + neighbor->rx_failed);
 
-        if (neighbor->n_sampled == 0)
+        if (neighbor->stable && neighbor->n_sampled == 0 && !rplDetectLoop(node, neighbor, nodesList))
         {
             /* This is the new parent */
             tamuSetPreferedParent(node, neighbor);
@@ -73,7 +75,7 @@ bool tamuSampleNodeMultiHopRank(Node_t *node)
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
 
-        if (neighbor->stable && rplTamuGetRank(neighbor) < min_rank_beta_sample)
+        if (neighbor->stable && rplTamuGetRank(neighbor) < min_rank_beta_sample && !rplDetectLoop(node, neighbor, nodesList))
         {
             min_rank_beta_sample = rplTamuGetRank(neighbor);
             min_rank_beta_neighbor = neighbor;
@@ -83,17 +85,19 @@ bool tamuSampleNodeMultiHopRank(Node_t *node)
     /* Set the new prefered parent */
     if (min_rank_beta_neighbor != NULL)
     {
-        tamuSetPreferedParent(node, min_rank_beta_neighbor);
+        /* Hysteresis */
+        if (min_rank_beta_sample < HYSTERESIS_PERCENTUAL*oldPreferedDagrank)
+        {
+            tamuSetPreferedParent(node, min_rank_beta_neighbor);
+            return (true);
+        }
+        else
+        {
+            tamuSetPreferedParent(node, oldPreferedParent);
+        }
     }
 
-    if (oldPreferedParent != min_rank_beta_neighbor)
-    {
-        return (true);
-    }
-    else
-    {
-        return (false);
-    }
+    return (false);
 }
 
 void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor)
@@ -106,7 +110,7 @@ void tamuSetPreferedParent(Node_t *node, RPL_Neighbor_t *neighbor)
     node->dagRank = rplTamuGetRank(neighbor);
 }
 
-bool tamuRxDio(Node_t *node)
+bool tamuRxDio(Node_t *node, List *nodesList)
 {
     /* We check if the DIO received was the first one, in this case we have to sample the new neighbor */
     if (!node->synced)
@@ -137,7 +141,7 @@ uint16_t rplTamuGetRank(RPL_Neighbor_t *neighbor)
     }
     else
     {
-        rank_increase = (uint16_t)(1.0/neighbor->beta_sample * 2.0 * (float)MINHOPRANKINCREASE);
+        rank_increase = 1.0/neighbor->beta_sample * 2.0 * (float)MINHOPRANKINCREASE;
     }
 
     return (neighbor->dagRank + rank_increase);

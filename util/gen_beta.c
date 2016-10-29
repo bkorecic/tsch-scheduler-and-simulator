@@ -17,13 +17,13 @@ float gen_beta(uint32_t a, uint32_t b)
     /* Generate a + b - 1 uniform U(0,1) */
     for (uint32_t i = 0; i < a + b - 1; i++)
     {
-        float *sample = (float *)malloc(sizeof(float));
-        *sample = (float)(rand() % 100)/100.0;
+        uint8_t *sample = (uint8_t *)malloc(sizeof(uint8_t));
+        *sample = rand() % 100;
 
         bool inserted = false;
         for (ListElem *elem = ListFirst(&listUniform); elem != NULL; elem = ListNext(&listUniform, elem))
         {
-            float *number = (float *)elem->obj;
+            uint8_t *number = (uint8_t *)elem->obj;
 
             if (*number >= *sample)
             {
@@ -45,9 +45,18 @@ float gen_beta(uint32_t a, uint32_t b)
         elem = ListNext(&listUniform, elem);
     }
 
-    float *beta_number = (float *)elem->obj;
+    uint8_t *beta_number = (uint8_t *)elem->obj;
+    float ret = (float)*beta_number/100.0;
 
-    return (*beta_number);
+    /* Lets free the memory */
+    for (ListElem *elem = ListFirst(&listUniform); elem != NULL; elem = ListNext(&listUniform, elem))
+    {
+        uint8_t *number = (uint8_t *)elem->obj;
+        free(number);
+    }
+    ListUnlinkAll(&listUniform);
+
+    return (ret);
 }
 
 void testBeta(void)

@@ -80,7 +80,7 @@ bool readFileLinks(FILE *fp, List *nodesList, List linksList[], uint8_t maxPrr)
                     j++;
                     token = strtok(NULL, ",");
                 }
-                if (j < n_nodes) ERROR_RET("Line %d has less fields than expected", i);
+                if (j < n_nodes) EXIT("Line %d has less fields than expected", i);
 
                 break;
             default:
@@ -127,7 +127,7 @@ bool readFile(FILE *fp, List *nodesList, List *linksList, Tree_t *tree, uint8_t 
                     /* Connect the node to its parent */
                     if (!connectToTree(node, parent, tree))
                     {
-                        ERROR_RET("Error while creating tree.\n");
+                        EXIT("Error while creating tree.\n");
                     }
                     else
                     {
@@ -213,7 +213,7 @@ bool readFile(FILE *fp, List *nodesList, List *linksList, Tree_t *tree, uint8_t 
                     j++;
                     token = strtok(NULL, ",");
                 }
-                if (j < n_nodes) ERROR_RET("Line %d has less fields than expected", i);
+                if (j < n_nodes) EXIT("Line %d has less fields than expected", i);
 
                 break;
 
@@ -298,7 +298,7 @@ bool readLinksFile(FILE *fp, List *nodesList, List *linksList, uint8_t maxPrr)
                     j++;
                     token = strtok(NULL, ",");
                 }
-                if (j < n_nodes) ERROR_RET("Line %d has less fields than expected", i);
+                if (j < n_nodes) EXIT("Line %d has less fields than expected", i);
 
                 break;
 

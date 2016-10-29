@@ -113,7 +113,7 @@ uint16_t dijkstraGetRank(Node_t *parent, Node_t *child, uint8_t prrMatrix[][MAX_
 
     if (average_prr != 0 && average_prr > STABLE_NEIGHBOR_THRESHOLD)
     {
-        rank_increase = 100.0/(float)average_prr * (float)MINHOPRANKINCREASE;
+        rank_increase = 100.0/(float)average_prr * 2.0 * (float)MINHOPRANKINCREASE;
 
         return (parent->dagRank + rank_increase);
     }

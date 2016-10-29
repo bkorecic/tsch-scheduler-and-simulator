@@ -8,11 +8,6 @@
                     fprintf(stderr, "\n"); \
                     fflush(stderr); exit(1);}while(0)
 
-#define ERROR_RET(...) do{fprintf(stderr, "\nAt %s (%s:%d) ", __func__, __FILE__, __LINE__); \
-                    fprintf(stderr, __VA_ARGS__); \
-                    fprintf(stderr, "\n"); \
-                    return(false);}while(0)
-
 #define ERROR(...) do{fprintf(stderr, "\nAt %s (%s:%d) ", __func__, __FILE__, __LINE__); \
                     fprintf(stderr, __VA_ARGS__); \
                     fprintf(stderr, "\n");}while(0)
