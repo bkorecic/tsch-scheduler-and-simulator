@@ -9,20 +9,37 @@
 #include "fhss.h"
 #include "no-schedule.h"
 
-bool main_no_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, int8_t channel)
+bool main_no_schedule(List *nodesList, uint8_t slotframe_size, uint8_t n_beacon_timeslot, float duty_cycle)
 {
-    uint8_t n_nodes = ListLength(nodesList);
+    TimeSlot_t *ts = NULL;
 
     /* Create the list of timeslots for all nodes */
     for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
     {
+        uint8_t cur_time = 1;
+
         /* Get the current node */
         Node_t *node = (Node_t *)elem->obj;
 
-        // Create n_nodes - 1 shared timeslots
-        for (uint8_t t = 1; t < n_nodes - 1; t++)
+        /* Create the timeslots with type Beacon */
+        for (; cur_time <= n_beacon_timeslot; cur_time++)
         {
-            TimeSlot_t *ts = newTimeSlot(t, channel, TS_SHARED, NULL, false);
+            ts = newTimeSlot(cur_time, 0, TS_BEACON, NULL, false);
+            ListAppend(&node->timeslots, (void *)ts);
+        }
+
+        /* Create the timeslots with type Shared */
+        uint8_t n_shared_timeslot = (uint8_t)((float)slotframe_size * duty_cycle);
+        for (; cur_time <= n_shared_timeslot; cur_time++)
+        {
+            ts = newTimeSlot(cur_time, 0, TS_SHARED, NULL, false);
+            ListAppend(&node->timeslots, (void *)ts);
+        }
+
+        /* Create the timeslots with type Idle */
+        for (; cur_time < slotframe_size; cur_time++)
+        {
+            ts = newTimeSlot(cur_time, 0, TS_IDLE, NULL, false);
             ListAppend(&node->timeslots, (void *)ts);
         }
     }

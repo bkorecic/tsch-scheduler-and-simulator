@@ -16,16 +16,20 @@
 #include "schedule/fhss.h"
 #include "rpl/rpl.h"
 
+#define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
+#define EXECUTE_RPL             0
+#define EXECUTE_FLOODING        1
+
 #define TSCH_PROTOCOL           NO_SCHEDULE
-#define RPL_PROTOCOL            RPL_WITH_DIJKSTRA
+#define RPL_PROTOCOL            RPL_MRHOF
 #define SINK_NODE               0
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
-#define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
-#define EXECUTE_RPL             1
 #define EXPORT_MASK_CHANNELS    0           /* This is 1 if we are going to output a mask with all channels that could be used */
 #define FHSS                    FHSS_OPENWSN    /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
 #define PKT_PROB                1
 #define ETX_THRESHOLD           0.5
+#define DUTY_CYCLE              0.9
+#define SLOTFRAME_SIZE          100
 
 #define DATA_FILE "data/prr_tutornet/rpl-tamu/prr40_1.dat"
 #define LINKS_PREFIX "data/prr_tutornet/rpl-tamu/prr40"
@@ -68,7 +72,7 @@ void printHelp(void)
 int main(int argc, char *argv[])
 {
     uint8_t sink_id, tsch_alg, channel, fhss, pkt_prob, rpl_alg;
-    bool execute_sch, export_mask_channels, execute_rpl;
+    bool execute_sch, export_mask_channels, execute_rpl, execute_flooding;
     float etx_threshold;
     char file_name[50];
     char links_prefix[50];
@@ -127,6 +131,7 @@ int main(int argc, char *argv[])
                 rpl_alg = atoi(argv[11]);
                 rplSetRankInterval(atoi(argv[12]));
             }
+
         }
     }
     /* Use hard-coded parameters */
@@ -144,6 +149,7 @@ int main(int argc, char *argv[])
         pkt_prob = PKT_PROB;
         execute_rpl = EXECUTE_RPL;
         rpl_alg = RPL_PROTOCOL;
+        execute_flooding = EXECUTE_FLOODING;
     }
 
     /* Initializing the RGN */
@@ -219,7 +225,7 @@ int main(int argc, char *argv[])
     }
     else if (tsch_alg == NO_SCHEDULE)
     {
-        main_no_schedule(&nodesList, &linksList[channel], tree, sink_id, channel);
+        main_no_schedule(&nodesList, SLOTFRAME_SIZE, 1, DUTY_CYCLE);
     }
     else
     {
@@ -259,6 +265,11 @@ int main(int argc, char *argv[])
         if (execute_rpl)
         {
             run_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, N_TIMESLOTS_LOG);
+        }
+
+        if (execute_flooding)
+        {
+
         }
     }
 

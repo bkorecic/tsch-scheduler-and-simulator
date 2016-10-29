@@ -11,6 +11,6 @@
  *
  * Forms the schedule with N shared timeslots, where N is equal to the number of sensor nodes (exclude the sink).
  */
-bool main_no_schedule(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id, int8_t channel);
+bool main_no_schedule(List *nodesList, uint8_t slotframe_size, uint8_t n_beacon_timeslot, float duty_cycle);
 
 #endif // _NO_SCHEDULE_
