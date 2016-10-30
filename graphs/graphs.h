@@ -95,6 +95,11 @@ typedef struct node_t {
     uint64_t    nextAsnToTxKA;      /* Next ASN to transmit a Keep Alive message */
 /* RPL */
 
+/* Flooding */
+    uint64_t    nextDataTs;
+    uint16_t    curBurstId;
+/* Flooding */
+
 } Node_t;
 
 typedef struct link_t {
@@ -149,6 +154,11 @@ typedef struct packet_t {
     uint8_t         n_retries;          /* Current number of transmission retries */
     uint8_t         n_transmissions;    /* Number of times the packet was transmitted (or re-transmitted) */
     uint8_t         n_hops;             /* Number of hops the packet passed thru */
+/* Flooding */
+    uint64_t        ts_generated;
+    uint16_t        burst_id;
+    uint64_t        delay;
+/* Flooding */
 } Packet_t;
 
 /**
@@ -206,7 +216,7 @@ LineTree_t *newLineTree(uint8_t hop_count);
  */
 TimeSlot_t *newTimeSlot(uint16_t time, uint8_t freq, TIMESLOT_TYPE type, Node_t *neighbor, bool relay);
 
-Packet_t *newPacket(uint16_t dsn, uint16_t src_id);
+Packet_t *newPacket(uint16_t dsn, uint16_t src_id, uint64_t ts_generated, uint16_t burst_id);
 
 /**
  * \brief Checks if the node is in a particular tree, avoiding a specific root node.

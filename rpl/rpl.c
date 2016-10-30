@@ -207,8 +207,8 @@ uint64_t rplGetNextDIOASN(Node_t *node, uint32_t min_asn_per_dio)
 {
     /* Lets set the next DIO interval to be average_asn_per_dio + randomness */
 
-    //uint64_t nextDIO = min_asn_per_dio + (rand() % min_asn_per_dio) / 10;
-    uint64_t nextDIO = min_asn_per_dio;
+    uint64_t nextDIO = min_asn_per_dio + (rand() % min_asn_per_dio) / 10;
+    //uint64_t nextDIO = min_asn_per_dio;
 
     return (nextDIO);
 }
@@ -217,8 +217,8 @@ uint64_t rplGetNextKAASN(Node_t *node, uint32_t min_asn_per_ka)
 {
     /* Lets set the next DIO interval to be average_asn_per_dio + randomness */
 
-    //uint64_t nextKA = min_asn_per_ka + (rand() % min_asn_per_ka) / 10;
-    uint64_t nextKA = min_asn_per_ka;
+    uint64_t nextKA = min_asn_per_ka + (rand() % min_asn_per_ka) / 10;
+    //uint64_t nextKA = min_asn_per_ka;
 
     return (nextKA);
 }
@@ -281,8 +281,8 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
         if (rxNode->id != txNode->id && rxNode->type != SINK)
         {
             /* Probability of packet reception */
-            //uint8_t probRx = rand() % 100;
-            uint8_t probRx = 50;
+            uint8_t probRx = rand() % 100;
+            //uint8_t probRx = 50;
 
             if (prrMatrix[txNode->id][rxNode->id][freq] > probRx)
             {
@@ -339,8 +339,8 @@ void rplRxDIO(uint8_t rpl_alg, Node_t *txNode, Node_t *rxNode, uint8_t prr)
 bool rplProcessTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq)
 {
     /* Probability of packet reception */
-    //uint8_t probRx = rand() % 100;
-    uint8_t probRx = 50;
+    uint8_t probRx = rand() % 100;
+    //uint8_t probRx = 50;
 
     Node_t *parentNode = rplPreferedParent(txNode, nodesList);
     if (parentNode == NULL)

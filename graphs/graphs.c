@@ -154,7 +154,7 @@ TimeSlot_t *newTimeSlot(uint16_t time, uint8_t freq, TIMESLOT_TYPE type, Node_t 
     return (ts);
 }
 
-Packet_t *newPacket(uint16_t dsn, uint16_t src_id)
+Packet_t *newPacket(uint16_t dsn, uint16_t src_id, uint64_t ts_generated, uint16_t burst_id)
 {
     Packet_t *pkt = (Packet_t *)malloc(sizeof(Packet_t));
 
@@ -169,6 +169,8 @@ Packet_t *newPacket(uint16_t dsn, uint16_t src_id)
 
     pkt->dsn = dsn;
     pkt->src_id = src_id;
+    pkt->ts_generated = ts_generated;
+    pkt->burst_id = burst_id;
 
     return (pkt);
 }

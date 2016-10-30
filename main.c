@@ -28,15 +28,15 @@
 #define FHSS                    FHSS_OPENWSN    /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
 #define PKT_PROB                1
 #define ETX_THRESHOLD           0.5
-#define DUTY_CYCLE              0.9
-#define SLOTFRAME_SIZE          100
+#define DUTY_CYCLE              0.77
+#define SLOTFRAME_SIZE          13
 
-#define DATA_FILE "data/prr_tutornet/rpl-tamu/prr40_1.dat"
-#define LINKS_PREFIX "data/prr_tutornet/rpl-tamu/prr40"
+#define DATA_FILE "data/prr_tutornet/fbr-tsch/prr40_1.dat"
+#define LINKS_PREFIX "data/prr_tutornet/fbr-tsch/prr40"
 #define TREE_FILE "tree.dat"
 
 //#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
-#define N_TIMESLOTS_PER_FILE    90000
+#define N_TIMESLOTS_PER_FILE    525000
 //#define N_TIMESLOTS_LOG         1560        // log every 1 minute (60 s x 39 ts / 1.5 s = 1560 ts per minute)
 #define N_TIMESLOTS_LOG         1000        // log every 30 seconds
 #define MAX_N_FILES             100
@@ -262,14 +262,16 @@ int main(int argc, char *argv[])
     }
     else
     {
+        /* Execute the RPL for routing tree calculation */
         if (execute_rpl)
         {
             run_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, N_TIMESLOTS_LOG);
         }
 
+        /* Execute the Flooding protocol with alarm application */
         if (execute_flooding)
         {
-
+            run_no_schedule(sink_id, 39, 850, 7, &nodesList, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
         }
     }
 

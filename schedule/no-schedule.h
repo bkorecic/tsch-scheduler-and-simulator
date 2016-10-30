@@ -12,5 +12,6 @@
  * Forms the schedule with N shared timeslots, where N is equal to the number of sensor nodes (exclude the sink).
  */
 bool main_no_schedule(List *nodesList, uint8_t slotframe_size, uint8_t n_beacon_timeslot, float duty_cycle);
+bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pkt_ts, uint8_t prob_tx, List *nodesList, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint16_t n_timeslots_log);
 
 #endif // _NO_SCHEDULE_

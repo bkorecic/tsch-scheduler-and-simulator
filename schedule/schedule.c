@@ -128,7 +128,7 @@ int run_schedule(uint8_t fhss, List *draws, List *nodesList, Tree_t *tree, uint8
                     uint8_t tx_attempty = rand() % 100;
                     if ((ListLength(&node->packets) < NODE_QUEUE_SIZE) && (tx_attempty < pkt_gen_prob) && (node->id != sink_id))
                     {
-                        Packet_t *pkt = newPacket(node->cur_dsn, node->id);
+                        Packet_t *pkt = newPacket(node->cur_dsn, node->id, asn, 0);
                         node->cur_dsn++;
                         ListAppend(&node->packets, (void *)pkt);
                     }
