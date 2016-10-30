@@ -121,9 +121,8 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
             /* Check if we need to output the log */
             if ((asn % n_timeslots_log) == 0)
             {
-                noScheduleOutputReliabilityFile(nodesList, first_general_log);
+                noScheduleOutputReliabilityDelayFile(nodesList, first_general_log);
                 noScheduleOutputEnergyFile(nodesList, first_general_log);
-                noScheduleOutputDelayFile(nodesList, first_general_log);
                 first_general_log = false;
             }
 
@@ -216,15 +215,58 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
     return (true);
 }
 
-void noScheduleOutputReliabilityFile(List *nodesList, bool first_time)
+void noScheduleOutputReliabilityDelayFile(List *nodesList, bool first_time)
 {
+    /* Opening file */
+    FILE *fp_reliability_delay_output = NULL;
+    char file_name[100];
+
+    snprintf(file_name, 100, "reability_delay_floooding.csv");
+
+    if (first_time)
+    {
+        openFile(&fp_reliability_delay_output, file_name, "w");
+
+        /* Header */
+        fprintf(fp_reliability_delay_output, "max_signal, reliability, average_delay, ");
+
+        fprintf(fp_reliability_delay_output, "\n");
+        first_time = false;
+    }
+    else
+    {
+        openFile(&fp_reliability_delay_output, file_name, "a");
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            if (node->type == SINK)
+            {
+                uint16_t max_burst = 0;
+                uint64_t total_delay = 0;
+                for (ListElem *elem2 = ListFirst(&node->packets); elem2 != NULL; elem2 = ListNext(&node->packets, elem2))
+                {
+                    Packet_t *pkt = (Packet_t *)elem2->obj;
+                    if (pkt->burst_id > max_burst)
+                    {
+                        max_burst = pkt->burst_id;
+                    }
+                    total_delay += pkt->delay;
+                }
+
+                fprintf(fp_reliability_delay_output, "%d, %f, %f, ", max_burst, ListLength(&node->packets)/(float)max_burst, (double)total_delay/ListLength(&node->packets));
+                break;
+            }
+        }
+
+        fprintf(fp_reliability_delay_output, "\n");
+    }
+
+    fclose(fp_reliability_delay_output);
 }
 
 void noScheduleOutputEnergyFile(List *nodesList, bool first_time)
-{
-}
-
-void noScheduleOutputDelayFile(List *nodesList, bool first_time)
 {
 }
 
