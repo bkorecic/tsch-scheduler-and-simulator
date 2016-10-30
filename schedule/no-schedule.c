@@ -9,9 +9,9 @@
 #include "fhss.h"
 #include "no-schedule.h"
 
-void noScheduleOutputReliabilityFile(List *nodesList, bool first_time);
+void noScheduleOutputReliabilityDelayFile(List *nodesList, bool first_time);
 void noScheduleOutputEnergyFile(List *nodesList, bool first_time);
-void noScheduleOutputDelayFile(List *nodesList, bool first_time);
+List *noScheduleNodesToTX(uint8_t sink_id, List *nodesList, uint16_t time, uint8_t prob_tx);
 
 bool main_no_schedule(List *nodesList, uint8_t slotframe_size, uint8_t n_beacon_timeslot, float duty_cycle)
 {
@@ -126,77 +126,126 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
                 first_general_log = false;
             }
 
-            /* Finding nodes that transmit at time slot 'time' */
-            for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+            /* Get the sensor node */
+            Node_t *sensor_node = getNode(sensor_id, nodesList);
+
+            /* Schedule the next data packet */
+            if (sensor_node->nextDataTs < asn)
             {
-                Node_t *node_tx = (Node_t *)elem1->obj;
-
-                /* Sensor node */
-                if (node_tx->id == sensor_id)
+                sensor_node->nextDataTs = asn + average_gen_pkt_ts  + (rand() % average_gen_pkt_ts) / 10;
+            }
+            if (sensor_node->nextDataTs == asn)
+            {
+                if (ListLength(&sensor_node->packets) < NODE_QUEUE_SIZE)
                 {
-                    /* Schedule the next data packet */
-                    if (node_tx->nextDataTs < asn)
-                    {
-                        node_tx->nextDataTs = asn + average_gen_pkt_ts  + (rand() % average_gen_pkt_ts) / 10;
-                    }
-                    if (node_tx->nextDataTs == asn)
-                    {
-                        if (ListLength(&node_tx->packets) < NODE_QUEUE_SIZE)
-                        {
-                            Packet_t *pkt = newPacket(node_tx->cur_dsn, node_tx->id, asn, node_tx->curBurstId);
-                            node_tx->cur_dsn++;
-                            node_tx->curBurstId++;
-                            ListAppend(&node_tx->packets, (void *)pkt);
-                        }
-                    }
+                    Packet_t *pkt = newPacket(sensor_node->cur_dsn, sensor_node->id, asn, sensor_node->curBurstId);
+                    sensor_node->cur_dsn++;
+                    sensor_node->curBurstId++;
+                    ListAppend(&sensor_node->packets, (void *)pkt);
                 }
+            }
 
-                /* Check if we need to transmit something */
-                /* We dont transmit if we dont have packet, or if we are the sink, or if we are not the sensor and we do not decide to TX */
-                uint8_t draw = rand() % 100;
-                if (ListLength(&node_tx->packets) == 0 || node_tx->id == sink_id || (node_tx->id != sensor_id && draw > prob_tx))
+            List *nodesToTX = noScheduleNodesToTX(sink_id, nodesList, time, prob_tx);
+
+            if (ListLength(nodesToTX) > 1)
+            {
+                /* Update the number of tx pkts and release the packet from nodes */
+                for (ListElem *elem = ListFirst(nodesToTX); elem != NULL; elem = ListNext(nodesToTX, elem))
                 {
-                    continue;
-                }
+                    Node_t *node = (Node_t *)elem->obj;
 
+                    /* TX failed */
+                    node->pkt_tx_data++;
+
+                    /* Release the pkt */
+                    ListElem *pkt_elem = ListFirst(&node->packets);
+                    ListUnlink(&node->packets, pkt_elem);
+                }
+            }
+            else if(ListLength(nodesToTX) == 1)
+            {
+                /* Get the node to TX */
+                ListElem *node_elem = ListFirst(nodesToTX);
+                Node_t *node_tx = (Node_t *)node_elem->obj;
+
+                /* Get the packet to be transmitted */
+                ListElem *pkt_elem = ListFirst(&node_tx->packets);
+                Packet_t *pkt = (Packet_t *)pkt_elem->obj;
+
+                /* TX successful */
+                node_tx->pkt_tx_data++;
+
+                /* Get the timeslot */
                 TimeSlot_t *ts = getTimeSlot(time + 1, &node_tx->timeslots);
-                if (ts != NULL && ts->type != TS_IDLE)
+
+                /* Calculate the frequency to transmit */
+                uint8_t freq = fhssOpenwsnChan(ts->freq, asn);
+
+                /* For all nodes check if one will receive */
+                for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
                 {
-                    /* Calculate the frequency to transmit */
-                    uint8_t freq = fhssOpenwsnChan(ts->freq, asn);
-
-                    /* Get the packet to be transmitted */
-                    ListElem *pkt_elem = ListFirst(&node_tx->packets);
-                    Packet_t *pkt = (Packet_t *)pkt_elem->obj;
-
-                    /* For all nodes check if one will receive */
-                    for (ListElem *elem2 = ListFirst(nodesList); elem2 != NULL; elem2 = ListNext(nodesList, elem2))
+                    uint8_t draw = rand() % 100;
+                    Node_t *node_rx = (Node_t *)elem->obj;
+                    if (node_rx->id != node_tx->id && draw <= prrMatrix[node_tx->id][node_rx->id][freq])
                     {
-                        draw = rand() % 100;
-                        Node_t *node_rx = (Node_t *)elem2->obj;
-                        if (node_rx->id != node_tx->id)
+                        /* Check if receiver can receive the packet */
+                        if (ListLength(&node_rx->packets) < NODE_QUEUE_SIZE || node_rx->id == sink_id)
                         {
-                            if (draw <= prrMatrix[node_tx->id][node_rx->id][freq])
+                            if (node_rx->curBurstId < pkt->burst_id)
                             {
-                                /* Check if receiver can accommodate the packet */
-                                if ((ListLength(&node_rx->packets) < NODE_QUEUE_SIZE || node_rx->id == sink_id) && node_rx->curBurstId < pkt->burst_id)
+                                ListAppend(&node_rx->packets, (void *)pkt);
+
+                                /* Update the current burst ID */
+                                node_rx->curBurstId = pkt->burst_id;
+
+                                if (node_rx->id == sink_id)
                                 {
-                                    ListAppend(&node_rx->packets, (void *)pkt);
-
-                                    /* Update the current burst ID */
-                                    node_rx->curBurstId = pkt->burst_id;
-
-                                    if (node_rx->id == sink_id)
-                                    {
-                                        pkt->delay = asn - pkt->ts_generated;
-                                    }
+                                    pkt->delay = asn - pkt->ts_generated;
                                 }
                             }
                         }
-                    }
 
-                    /* Release the packet from transmitter */
-                    ListUnlink(&node_tx->packets, pkt_elem);
+                        /* RX successful */
+                        node_rx->pkt_rx_success++;
+                    }
+                    else
+                    {
+                        if (getNode(node_rx->id, nodesToTX) == NULL)
+                        {
+                            /* RX failed */
+                            node_rx->pkt_rx_failed++;
+                        }
+                    }
+                }
+
+                /* Release the packet from transmitter */
+                ListUnlink(&node_tx->packets, pkt_elem);
+            }
+            else
+            {
+                /* No nodes to TX */
+                for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
+                {
+                    Node_t *node = (Node_t *)elem->obj;
+
+                    TimeSlot_t *ts = getTimeSlot(time + 1, &node->timeslots);
+                    if (ts->type == TS_BEACON)
+                    {
+                        uint8_t draw = rand() % 100;
+                        if (draw <= prob_tx)
+                        {
+                            node->pkt_tx_beacon++;
+                        }
+                        else
+                        {
+                            node->pkt_rx_success++;
+                        }
+                    }
+                    else if(ts->type == TS_SHARED)
+                    {
+                        /* Empty timeslot */
+                        node->pkt_rx_failed++;
+                    }
                 }
             }
 
@@ -268,6 +317,40 @@ void noScheduleOutputReliabilityDelayFile(List *nodesList, bool first_time)
 
 void noScheduleOutputEnergyFile(List *nodesList, bool first_time)
 {
+    /* Opening file */
+    FILE *fp_energy_output = NULL;
+    char file_name[100];
+
+    snprintf(file_name, 100, "energy_floooding.csv");
+
+    if (first_time)
+    {
+        openFile(&fp_energy_output, file_name, "w");
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+
+            /* Header */
+            fprintf(fp_energy_output, "pkt_tx_data_%d, pkt_tx_beacon_%d, pkt_rx_%d, pkt_empty_%d, ", node->id, node->id, node->id, node->id);
+        }
+
+        fprintf(fp_energy_output, "\n");
+        first_time = false;
+    }
+    else
+    {
+        openFile(&fp_energy_output, file_name, "a");
+
+        for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
+        {
+            Node_t *node = (Node_t *)elem1->obj;
+        }
+
+        fprintf(fp_energy_output, "\n");
+    }
+
+    fclose(fp_energy_output);
 }
 
 void noSchedulePrintPktSink(uint8_t sink_id, List *nodesList)
@@ -279,4 +362,32 @@ void noSchedulePrintPktSink(uint8_t sink_id, List *nodesList)
         Packet_t *pkt = (Packet_t *)elem->obj;
         PRINTF("Pkt src(%d) DSN(%d) TS(%d) BurstId(%d) Delay(%d)\n", pkt->src_id, pkt->dsn, pkt->ts_generated, pkt->burst_id, pkt->delay);
     }
+}
+
+List *noScheduleNodesToTX(uint8_t sink_id, List *nodesList, uint16_t time, uint8_t prob_tx)
+{
+    /* List of nodes to tx */
+    List *list = (List *)malloc(sizeof(List)); memset(list, 0, sizeof(List)); ListInit(list);
+
+    for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
+    {
+        Node_t *node = (Node_t *)elem->obj;
+
+        /* Only check nodes that are not sink or sensor */
+        if (node->id != sink_id)
+        {
+            TimeSlot_t *ts = getTimeSlot(time + 1, &node->timeslots);
+
+            if(ts != NULL && ts->type == TS_SHARED)
+            {
+                uint8_t draw = rand() % 100;
+                if (ListLength(&node->packets) > 0 &&  draw <= prob_tx)
+                {
+                    ListAppend(list, (void *)node);
+                }
+            }
+        }
+    }
+
+    return (list);
 }

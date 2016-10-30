@@ -98,6 +98,8 @@ typedef struct node_t {
 /* Flooding */
     uint64_t    nextDataTs;
     uint16_t    curBurstId;
+    uint32_t    pkt_tx_beacon;
+    uint32_t    pkt_tx_data;
 /* Flooding */
 
 } Node_t;

@@ -36,7 +36,7 @@
 #define TREE_FILE "tree.dat"
 
 //#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
-#define N_TIMESLOTS_PER_FILE    525000
+#define N_TIMESLOTS_PER_FILE    5500
 //#define N_TIMESLOTS_LOG         1560        // log every 1 minute (60 s x 39 ts / 1.5 s = 1560 ts per minute)
 #define N_TIMESLOTS_LOG         1000        // log every 30 seconds
 #define MAX_N_FILES             100
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
         /* Execute the Flooding protocol with alarm application */
         if (execute_flooding)
         {
-            run_no_schedule(sink_id, 39, 850, 7, &nodesList, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
+            run_no_schedule(sink_id, 20, 850, 7, &nodesList, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
         }
     }
 
