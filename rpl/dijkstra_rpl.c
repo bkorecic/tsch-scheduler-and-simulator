@@ -13,7 +13,6 @@
 
 void dijkstraCalculateTree(List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS])
 {
-    bool ret = false;
     Node_t *v, *u;
 
     /* This queue keeps all nodes that do not have a dagrank yet */

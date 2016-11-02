@@ -155,7 +155,8 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
                     Node_t *node = (Node_t *)elem->obj;
 
                     /* TX failed */
-                    node->pkt_tx_data++;
+                    node->ts_tx_data++;
+                    node->flood_checked = true;
 
                     /* Release the pkt */
                     ListElem *pkt_elem = ListFirst(&node->packets);
@@ -173,7 +174,8 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
                 Packet_t *pkt = (Packet_t *)pkt_elem->obj;
 
                 /* TX successful */
-                node_tx->pkt_tx_data++;
+                node_tx->ts_tx_data++;
+                node_tx->flood_checked = true;
 
                 /* Get the timeslot */
                 TimeSlot_t *ts = getTimeSlot(time + 1, &node_tx->timeslots);
@@ -206,14 +208,16 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
                         }
 
                         /* RX successful */
-                        node_rx->pkt_rx_success++;
+                        node_rx->ts_rx_sucess++;
+                        node_rx->flood_checked = true;
                     }
                     else
                     {
                         if (getNode(node_rx->id, nodesToTX) == NULL)
                         {
                             /* RX failed */
-                            node_rx->pkt_rx_failed++;
+                            node_rx->ts_rx_failed++;
+                            node_rx->flood_checked = true;
                         }
                     }
                 }
@@ -234,23 +238,43 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
                         uint8_t draw = rand() % 100;
                         if (draw <= prob_tx)
                         {
-                            node->pkt_tx_beacon++;
+                            node->ts_tx_beacon++;
                         }
                         else
                         {
-                            node->pkt_rx_success++;
+                            node->ts_rx_sucess++;
                         }
+                        node->flood_checked = true;
                     }
                     else if(ts->type == TS_SHARED)
                     {
                         /* Empty timeslot */
-                        node->pkt_rx_failed++;
+                        node->ts_rx_failed++;
+                        node->flood_checked = true;
+                    }
+                    else if (ts->type == TS_IDLE)
+                    {
+                        /* Sleep timeslot */
+                        node->ts_sleep++;
+                        node->flood_checked = true;
                     }
                 }
             }
 
             /* Go to the next time slot */
             asn++;
+
+            /* Uncheck the flood for all nodes */
+            for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
+            {
+                Node_t *node = (Node_t *)elem->obj;
+
+                if (node->flood_checked == false)
+                {
+                    continue;
+                }
+                node->flood_checked = false;
+            }
         }
 
         /* Reading next file */
@@ -304,7 +328,14 @@ void noScheduleOutputReliabilityDelayFile(List *nodesList, bool first_time)
                     total_delay += pkt->delay;
                 }
 
-                fprintf(fp_reliability_delay_output, "%d, %f, %f, ", max_burst, ListLength(&node->packets)/(float)max_burst, (double)total_delay/ListLength(&node->packets));
+                if (ListLength(&node->packets) == 0)
+                {
+                    fprintf(fp_reliability_delay_output, "-1, -1, -1, ");
+                }
+                else
+                {
+                    fprintf(fp_reliability_delay_output, "%d, %f, %f, ", max_burst, ListLength(&node->packets)/(float)max_burst, (double)total_delay/(double)ListLength(&node->packets));
+                }
                 break;
             }
         }
@@ -332,7 +363,7 @@ void noScheduleOutputEnergyFile(List *nodesList, bool first_time)
             Node_t *node = (Node_t *)elem1->obj;
 
             /* Header */
-            fprintf(fp_energy_output, "pkt_tx_data_%d, pkt_tx_beacon_%d, pkt_rx_%d, pkt_empty_%d, ", node->id, node->id, node->id, node->id);
+            fprintf(fp_energy_output, "ts_tx_data_%d, ts_tx_beacon_%d, ts_rx_success_%d, ts_rx_failed_%d, ts_sleep_%d, ", node->id, node->id, node->id, node->id, node->id);
         }
 
         fprintf(fp_energy_output, "\n");
@@ -345,6 +376,8 @@ void noScheduleOutputEnergyFile(List *nodesList, bool first_time)
         for (ListElem *elem1 = ListFirst(nodesList); elem1 != NULL; elem1 = ListNext(nodesList, elem1))
         {
             Node_t *node = (Node_t *)elem1->obj;
+
+            fprintf(fp_energy_output, "%d, %d, %d, %d, %d, ", node->ts_tx_data, node->ts_tx_beacon, node->ts_rx_sucess, node->ts_rx_failed, node->ts_sleep);
         }
 
         fprintf(fp_energy_output, "\n");

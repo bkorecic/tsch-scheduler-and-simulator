@@ -5,16 +5,15 @@
 #include <limits.h>
 #include <math.h>
 #include "rpl.h"
-#include "../util/defs.h"
-#include "../util/debug.h"
-#include "../util/files.h"
 #include "mrhof_rpl.h"
 #include "tamu_rpl.h"
 #include "dijkstra_rpl.h"
+#include "../util/defs.h"
+#include "../util/debug.h"
+#include "../util/files.h"
 #include "../mcc/time_schedule.h"
 #include "../schedule/fhss.h"
 
-RPL_Neighbor_t *newNeighbor(uint16_t node_id);
 RPL_Neighbor_t *findNeighbor (Node_t *node, uint16_t neighborID);
 void rplPrintTree(List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS]);
 uint8_t probOptimalNeighbor(Node_t *txNode, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq);
@@ -65,7 +64,6 @@ int run_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uin
     /* Opening file */
     FILE *fp_prr_file = NULL;
     int res = openFile(&fp_prr_file, prr_filename, "r");
-    uint64_t count = 0;
     while (res)
     {
         PRINTF("Processing file %s\n", prr_filename);
@@ -115,10 +113,6 @@ int run_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uin
             /* Check if we need to log the execution */
             if ((asn / n_timeslots_per_log) >= log_round)
             {
-                //rplOutputRegretFile(nodesList, rpl_alg, first_general_log);
-                //rplOutputPullArms(nodesList, rpl_alg, first_general_log);
-                //rplOutputFullLog(nodesList, rpl_alg, prrMatrix, first_general_log);
-                //rplOutputThroughputFile(nodesList, rpl_alg, first_general_log);
                 rplOutputDAGRankFile(nodesList, rpl_alg, first_general_log);
                 rplOutputETXFile(nodesList, rpl_alg, prrMatrix, first_general_log);
                 log_round++;
@@ -293,7 +287,6 @@ bool rplProcessTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t p
                 bool updateDag;
                 if (rpl_alg == RPL_MRHOF)
                 {
-                    //updateDag = mrhofUpdateDAGRanks(rxNode);
                     updateDag = mrhofRxDio(rxNode, nodesList);
                 }
                 else if (rpl_alg == RPL_TAMU_MULTIHOP_RANK)

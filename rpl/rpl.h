@@ -59,6 +59,7 @@ typedef struct rpl_neighbor_t {
 int run_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uint8_t channel, char *prr_file_prefix, uint32_t n_timeslots_per_file, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka, uint32_t n_timeslots_per_log);
 void init_rpl(List *nodesList, uint8_t sink_id, uint8_t rpl_algo);
 
+RPL_Neighbor_t *newNeighbor(uint16_t node_id);
 void rplTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t cur_asn, List *dio_to_transmit, List *ka_to_transmit, uint32_t min_asn_per_dio, uint32_t min_asn_per_ka);
 void rplRxDIO(uint8_t rpl_alg, Node_t *txNode, Node_t *rxNode, uint8_t prr);
 void rplTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t cur_asn, List *ka_to_transmit, uint32_t min_asn_per_ka);
@@ -84,8 +85,9 @@ void rplOutputDAGRankFile(List *nodesList, uint8_t rpl_algo, bool first_time);
 void rplOutputETXFile(List *nodesList, uint8_t rpl_algo, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], bool first_time);
 
 uint8_t rplAveragPRR(uint8_t txID, uint8_t rxID, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS]);
-
 bool rplDetectLoop(Node_t* node, RPL_Neighbor_t *neighbor, List *nodesList);
+
+void rplSetRankInterval(uint32_t new_rpl_rank_interval);
 
 #endif // _RPL_H_
 

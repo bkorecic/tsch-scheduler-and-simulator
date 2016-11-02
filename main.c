@@ -17,12 +17,13 @@
 #include "rpl/rpl.h"
 
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
-#define EXECUTE_RPL             0
-#define EXECUTE_FLOODING        1
+#define EXECUTE_RPL             1
+#define EXECUTE_FLOODING        0
 
 #define TSCH_PROTOCOL           NO_SCHEDULE
 #define RPL_PROTOCOL            RPL_MRHOF
 #define SINK_NODE               0
+#define SENSOR_NODE             39
 #define CHANNEL                 15          /* Channel to be considered for single-channel algorithms */
 #define EXPORT_MASK_CHANNELS    0           /* This is 1 if we are going to output a mask with all channels that could be used */
 #define FHSS                    FHSS_OPENWSN    /* FHSS_OPENWSN, FHSS_DISTRIBUTED_BLACKLIST_OPTIMAL FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM */
@@ -30,6 +31,7 @@
 #define ETX_THRESHOLD           0.5
 #define DUTY_CYCLE              0.77
 #define SLOTFRAME_SIZE          13
+#define PROB_TX                 3
 
 #define DATA_FILE "data/prr_tutornet/fbr-tsch/prr40_1.dat"
 #define LINKS_PREFIX "data/prr_tutornet/fbr-tsch/prr40"
@@ -38,7 +40,7 @@
 //#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
 #define N_TIMESLOTS_PER_FILE    5500
 //#define N_TIMESLOTS_LOG         1560        // log every 1 minute (60 s x 39 ts / 1.5 s = 1560 ts per minute)
-#define N_TIMESLOTS_LOG         1000        // log every 30 seconds
+#define N_TIMESLOTS_LOG         100        // log every 30 seconds
 #define MAX_N_FILES             100
 
 void readPrrFile(char *file_name, List *nodesList, List linksList[]);
@@ -51,29 +53,40 @@ void printHelp(void)
     printf("HELP:\n");
     printf("./Scheduling <alg> <sink_id> <channel> <export_mask_channels> <ext_threshold> <file_name> <execute_sch> <links_prefix> <fhss>:\n");
     printf("<tsch_alg>: 0 - MCC_ICRA; 1 - MCC_CQAA; 2 - MCC_CQARA; 3 - TASA; \n\t4 - MODESA; 5 - MCC_ICRA_NONOPTIMAL; 6 - NO_SCHEDULE\n");
-    printf("<sink_id>: 0 to N-1\n");
+    printf("<sink_id>: sink node\n");
     printf("<channel>: 0 to 15\n");
     printf("<export_mask_channels>: 0 or 1\n");
     printf("<etx_threshold>: 0.0 to 1.0\n");
     printf("<file_name>: file name (including extension)\n");
+    printf("<links_prefix>: prefix of file names with link information\n");
     printf("<fhss>: 0 - 10 \n");
+    printf("<n_timeslots_per_file>: number of timeslots per file \n");
+    printf("<n_timeslots_log>: number of timeslots per line of the log files \n");
     printf("<execute_sch>: 0 or 1\n");
+    printf("<execute_rpl>: 0 or 1\n");
+    printf("<execute_flooding>: 0 or 1\n");
     printf("if execute_sch == 1\n");
-    printf("- <links_prefix>: prefix of file names with link information\n");
     printf("- <pkt_prob>: 0 - 100\n");
     printf("if execute_sch == 0\n");
-    printf("- <execute_rpl>: 0 or 1\n");
     printf("- if execute_rpl == 1\n");
-    printf("-- <links_prefix>: prefix of file names with link information\n");
     printf("-- <rpl_alg>: 1 - RPL_MRHOF; 2 - RPL_TAMU_MULTIHOP_RANK; 5 - RPL_WITH_DIJKSTRA\n");
     printf("-- <rank_interval>: interval in timeslots to calculate the rank on RPL\n");
+    printf("- if execute_rpl == 0\n");
+    printf("-- if execute_flooding == 1\n");
+    printf("--- <sensor_id>: sensor node\n");
+    printf("--- <slotframe_size>: number of time slots in a slotframe\n");
+    printf("--- <duty_cycle>: duty-cycle\n");
+    printf("--- <prob_tx>: probability of TX packet\n");
 }
 
 int main(int argc, char *argv[])
 {
     uint8_t sink_id, tsch_alg, channel, fhss, pkt_prob, rpl_alg;
     bool execute_sch, export_mask_channels, execute_rpl, execute_flooding;
+    uint32_t n_timeslots_per_file, n_timeslots_log;
     float etx_threshold;
+    uint8_t slotframe_size, prob_tx, sensor_id;
+    float duty_cycle;
     char file_name[50];
     char links_prefix[50];
 
@@ -92,46 +105,56 @@ int main(int argc, char *argv[])
         export_mask_channels = atoi(argv[4]);
         etx_threshold = atof(argv[5]);
         strcpy(file_name,argv[6]);
-        fhss = atoi(argv[7]);
-        execute_sch = atoi(argv[8]);
+        strcpy(links_prefix,argv[7]);
+        fhss = atoi(argv[8]);
+        n_timeslots_per_file = atoi(argv[9]);
+        n_timeslots_log = atoi(argv[10]);
+        execute_sch = atoi(argv[11]);
+        execute_rpl = atoi(argv[12]);
+        execute_flooding = atoi(argv[13]);
         if (execute_sch)
         {
-            strcpy(links_prefix,argv[9]);
-            pkt_prob = atoi(argv[10]);
-
+            pkt_prob = atoi(argv[14]);
             if (fhss == FHSS_CENTRALIZED_BLACKLIST)
             {
-                schedulSetBlacklistSize(atoi(argv[11]));
+                schedulSetBlacklistSize(atoi(argv[15]));
             }
             else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM || \
                      fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM || \
                      fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
             {
-                fhssSetEpsilonN(atoi(argv[11]));
-                fhssSetEpsilonInitN(atoi(argv[11]));
-                fhssSetEpsilonTSIncrN(atoi(argv[12]));
-                fhssSetEpsilonMaxN(atoi(argv[13]));
+                fhssSetEpsilonN(atoi(argv[15]));
+                fhssSetEpsilonInitN(atoi(argv[16]));
+                fhssSetEpsilonTSIncrN(atoi(argv[17]));
+                fhssSetEpsilonMaxN(atoi(argv[18]));
 
                 if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM)
                 {
-                    fhssSetMABFirstBestArms(atoi(argv[13]));
+                    fhssSetMABFirstBestArms(atoi(argv[19]));
                 }
                 else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM)
                 {
-                    fhssSetMABThreshooldGoodArm(atoi(argv[13]));
+                    fhssSetMABThreshooldGoodArm(atoi(argv[19]));
                 }
             }
         }
         else
         {
-            execute_rpl = atoi(argv[9]);
             if (execute_rpl)
             {
-                strcpy(links_prefix,argv[10]);
-                rpl_alg = atoi(argv[11]);
-                rplSetRankInterval(atoi(argv[12]));
+                rpl_alg = atoi(argv[14]);
+                rplSetRankInterval(atoi(argv[15]));
             }
-
+            else
+            {
+                if (execute_flooding)
+                {
+                    sensor_id = atoi(argv[14]);
+                    slotframe_size = atoi(argv[15]);
+                    duty_cycle = atof(argv[16]);
+                    prob_tx = atoi(argv[17]);
+                }
+            }
         }
     }
     /* Use hard-coded parameters */
@@ -143,13 +166,19 @@ int main(int argc, char *argv[])
         export_mask_channels = EXPORT_MASK_CHANNELS;
         etx_threshold = ETX_THRESHOLD;
         strcpy(file_name, DATA_FILE);
-        fhss = FHSS;
-        execute_sch = EXECUTE_SCHEDULE;
         strcpy(links_prefix, LINKS_PREFIX);
-        pkt_prob = PKT_PROB;
+        fhss = FHSS;
+        n_timeslots_per_file = N_TIMESLOTS_PER_FILE;
+        n_timeslots_log = N_TIMESLOTS_LOG;
+        execute_sch = EXECUTE_SCHEDULE;
         execute_rpl = EXECUTE_RPL;
-        rpl_alg = RPL_PROTOCOL;
         execute_flooding = EXECUTE_FLOODING;
+        pkt_prob = PKT_PROB;
+        rpl_alg = RPL_PROTOCOL;
+        sensor_id = SENSOR_NODE;
+        slotframe_size = SLOTFRAME_SIZE;
+        duty_cycle = DUTY_CYCLE;
+        prob_tx = PROB_TX;
     }
 
     /* Initializing the RGN */
@@ -195,9 +224,6 @@ int main(int argc, char *argv[])
     /* Print network parameters */
     printNetworkParameters(tree, linksList, &nodesList, conMatrix, intMatrix, confMatrix, etxMatrix);
 
-    /* Test the beta rng */
-    //testBeta();
-
     /* Lets choose which protocol we want to work with */
     if (tsch_alg == MCC_ICRA)
     {
@@ -225,7 +251,7 @@ int main(int argc, char *argv[])
     }
     else if (tsch_alg == NO_SCHEDULE)
     {
-        main_no_schedule(&nodesList, SLOTFRAME_SIZE, 1, DUTY_CYCLE);
+        main_no_schedule(&nodesList, slotframe_size, 1, duty_cycle);
     }
     else
     {
@@ -241,7 +267,7 @@ int main(int argc, char *argv[])
 
         /* Generate 'n_timeslots_per_file' random numbers to be used in the recpetion decision */
         List draws; memset(&draws, 0, sizeof(List)); ListInit(&draws);
-        for (uint64_t i = 0; i < N_TIMESLOTS_PER_FILE*MAX_N_FILES; i++)
+        for (uint64_t i = 0; i < n_timeslots_per_file*MAX_N_FILES; i++)
         {
             uint8_t sample = rand() % 100;
             ListAppend(&draws, (void *)sample);
@@ -250,13 +276,13 @@ int main(int argc, char *argv[])
         /* Run each type of FHSS algorithm */
         if (fhss != FHSS_ALL)
         {
-            run_schedule(fhss, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG, pkt_prob);
+            run_schedule(fhss, &draws, &nodesList, tree, sink_id, links_prefix, n_timeslots_per_file, n_timeslots_log, pkt_prob);
         }
         else
         {
             for (uint8_t i = 0; i < FHSS_ALL; i++)
             {
-                run_schedule(i, &draws, &nodesList, tree, sink_id, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG, pkt_prob);
+                run_schedule(i, &draws, &nodesList, tree, sink_id, links_prefix, n_timeslots_per_file, n_timeslots_log, pkt_prob);
             }
         }
     }
@@ -265,13 +291,13 @@ int main(int argc, char *argv[])
         /* Execute the RPL for routing tree calculation */
         if (execute_rpl)
         {
-            run_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, N_TIMESLOTS_LOG);
+            run_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, n_timeslots_per_file, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, n_timeslots_log);
         }
 
         /* Execute the Flooding protocol with alarm application */
         if (execute_flooding)
         {
-            run_no_schedule(sink_id, 20, 850, 7, &nodesList, links_prefix, N_TIMESLOTS_PER_FILE, N_TIMESLOTS_LOG);
+            run_no_schedule(sink_id, sensor_id, 850, prob_tx, &nodesList, links_prefix, n_timeslots_per_file, n_timeslots_log);
         }
     }
 
