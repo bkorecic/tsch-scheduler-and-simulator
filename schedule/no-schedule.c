@@ -5,6 +5,7 @@
 #include "../util/files.h"
 #include "../util/print.h"
 #include "../util/debug.h"
+#include "../rpl/rpl.h"
 #include "../graphs/graphs.h"
 #include "fhss.h"
 #include "no-schedule.h"
@@ -12,6 +13,8 @@
 void noScheduleOutputReliabilityDelayFile(List *nodesList, bool first_time);
 void noScheduleOutputEnergyFile(List *nodesList, bool first_time);
 List *noScheduleNodesToTX(uint8_t sink_id, List *nodesList, uint16_t time, uint8_t prob_tx);
+void noSchedulePrintPktSink(uint8_t sink_id, List *nodesList);
+bool noScheduleReceivePkt(Node_t *node_tx, Node_t *node_rx, Packet_t *pkt, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t asn);
 
 bool main_no_schedule(List *nodesList, uint8_t slotframe_size, uint8_t n_beacon_timeslot, float duty_cycle)
 {
@@ -183,47 +186,44 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
                 /* Calculate the frequency to transmit */
                 uint8_t freq = fhssOpenwsnChan(ts->freq, asn);
 
-                /* For all nodes check if one will receive */
-                for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
+                /* Lets see if our node has a preferred parent (found with RPL) */
+                RPL_Neighbor_t *parent = rplGetPreferedParent(node_tx);
+
+                if (parent == NULL)
                 {
-                    uint8_t draw = rand() % 100;
-                    Node_t *node_rx = (Node_t *)elem->obj;
-                    if (node_rx->id != node_tx->id && draw <= prrMatrix[node_tx->id][node_rx->id][freq])
+                    /* For all nodes check if one will receive */
+                    for (ListElem *elem = ListFirst(nodesList); elem != NULL; elem = ListNext(nodesList, elem))
                     {
-                        /* Check if receiver can receive the packet */
-                        if (ListLength(&node_rx->packets) < NODE_QUEUE_SIZE || node_rx->id == sink_id)
+                        Node_t *node_rx = (Node_t *)elem->obj;
+
+                        if (node_rx->id != node_tx->id && getNode(node_rx->id, nodesToTX) == NULL)
                         {
-                            if (node_rx->curBurstId < pkt->burst_id)
-                            {
-                                ListAppend(&node_rx->packets, (void *)pkt);
-
-                                /* Update the current burst ID */
-                                node_rx->curBurstId = pkt->burst_id;
-
-                                if (node_rx->id == sink_id)
-                                {
-                                    pkt->delay = asn - pkt->ts_generated;
-                                }
-                            }
+                            noScheduleReceivePkt(node_tx, node_rx, pkt, prrMatrix, freq, asn);
                         }
+                    }
 
-                        /* RX successful */
-                        node_rx->ts_rx_sucess++;
-                        node_rx->flood_checked = true;
+                    /* Release the packet from transmitter */
+                    ListUnlink(&node_tx->packets, pkt_elem);
+                }
+                else
+                {
+                    Node_t *node_rx = getNode(parent->id, nodesList);
+
+                    /* Packet received */
+                    if (noScheduleReceivePkt(node_tx, node_rx, pkt, prrMatrix, freq, asn))
+                    {
+                        /* Release the packet from transmitter */
+                        ListUnlink(&node_tx->packets, pkt_elem);
                     }
                     else
                     {
-                        if (getNode(node_rx->id, nodesToTX) == NULL)
+                        pkt->n_retries++;
+                        if (pkt->n_retries == MAX_PKT_RETRIES)
                         {
-                            /* RX failed */
-                            node_rx->ts_rx_failed++;
-                            node_rx->flood_checked = true;
+                            ListUnlink(&node_tx->packets, pkt_elem);
                         }
                     }
                 }
-
-                /* Release the packet from transmitter */
-                ListUnlink(&node_tx->packets, pkt_elem);
             }
             else
             {
@@ -286,6 +286,46 @@ bool run_no_schedule(uint8_t sink_id, uint8_t sensor_id, uint32_t average_gen_pk
     noSchedulePrintPktSink(sink_id, nodesList);
 
     return (true);
+}
+
+bool noScheduleReceivePkt(Node_t *node_tx, Node_t *node_rx, Packet_t *pkt, uint8_t prrMatrix[][MAX_NODES][NUM_CHANNELS], uint8_t freq, uint64_t asn)
+{
+    uint8_t draw = rand() % 100;
+
+    if (draw <= prrMatrix[node_tx->id][node_rx->id][freq])
+    {
+        /* Check if receiver can receive the packet */
+        if (ListLength(&node_rx->packets) < NODE_QUEUE_SIZE || node_rx->type == SINK)
+        {
+            if (node_rx->curBurstId < pkt->burst_id)
+            {
+                ListAppend(&node_rx->packets, (void *)pkt);
+
+                /* Update the current burst ID */
+                node_rx->curBurstId = pkt->burst_id;
+                pkt->n_retries = 0;
+
+                if (node_rx->type == SINK)
+                {
+                    pkt->delay = asn - pkt->ts_generated;
+                }
+            }
+        }
+
+        /* RX successful */
+        node_rx->ts_rx_sucess++;
+        node_rx->flood_checked = true;
+
+        return (true);
+    }
+    else
+    {
+        /* RX failed */
+        node_rx->ts_rx_failed++;
+        node_rx->flood_checked = true;
+
+        return (false);
+    }
 }
 
 void noScheduleOutputReliabilityDelayFile(List *nodesList, bool first_time)
