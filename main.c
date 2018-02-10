@@ -63,15 +63,14 @@ void printHelp(void)
     printf("<n_timeslots_per_file>: number of timeslots per file \n");
     printf("<n_timeslots_log>: number of timeslots per line of the log files \n");
     printf("<execute_sch>: 0 or 1\n");
-    printf("<execute_rpl>: 0 or 1\n");
-    printf("<execute_flooding>: 0 or 1\n");
     printf("if execute_sch == 1\n");
     printf("- <pkt_prob>: 0 - 100\n");
     printf("if execute_sch == 0\n");
-    printf("- if execute_rpl == 1\n");
-    printf("-- <rpl_alg>: 1 - RPL_MRHOF; 2 - RPL_TAMU_MULTIHOP_RANK; 5 - RPL_WITH_DIJKSTRA\n");
-    printf("-- <rank_interval>: interval in timeslots to calculate the rank on RPL\n");
-    printf("- if execute_rpl == 0\n");
+    printf("- <execute_rpl>: 0 or 1\n");
+    printf("-- if execute_rpl == 1\n");
+    printf("--- <rpl_alg>: 1 - RPL_MRHOF; 2 - RPL_TAMU_MULTIHOP_RANK; 5 - RPL_WITH_DIJKSTRA\n");
+    printf("--- <rank_interval>: interval in timeslots to calculate the rank on RPL\n");
+    printf("- <execute_flooding>: 0 or 1\n");
     printf("-- if execute_flooding == 1\n");
     printf("--- <sensor_id>: sensor node\n");
     printf("--- <slotframe_size>: number of time slots in a slotframe\n");
@@ -99,61 +98,59 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        tsch_alg = atoi(argv[1]);
-        sink_id = atoi(argv[2]);
-        channel = atoi(argv[3]);
-        export_mask_channels = atoi(argv[4]);
-        etx_threshold = atof(argv[5]);
-        strcpy(file_name,argv[6]);
-        strcpy(links_prefix,argv[7]);
-        fhss = atoi(argv[8]);
-        n_timeslots_per_file = atoi(argv[9]);
-        n_timeslots_log = atoi(argv[10]);
-        execute_sch = atoi(argv[11]);
-        execute_rpl = atoi(argv[12]);
-        execute_flooding = atoi(argv[13]);
+        uint8_t arg_i = 1;
+        tsch_alg = atoi(argv[arg_i++]);
+        sink_id = atoi(argv[arg_i++]);
+        channel = atoi(argv[arg_i++]);
+        export_mask_channels = atoi(argv[arg_i++]);
+        etx_threshold = atof(argv[arg_i++]);
+        strcpy(file_name,argv[arg_i++]);
+        strcpy(links_prefix,argv[arg_i++]);
+        fhss = atoi(argv[arg_i++]);
+        n_timeslots_per_file = atoi(argv[arg_i++]);
+        n_timeslots_log = atoi(argv[arg_i++]);
+        execute_sch = atoi(argv[arg_i++]);
         if (execute_sch)
         {
-            pkt_prob = atoi(argv[14]);
+            pkt_prob = atoi(argv[arg_i++]);
             if (fhss == FHSS_CENTRALIZED_BLACKLIST)
             {
-                schedulSetBlacklistSize(atoi(argv[15]));
+                schedulSetBlacklistSize(atoi(argv[arg_i++]));
             }
             else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM || \
                      fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM || \
                      fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_BEST_ARM)
             {
-                fhssSetEpsilonN(atoi(argv[15]));
-                fhssSetEpsilonInitN(atoi(argv[16]));
-                fhssSetEpsilonTSIncrN(atoi(argv[17]));
-                fhssSetEpsilonMaxN(atoi(argv[18]));
+                fhssSetEpsilonN(atoi(argv[arg_i++]));
+                fhssSetEpsilonInitN(atoi(argv[arg_i++]));
+                fhssSetEpsilonTSIncrN(atoi(argv[arg_i++]));
+                fhssSetEpsilonMaxN(atoi(argv[arg_i++]));
 
                 if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_BEST_ARM)
                 {
-                    fhssSetMABFirstBestArms(atoi(argv[19]));
+                    fhssSetMABFirstBestArms(atoi(argv[arg_i++]));
                 }
                 else if (fhss == FHSS_DISTRIBUTED_BLACKLIST_MAB_FIRST_GOOD_ARM)
                 {
-                    fhssSetMABThreshooldGoodArm(atoi(argv[19]));
+                    fhssSetMABThreshooldGoodArm(atoi(argv[arg_i++]));
                 }
             }
         }
         else
         {
+            execute_rpl = atoi(argv[arg_i++]);
             if (execute_rpl)
             {
-                rpl_alg = atoi(argv[14]);
-                rplSetRankInterval(atoi(argv[15]));
+                rpl_alg = atoi(argv[arg_i++]);
+                rplSetRankInterval(atoi(argv[arg_i++]));
             }
-            else
+            execute_flooding = atoi(argv[arg_i++]);
+            if (execute_flooding)
             {
-                if (execute_flooding)
-                {
-                    sensor_id = atoi(argv[14]);
-                    slotframe_size = atoi(argv[15]);
-                    duty_cycle = atof(argv[16]);
-                    prob_tx = atoi(argv[17]);
-                }
+                sensor_id = atoi(argv[arg_i++]);
+                slotframe_size = atoi(argv[arg_i++]);
+                duty_cycle = atof(argv[arg_i++]);
+                prob_tx = atoi(argv[arg_i++]);
             }
         }
     }
