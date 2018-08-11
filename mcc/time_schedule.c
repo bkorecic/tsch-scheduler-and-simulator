@@ -491,6 +491,14 @@ void printTimeSlots(List *nodesList)
             {
                 PRINTF("SH) ");
             }
+            else if (ts->type == TS_BEACON)
+            {
+                PRINTF("BE) ");
+            }
+            else if (ts->type == TS_IDLE)
+            {
+                PRINTF("ID) ");
+            }
         }
         PRINTF("]\n");
     }

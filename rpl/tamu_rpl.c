@@ -41,7 +41,7 @@ bool tamuSampleNodeMultiHopRank(Node_t *node, List *nodesList)
 
     node->synced = false;
 
-    /* Clean the prefered parent field of all neighbors */
+    /* Clean the prefered parent and createLoop field of all neighbors */
     for(ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
@@ -51,6 +51,7 @@ bool tamuSampleNodeMultiHopRank(Node_t *node, List *nodesList)
             oldPreferedDagrank = rplTamuGetRank(neighbor);
         }
         neighbor->prefered_parent = false;
+        neighbor->createLoop = false;
     }
 
     /* Lets sample all neighbors */
@@ -70,15 +71,35 @@ bool tamuSampleNodeMultiHopRank(Node_t *node, List *nodesList)
         }
     }
 
-    /* Lets find what is the stable neighbor with minimum Rank + Beta */
-    for(ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
+    while (rplDetectLoop(node, min_rank_beta_neighbor, nodesList) || min_rank_beta_neighbor == NULL)
     {
-        RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
-
-        if (neighbor->stable && rplTamuGetRank(neighbor) < min_rank_beta_sample && !rplDetectLoop(node, neighbor, nodesList))
+        /* Lets find what is the stable neighbor with minimum Rank + Beta */
+        bool foundOneNewNeighbor = false;
+        for(ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
         {
-            min_rank_beta_sample = rplTamuGetRank(neighbor);
-            min_rank_beta_neighbor = neighbor;
+            RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
+
+            if (neighbor->stable && rplTamuGetRank(neighbor) < min_rank_beta_sample && !neighbor->createLoop)
+            {
+                min_rank_beta_sample = rplTamuGetRank(neighbor);
+                min_rank_beta_neighbor = neighbor;
+
+                foundOneNewNeighbor = true;
+            }
+        }
+
+        if (rplDetectLoop(node, min_rank_beta_neighbor, nodesList) && min_rank_beta_neighbor != NULL)
+        {
+            min_rank_beta_neighbor->createLoop = true;
+            min_rank_beta_sample = MAXDAGRANK;
+            node->loops_detected++;
+        }
+
+        if (!foundOneNewNeighbor)
+        {
+            min_rank_beta_sample = oldPreferedDagrank;
+            min_rank_beta_neighbor = oldPreferedParent;
+            break;
         }
     }
 
@@ -137,7 +158,7 @@ uint16_t rplTamuGetRank(RPL_Neighbor_t *neighbor)
 
     if (neighbor->beta_sample == 0)
     {
-        rank_increase = DEFAULTLINKCOST * 2 * MINHOPRANKINCREASE;
+        rank_increase = rplGetDefaultLinkCost() * 2 * MINHOPRANKINCREASE;
     }
     else
     {

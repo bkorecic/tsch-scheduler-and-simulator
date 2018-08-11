@@ -169,6 +169,7 @@ Packet_t *newPacket(uint16_t dsn, uint16_t src_id, uint64_t ts_generated, uint16
 
     pkt->dsn = dsn;
     pkt->src_id = src_id;
+    pkt->relay_id = src_id;
     pkt->ts_generated = ts_generated;
     pkt->burst_id = burst_id;
 
@@ -401,7 +402,12 @@ void printListNodes(List *nodesList)
         {
             TimeSlot_t *ts = (TimeSlot_t *)elem2->obj;
 
-            PRINTF("[%d,%d,%s] ", ts->time, ts->freq, (ts->type == TS_RX) ? "RX" : "TX");
+            if (ts->type == TS_BEACON) PRINTF("[%d,%d,%s] ", ts->time, ts->freq, ("BEACON"));
+            else if (ts->type == TS_SHARED) PRINTF("[%d,%d,%s] ", ts->time, ts->freq, ("SHARED"));
+            else if (ts->type == TS_IDLE) PRINTF("[%d,%d,%s] ", ts->time, ts->freq, ("IDLE"));
+            else if (ts->type == TS_TX) PRINTF("[%d,%d,%s] ", ts->time, ts->freq, ("TX"));
+            else if (ts->type == TS_RX) PRINTF("[%d,%d,%s] ", ts->time, ts->freq, ("RX"));
+            else PRINTF("[%d,%d,%s] ", ts->time, ts->freq, ("UNDEFINED"));
         }
         PRINTF("\n");
     }

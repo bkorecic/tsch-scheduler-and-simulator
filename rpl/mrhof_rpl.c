@@ -65,27 +65,54 @@ bool mrhofUpdateDAGRanks(Node_t *node, List *nodesList)
     /* Set the synced flag */
     node->synced = false;
 
-    /* Go over all neighbors and check which should be our prefered parent */
+    /* Clean up the createLoop flag of all neighbors */
     for (ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
     {
         RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
+        neighbor->createLoop = false;
+    }
 
-        uint16_t neighborRank = mrhofGetRank(neighbor);
-        if (neighbor->stable && neighborRank < min_dagRank && !rplDetectLoop(node, neighbor, nodesList))
+    while (rplDetectLoop(node, preferedParent, nodesList) || preferedParent == NULL)
+    {
+        /* Go over all neighbors and check which should be our prefered parent */
+        bool foundOneNewNeighbor = false;
+        for (ListElem *elem = ListFirst(&node->candidate_parents); elem != NULL; elem = ListNext(&node->candidate_parents, elem))
         {
-            /* This neighbor has a lower Rank */
-            min_dagRank = neighborRank;
-            preferedParent = neighbor;
+            RPL_Neighbor_t *neighbor = (RPL_Neighbor_t *)elem->obj;
+
+            uint16_t neighborRank = mrhofGetRank(neighbor);
+            if (neighbor->stable && neighborRank < min_dagRank && !neighbor->createLoop)
+            {
+                /* This neighbor has a lower Rank */
+                min_dagRank = neighborRank;
+                preferedParent = neighbor;
+
+                foundOneNewNeighbor = true;
+            }
+
+            if (neighbor->prefered_parent)
+            {
+                oldPreferedParent = neighbor;
+                oldPreferedDagrank = neighborRank;
+            }
+
+            /* Clean the preferedparent field */
+            neighbor->prefered_parent = false;
         }
 
-        if (neighbor->prefered_parent)
+        if (rplDetectLoop(node, preferedParent, nodesList) && preferedParent != NULL)
         {
-            oldPreferedParent = neighbor;
-            oldPreferedDagrank = neighborRank;
+            preferedParent->createLoop = true;
+            min_dagRank = MAXDAGRANK;
+            node->loops_detected++;
         }
 
-        /* Clean the preferedparent field */
-        neighbor->prefered_parent = false;
+        if (!foundOneNewNeighbor)
+        {
+            min_dagRank = oldPreferedDagrank;
+            preferedParent = oldPreferedParent;
+            break;
+        }
     }
 
     if (preferedParent != NULL)
@@ -113,7 +140,7 @@ uint16_t mrhofGetRank(RPL_Neighbor_t *neighbor)
 
     if (neighbor->rx_success == 0)
     {
-        rank_increase = DEFAULTLINKCOST * 2 * MINHOPRANKINCREASE;
+        rank_increase = rplGetDefaultLinkCost() * 2 * MINHOPRANKINCREASE;
     }
     else
     {

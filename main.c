@@ -17,8 +17,8 @@
 #include "rpl/rpl.h"
 
 #define EXECUTE_SCHEDULE        0           /* This is 1 if we are going to simulate the schedule */
-#define EXECUTE_RPL             0
-#define EXECUTE_FLOODING        1
+#define EXECUTE_RPL             1
+#define EXECUTE_FLOODING        0
 
 #define TSCH_PROTOCOL           NO_SCHEDULE
 #define RPL_PROTOCOL            RPL_MRHOF
@@ -32,9 +32,10 @@
 #define DUTY_CYCLE              0.77
 #define SLOTFRAME_SIZE          13
 #define PROB_TX                 3
+#define LOG_TYPE                32          /* All 6 logs */
 
-#define DATA_FILE "data/prr_tutornet/fbr-tsch/prr40_1.dat"
-#define LINKS_PREFIX "data/prr_tutornet/fbr-tsch/prr40"
+#define DATA_FILE "data/prr_tutornet/rpl-tamu/prr40_1.dat"
+#define LINKS_PREFIX "data/prr_tutornet/rpl-tamu/prr40"
 #define TREE_FILE "tree.dat"
 
 //#define N_TIMESLOTS_PER_FILE    23400       // 15 minutes per file and 39 time slots per 1.5 second (900 s x 39 ts / 1.5 s = 23400 ts per file)
@@ -62,6 +63,7 @@ void printHelp(void)
     printf("<fhss>: 0 - 10 \n");
     printf("<n_timeslots_per_file>: number of timeslots per file \n");
     printf("<n_timeslots_log>: number of timeslots per line of the log files \n");
+    printf("<log_type>: bitmap with log types to output \n");
     printf("<execute_sch>: 0 or 1\n");
     printf("if execute_sch == 1\n");
     printf("- <pkt_prob>: 0 - 100\n");
@@ -70,6 +72,7 @@ void printHelp(void)
     printf("-- if execute_rpl == 1\n");
     printf("--- <rpl_alg>: 1 - RPL_MRHOF; 2 - RPL_TAMU_MULTIHOP_RANK; 5 - RPL_WITH_DIJKSTRA\n");
     printf("--- <rank_interval>: interval in timeslots to calculate the rank on RPL\n");
+    printf("--- <default_link_cost>: default RPL link cost (default ETX)\n");
     printf("- <execute_flooding>: 0 or 1\n");
     printf("-- if execute_flooding == 1\n");
     printf("--- <sensor_id>: sensor node\n");
@@ -80,7 +83,7 @@ void printHelp(void)
 
 int main(int argc, char *argv[])
 {
-    uint8_t sink_id, tsch_alg, channel, fhss, pkt_prob, rpl_alg;
+    uint8_t sink_id, tsch_alg, channel, fhss, pkt_prob, rpl_alg, log_type;
     bool execute_sch, export_mask_channels, execute_rpl, execute_flooding;
     uint32_t n_timeslots_per_file, n_timeslots_log;
     float etx_threshold;
@@ -109,6 +112,7 @@ int main(int argc, char *argv[])
         fhss = atoi(argv[arg_i++]);
         n_timeslots_per_file = atoi(argv[arg_i++]);
         n_timeslots_log = atoi(argv[arg_i++]);
+        log_type = atoi(argv[arg_i++]);
         execute_sch = atoi(argv[arg_i++]);
         if (execute_sch)
         {
@@ -143,6 +147,7 @@ int main(int argc, char *argv[])
             {
                 rpl_alg = atoi(argv[arg_i++]);
                 rplSetRankInterval(atoi(argv[arg_i++]));
+                rplSetDefaultLinkCost(atoi(argv[arg_i++]));
             }
             execute_flooding = atoi(argv[arg_i++]);
             if (execute_flooding)
@@ -176,6 +181,7 @@ int main(int argc, char *argv[])
         slotframe_size = SLOTFRAME_SIZE;
         duty_cycle = DUTY_CYCLE;
         prob_tx = PROB_TX;
+        log_type = LOG_TYPE;
     }
 
     /* Initializing the RGN */
@@ -255,6 +261,9 @@ int main(int argc, char *argv[])
         EXIT("Invalid TSCH algorithm %d\n", tsch_alg);
     }
 
+    /* Print network parameters */
+    printNetworkParameters(tree, linksList, &nodesList, conMatrix, intMatrix, confMatrix, etxMatrix);
+
     /* Execute the schedule */
     if (execute_sch)
     {
@@ -288,7 +297,7 @@ int main(int argc, char *argv[])
         /* Execute the RPL for routing tree calculation */
         if (execute_rpl)
         {
-            run_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, n_timeslots_per_file, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, n_timeslots_log);
+            run_rpl(rpl_alg, &nodesList, tree, sink_id, channel, links_prefix, n_timeslots_per_file, N_TIMESLOTS_PER_DIO, N_TIMESLOTS_PER_KA, N_TIMESLOTS_PER_DATA, n_timeslots_log, log_type);
         }
 
         /* Execute the Flooding protocol with alarm application */

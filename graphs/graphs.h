@@ -93,6 +93,8 @@ typedef struct node_t {
     bool        synced;
     uint64_t    nextAsnToTxDIO;     /* Next ASN to transmit a DIO message */
     uint64_t    nextAsnToTxKA;      /* Next ASN to transmit a Keep Alive message */
+    uint64_t    nextAsnToTxData;    /* Next ASN to transmit a Data message */
+    uint32_t    loops_detected;
 /* RPL */
 
 /* Flooding */
@@ -156,10 +158,15 @@ typedef struct timeslot_t {
 
 typedef struct packet_t {
     uint16_t        dsn;
-    uint16_t        src_id;
+    uint16_t        src_id;             /* Original source node */
+    uint16_t        relay_id;           /* Current relay node */
     uint8_t         n_retries;          /* Current number of transmission retries */
     uint8_t         n_transmissions;    /* Number of times the packet was transmitted (or re-transmitted) */
     uint8_t         n_hops;             /* Number of hops the packet passed thru */
+/* RPL */
+    uint32_t        nextAsnToTxData;
+    bool            sinkReceived;
+/* RPL */
 /* Flooding */
     uint64_t        ts_generated;
     uint16_t        burst_id;
