@@ -62,7 +62,7 @@
 	"../util/debug.h"
 	"../mcc/time_schedule.h"
 
-1529781277 me_schedule.h"
+1533253165 me_schedule.h"
 
 1421126836 /mnt/hgfs/pedrohenriquegomes/USC/Dev/research/util/debug.h
 
@@ -445,7 +445,7 @@
 	"../graphs/graphs.h"
 	"../schedule/fhss.h"
 
-1529789660 le/fhss.h"
+1533602915 le/fhss.h"
 
 1436236815 source:/home/pedro/Dropbox/Dev/research/scheduling_algorithms/util/list.c
 	<stdio.h>
@@ -2411,7 +2411,7 @@
 	"schedule/fhss.h"
 	"rpl/rpl.h"
 
-1529789878 "
+1533769198 "
 
 1463790481 /media/Data/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.h
 	"../util/list.h"
@@ -3132,7 +3132,7 @@
 	"fhss.h"
 	"no-schedule.h"
 
-1478064560 le.h"
+1533253167 le.h"
 
 1477805708 /media/Data/USC/4_Dev/1_scheduling_algorithms/schedule/no-schedule.h
 
@@ -3211,7 +3211,7 @@
 	"../util/defs.h"
 	"../util/gen_beta.h"
 
-1529789716 en_beta.h"
+1533253161 en_beta.h"
 
 1476465946 source:/media/Data/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.c
 	<stdint.h>
@@ -3248,7 +3248,7 @@
 	"../util/list.h"
 	"../util/defs.h"
 
-1529781277 source:d:\usc\4_dev\1_scheduling_algorithms\graphs\graphs.c
+1533253165 source:d:\usc\4_dev\1_scheduling_algorithms\graphs\graphs.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3258,7 +3258,7 @@
 	"../util/debug.h"
 	"../mcc/time_schedule.h"
 
-1529789643 d:\usc\4_dev\1_scheduling_algorithms\graphs\graphs.h
+1533091419 d:\usc\4_dev\1_scheduling_algorithms\graphs\graphs.h
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
@@ -3274,7 +3274,7 @@
 	"../util/list.h"
 	"../graphs/graphs.h"
 
-1529789878 source:d:\usc\4_dev\1_scheduling_algorithms\main.c
+1553214265 source:d:\usc\4_dev\1_scheduling_algorithms\main.c
 	<string.h>
 	<stdio.h>
 	<stdlib.h>
@@ -3329,14 +3329,14 @@
 1468539688 d:\usc\4_dev\1_scheduling_algorithms\schedule\fhss.h
 	<stdint.h>
 
-1529789507 d:\usc\4_dev\1_scheduling_algorithms\rpl\rpl.h
+1553212420 d:\usc\4_dev\1_scheduling_algorithms\rpl\rpl.h
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
 	"../util/defs.h"
 	"../graphs/graphs.h"
 
-1474086786 source:d:\usc\4_dev\1_scheduling_algorithms\mcc\cms_tree.c
+1533253170 source:d:\usc\4_dev\1_scheduling_algorithms\mcc\cms_tree.c
 	<string.h>
 	<stdio.h>
 	<stdlib.h>
@@ -3409,7 +3409,7 @@
 	"../util/list.h"
 	"../util/defs.h"
 
-1529795420 source:d:\usc\4_dev\1_scheduling_algorithms\rpl\mrhof_rpl.c
+1530228999 source:d:\usc\4_dev\1_scheduling_algorithms\rpl\mrhof_rpl.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3430,7 +3430,7 @@
 	"../util/list.h"
 	"../util/defs.h"
 
-1529789660 source:d:\usc\4_dev\1_scheduling_algorithms\rpl\rpl.c
+1553362315 source:d:\usc\4_dev\1_scheduling_algorithms\rpl\rpl.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3452,7 +3452,7 @@
 	<stdbool.h>
 	"rpl.h"
 
-1529789716 source:d:\usc\4_dev\1_scheduling_algorithms\rpl\tamu_rpl.c
+1533253161 source:d:\usc\4_dev\1_scheduling_algorithms\rpl\tamu_rpl.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3478,7 +3478,7 @@
 	"fhss.h"
 	"schedule.h"
 
-1478064560 source:d:\usc\4_dev\1_scheduling_algorithms\schedule\no-schedule.c
+1533253167 source:d:\usc\4_dev\1_scheduling_algorithms\schedule\no-schedule.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3491,7 +3491,7 @@
 	"fhss.h"
 	"no-schedule.h"
 
-1477786138 source:d:\usc\4_dev\1_scheduling_algorithms\schedule\schedule.c
+1533253168 source:d:\usc\4_dev\1_scheduling_algorithms\schedule\schedule.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3579,7 +3579,7 @@
 	"defs.h"
 	"../util/print.h"
 
-1529781277 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.c
+1533253165 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3588,329 +3588,6 @@
 	"../util/defs.h"
 	"../util/debug.h"
 	"../mcc/time_schedule.h"
-
-1529789643 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.h
-	<stdint.h>
-	<stdbool.h>
-	"../util/list.h"
-	"../util/defs.h"
-
-1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/list.h
-
-1474086786 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/defs.h
-
-1477091654 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/debug.h
-
-1463800458 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.h
-	"../util/list.h"
-	"../graphs/graphs.h"
-
-1529789878 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/main.c
-	<string.h>
-	<stdio.h>
-	<stdlib.h>
-	<time.h>
-	<float.h>
-	"util/debug.h"
-	"util/files.h"
-	"util/print.h"
-	"util/defs.h"
-	"mcc/mcc.h"
-	"mcc/cms_tree.h"
-	"tasa/tasa.h"
-	"modesa/modesa.h"
-	"schedule/schedule.h"
-	"schedule/no-schedule.h"
-	"schedule/fhss.h"
-	"rpl/rpl.h"
-
-1460269394 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/files.h
-	<stdint.h>
-	<stdio.h>
-	<stdlib.h>
-	<stdbool.h>
-	"list.h"
-	"../graphs/graphs.h"
-
-1460408766 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/print.h
-	<stdint.h>
-	<stdio.h>
-	<stdlib.h>
-	<stdbool.h>
-
-1463790482 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.h
-	"../util/list.h"
-	"../graphs/graphs.h"
-
-1444284232 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/cms_tree.h
-	"../graphs/graphs.h"
-
-1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/tasa.h
-	<stdint.h>
-	"../graphs/graphs.h"
-
-1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/modesa/modesa.h
-	<stdint.h>
-	"../graphs/graphs.h"
-
-1476418352 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.h
-
-1477805708 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/no-schedule.h
-
-1468539688 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.h
-	<stdint.h>
-
-1529789507 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.h
-	<stdint.h>
-	<stdbool.h>
-	"../util/list.h"
-	"../util/defs.h"
-	"../graphs/graphs.h"
-
-1474086786 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/cms_tree.c
-	<string.h>
-	<stdio.h>
-	<stdlib.h>
-	<limits.h>
-	<float.h>
-	"cms_tree.h"
-	"../graphs/graphs.h"
-	"../util/defs.h"
-	"../util/debug.h"
-
-1474086786 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/graph_coloring.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	"../util/debug.h"
-	"graph_coloring.h"
-
-1457217970 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/graph_coloring.h
-	<stdbool.h>
-	"../graphs/graphs.h"
-
-1463800524 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	"../graphs/graphs.h"
-	"../util/list.h"
-	"../util/debug.h"
-	"../util/files.h"
-	"../util/defs.h"
-	"../graphs/graphs.h"
-	"cms_tree.h"
-	"graph_coloring.h"
-	"time_schedule.h"
-
-1444284234 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/modesa/modesa.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	"modesa.h"
-	"../util/debug.h"
-
-1477871870 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/dijkstra_rpl.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<float.h>
-	<limits.h>
-	"dijkstra_rpl.h"
-	"rpl.h"
-	"../util/defs.h"
-	"../util/debug.h"
-	"../util/files.h"
-	"../mcc/time_schedule.h"
-	"../schedule/fhss.h"
-
-1477871952 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/dijkstra_rpl.h
-	<stdint.h>
-	<stdbool.h>
-	"rpl.h"
-	"../graphs/graphs.h"
-	"../util/list.h"
-	"../util/defs.h"
-
-1529795420 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<float.h>
-	<limits.h>
-	"mrhof_rpl.h"
-	"rpl.h"
-	"../util/defs.h"
-	"../util/debug.h"
-	"../util/files.h"
-	"../mcc/time_schedule.h"
-	"../schedule/fhss.h"
-
-1477093562 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.h
-	<stdint.h>
-	<stdbool.h>
-	"../graphs/graphs.h"
-	"../util/list.h"
-	"../util/defs.h"
-
-1529789716 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<float.h>
-	<limits.h>
-	<float.h>
-	"tamu_rpl.h"
-	"rpl.h"
-	"../util/defs.h"
-	"../util/gen_beta.h"
-
-1477093892 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.h
-	<stdint.h>
-	<stdbool.h>
-	"rpl.h"
-
-1474429318 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.h
-
-1461084480 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<stdint.h>
-	"../util/list.h"
-	"../util/files.h"
-	"../util/debug.h"
-	"../graphs/graphs.h"
-	"fhss.h"
-	"schedule.h"
-
-1478064560 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/no-schedule.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	"../util/list.h"
-	"../util/files.h"
-	"../util/print.h"
-	"../util/debug.h"
-	"../rpl/rpl.h"
-	"../graphs/graphs.h"
-	"fhss.h"
-	"no-schedule.h"
-
-1477786138 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	"../util/list.h"
-	"../util/files.h"
-	"../util/print.h"
-	"../util/debug.h"
-	"../graphs/graphs.h"
-	"fhss.h"
-	"schedule.h"
-
-1444284234 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/coloring.c
-	<string.h>
-	<stdlib.h>
-	"coloring.h"
-
-1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/coloring.h
-	<stdint.h>
-	<stdbool.h>
-	"../util/list.h"
-	"../graphs/graphs.h"
-
-1444284234 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/matching.c
-	<stdio.h>
-	"matching.h"
-
-1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/matching.h
-	<stdbool.h>
-	<stdint.h>
-	"../util/list.h"
-	"../graphs/graphs.h"
-
-1444284234 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/tasa.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	"tasa.h"
-	"matching.h"
-	"coloring.h"
-	"../util/list.h"
-	"../util/debug.h"
-	"../util/files.h"
-	"../util/files.h"
-	"../util/defs.h"
-	"../graphs/graphs.h"
-
-1477091716 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/files.c
-	<sys/stat.h>
-	<stdint.h>
-	<stdlib.h>
-	<string.h>
-	"files.h"
-	"debug.h"
-	"defs.h"
-	"../graphs/graphs.h"
-	"../schedule/fhss.h"
-
-1476465946 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.c
-	<stdint.h>
-	<stdlib.h>
-	<string.h>
-	<stdbool.h>
-	"../util/list.h"
-	"../util/defs.h"
-	"debug.h"
-	"files.h"
-	"gen_beta.h"
-
-1444284234 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/list.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<stdbool.h>
-	"list.h"
-	"defs.h"
-
-1463796656 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/print.c
-	<sys/stat.h>
-	<stdint.h>
-	<stdlib.h>
-	<string.h>
-	<float.h>
-	"files.h"
-	"debug.h"
-	"defs.h"
-	"../util/print.h"
-
-1526784111 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.c
-	<stdio.h>
-	<string.h>
-	<stdlib.h>
-	"time_schedule.h"
-	"../util/debug.h"
-	"../graphs/graphs.h"
-
-1529789660 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<float.h>
-	<limits.h>
-	<math.h>
-	"rpl.h"
-	"mrhof_rpl.h"
-	"tamu_rpl.h"
-	"dijkstra_rpl.h"
-	"../util/defs.h"
-	"../util/debug.h"
-	"../util/files.h"
-	"../mcc/time_schedule.h"
-	"../schedule/fhss.h"
-
-1533253165 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -3925,6 +3602,10 @@
 	<stdbool.h>
 	"../util/list.h"
 	"../util/defs.h"
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
 
 1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/list.h
 
@@ -3933,6 +3614,8 @@
 1477091654 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/debug.h
 
 1463800458 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
 	"../util/list.h"
 	"../graphs/graphs.h"
 
@@ -3954,8 +3637,31 @@
 	"schedule/no-schedule.h"
 	"schedule/fhss.h"
 	"rpl/rpl.h"
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+	"schedule/no-schedule.h"
+	"schedule/fhss.h"
+	"rpl/rpl.h"
 
 1460269394 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
 	<stdint.h>
 	<stdio.h>
 	<stdlib.h>
@@ -3968,19 +3674,30 @@
 	<stdio.h>
 	<stdlib.h>
 	<stdbool.h>
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
 
 1463790482 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
 	"../util/list.h"
 	"../graphs/graphs.h"
 
 1444284232 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/cms_tree.h
 	"../graphs/graphs.h"
+	"../graphs/graphs.h"
 
 1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/tasa.h
 	<stdint.h>
 	"../graphs/graphs.h"
+	<stdint.h>
+	"../graphs/graphs.h"
 
 1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
 	<stdint.h>
 	"../graphs/graphs.h"
 
@@ -3990,8 +3707,14 @@
 
 1468539688 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.h
 	<stdint.h>
+	<stdint.h>
 
 1533601891 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
@@ -4008,6 +3731,15 @@
 	"../graphs/graphs.h"
 	"../util/defs.h"
 	"../util/debug.h"
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
 
 1474086786 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/graph_coloring.c
 	<stdio.h>
@@ -4015,8 +3747,15 @@
 	<string.h>
 	"../util/debug.h"
 	"graph_coloring.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
 
 1457217970 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
 	<stdbool.h>
 	"../graphs/graphs.h"
 
@@ -4033,14 +3772,18 @@
 	"cms_tree.h"
 	"graph_coloring.h"
 	"time_schedule.h"
-
-1526784111 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.c
 	<stdio.h>
-	<string.h>
 	<stdlib.h>
-	"time_schedule.h"
-	"../util/debug.h"
+	<string.h>
 	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
 
 1444284234 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/modesa/modesa.c
 	<stdio.h>
@@ -4048,8 +3791,25 @@
 	<string.h>
 	"modesa.h"
 	"../util/debug.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
 
 1477871870 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/dijkstra_rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	"dijkstra_rpl.h"
+	"rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../mcc/time_schedule.h"
+	"../schedule/fhss.h"
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -4070,8 +3830,26 @@
 	"../graphs/graphs.h"
 	"../util/list.h"
 	"../util/defs.h"
+	<stdint.h>
+	<stdbool.h>
+	"rpl.h"
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/defs.h"
 
 1530228999 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	"mrhof_rpl.h"
+	"rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../mcc/time_schedule.h"
+	"../schedule/fhss.h"
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -4091,28 +3869,11 @@
 	"../graphs/graphs.h"
 	"../util/list.h"
 	"../util/defs.h"
-
-1533602915 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	<float.h>
-	<limits.h>
-	<math.h>
-	"rpl.h"
-	"mrhof_rpl.h"
-	"tamu_rpl.h"
-	"dijkstra_rpl.h"
-	"../util/defs.h"
-	"../util/debug.h"
-	"../util/files.h"
-	"../mcc/time_schedule.h"
-	"../schedule/fhss.h"
-
-1477093892 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.h
 	<stdint.h>
 	<stdbool.h>
-	"rpl.h"
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/defs.h"
 
 1533253161 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.c
 	<stdio.h>
@@ -4125,10 +3886,38 @@
 	"rpl.h"
 	"../util/defs.h"
 	"../util/gen_beta.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	<float.h>
+	"tamu_rpl.h"
+	"rpl.h"
+	"../util/defs.h"
+	"../util/gen_beta.h"
+
+1477093892 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.h
+	<stdint.h>
+	<stdbool.h>
+	"rpl.h"
+	<stdint.h>
+	<stdbool.h>
+	"rpl.h"
 
 1474429318 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.h
 
 1461084480 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -4152,8 +3941,29 @@
 	"../graphs/graphs.h"
 	"fhss.h"
 	"no-schedule.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../rpl/rpl.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"no-schedule.h"
 
 1533253168 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -4169,8 +3979,15 @@
 	<string.h>
 	<stdlib.h>
 	"coloring.h"
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
 
 1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
 	<stdint.h>
 	<stdbool.h>
 	"../util/list.h"
@@ -4179,14 +3996,32 @@
 1444284234 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/matching.c
 	<stdio.h>
 	"matching.h"
+	<stdio.h>
+	"matching.h"
 
 1444284234 /media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/matching.h
 	<stdbool.h>
 	<stdint.h>
 	"../util/list.h"
 	"../graphs/graphs.h"
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
 
 1444284234 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -4210,8 +4045,26 @@
 	"defs.h"
 	"../graphs/graphs.h"
 	"../schedule/fhss.h"
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+	"../schedule/fhss.h"
 
 1476465946 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.c
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+	"debug.h"
+	"files.h"
+	"gen_beta.h"
 	<stdint.h>
 	<stdlib.h>
 	<string.h>
@@ -4229,8 +4082,400 @@
 	<stdbool.h>
 	"list.h"
 	"defs.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
 
 1463796656 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/util/print.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../util/print.h"
+
+1526784111 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1533602915 source:/media/sf_DATA/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	<math.h>
+	"rpl.h"
+	"mrhof_rpl.h"
+	"tamu_rpl.h"
+	"dijkstra_rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../mcc/time_schedule.h"
+	"../schedule/fhss.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	<math.h>
+	"rpl.h"
+	"mrhof_rpl.h"
+	"tamu_rpl.h"
+	"dijkstra_rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../mcc/time_schedule.h"
+	"../schedule/fhss.h"
+
+1533253165 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	"graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../mcc/time_schedule.h"
+
+1533091419 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/graphs/graphs.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+
+1444284234 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/list.h
+
+1474086786 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/defs.h
+
+1477091654 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/debug.h
+
+1463800458 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1553367432 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<float.h>
+	"util/debug.h"
+	"util/files.h"
+	"util/print.h"
+	"util/defs.h"
+	"mcc/mcc.h"
+	"mcc/cms_tree.h"
+	"tasa/tasa.h"
+	"modesa/modesa.h"
+	"schedule/schedule.h"
+	"schedule/no-schedule.h"
+	"schedule/fhss.h"
+	"rpl/rpl.h"
+
+1460269394 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/files.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"list.h"
+	"../graphs/graphs.h"
+
+1460408766 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/print.h
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
+1463790482 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.h
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284232 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/mcc/cms_tree.h
+	"../graphs/graphs.h"
+
+1444284234 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/tasa/tasa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1444284234 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/modesa/modesa.h
+	<stdint.h>
+	"../graphs/graphs.h"
+
+1476418352 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.h
+
+1477805708 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/schedule/no-schedule.h
+
+1468539688 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.h
+	<stdint.h>
+
+1553368476 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1533253170 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/mcc/cms_tree.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<float.h>
+	"cms_tree.h"
+	"../graphs/graphs.h"
+	"../util/defs.h"
+	"../util/debug.h"
+
+1474086786 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/mcc/graph_coloring.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/debug.h"
+	"graph_coloring.h"
+
+1457217970 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/mcc/graph_coloring.h
+	<stdbool.h>
+	"../graphs/graphs.h"
+
+1463800524 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/mcc/mcc.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+	"cms_tree.h"
+	"graph_coloring.h"
+	"time_schedule.h"
+
+1526784111 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/mcc/time_schedule.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"time_schedule.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+
+1444284234 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/modesa/modesa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"modesa.h"
+	"../util/debug.h"
+
+1477871870 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/rpl/dijkstra_rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	"dijkstra_rpl.h"
+	"rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../mcc/time_schedule.h"
+	"../schedule/fhss.h"
+
+1477871952 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/rpl/dijkstra_rpl.h
+	<stdint.h>
+	<stdbool.h>
+	"rpl.h"
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/defs.h"
+
+1530228999 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	"mrhof_rpl.h"
+	"rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../mcc/time_schedule.h"
+	"../schedule/fhss.h"
+
+1477093562 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/rpl/mrhof_rpl.h
+	<stdint.h>
+	<stdbool.h>
+	"../graphs/graphs.h"
+	"../util/list.h"
+	"../util/defs.h"
+
+1553362315 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/rpl/rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	<math.h>
+	"rpl.h"
+	"mrhof_rpl.h"
+	"tamu_rpl.h"
+	"dijkstra_rpl.h"
+	"../util/defs.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../mcc/time_schedule.h"
+	"../schedule/fhss.h"
+
+1477093892 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.h
+	<stdint.h>
+	<stdbool.h>
+	"rpl.h"
+
+1533253161 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/rpl/tamu_rpl.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<limits.h>
+	<float.h>
+	"tamu_rpl.h"
+	"rpl.h"
+	"../util/defs.h"
+	"../util/gen_beta.h"
+
+1474429318 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.h
+
+1461084480 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/schedule/fhss.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1533253167 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/schedule/no-schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../rpl/rpl.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"no-schedule.h"
+
+1533253168 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/schedule/schedule.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../util/list.h"
+	"../util/files.h"
+	"../util/print.h"
+	"../util/debug.h"
+	"../graphs/graphs.h"
+	"fhss.h"
+	"schedule.h"
+
+1444284234 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/tasa/coloring.c
+	<string.h>
+	<stdlib.h>
+	"coloring.h"
+
+1444284234 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/tasa/coloring.h
+	<stdint.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284234 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/tasa/matching.c
+	<stdio.h>
+	"matching.h"
+
+1444284234 /mnt/dados/USC/4_Dev/1_scheduling_algorithms/tasa/matching.h
+	<stdbool.h>
+	<stdint.h>
+	"../util/list.h"
+	"../graphs/graphs.h"
+
+1444284234 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/tasa/tasa.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tasa.h"
+	"matching.h"
+	"coloring.h"
+	"../util/list.h"
+	"../util/debug.h"
+	"../util/files.h"
+	"../util/files.h"
+	"../util/defs.h"
+	"../graphs/graphs.h"
+
+1477091716 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/files.c
+	<sys/stat.h>
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	"files.h"
+	"debug.h"
+	"defs.h"
+	"../graphs/graphs.h"
+	"../schedule/fhss.h"
+
+1476465946 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/gen_beta.c
+	<stdint.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"../util/list.h"
+	"../util/defs.h"
+	"debug.h"
+	"files.h"
+	"gen_beta.h"
+
+1444284234 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/list.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"list.h"
+	"defs.h"
+
+1463796656 source:/mnt/dados/USC/4_Dev/1_scheduling_algorithms/util/print.c
 	<sys/stat.h>
 	<stdint.h>
 	<stdlib.h>

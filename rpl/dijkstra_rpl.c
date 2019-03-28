@@ -87,7 +87,7 @@ ListElem *dijkstraMinCost(List *nodesQueue)
     {
         Node_t *node = (Node_t *)elem->obj;
 
-        if (node->dagRank < min_cost)
+        if (node->dagRank <= min_cost)
         {
             min_cost = node->dagRank;
             node_min_cost = elem;

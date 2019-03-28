@@ -82,7 +82,10 @@ int run_rpl(uint8_t rpl_alg, List *nodesList, Tree_t *tree, uint8_t sink_id, uin
         printTimeSlots(nodesList);
 
         /* Freeing the linksList */
-        ListUnlinkAll(&linksList);
+        for (uint8_t c = 0; c < NUM_CHANNELS; c++)
+        {
+            ListUnlinkAll(&linksList[c]);
+        }
 
         /* Read the new list of links */
         readLinksFile(fp_prr_file, nodesList, &linksList, 100);
@@ -482,7 +485,7 @@ bool rplProcessTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t pr
     //}
     //else
     //{
-        return (false);
+    return (false);
     //}
 }
 
@@ -631,7 +634,7 @@ void rplTXDIO(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatri
     if (rplProcessTXDIO(rpl_alg, txNode, nodesList, prrMatrix, freq, dio_to_transmit, ka_to_transmit, min_asn_per_dio, min_asn_per_ka))
     {
         /* Print the new tree */
-//        rplPrintTree(nodesList, prrMatrix);
+        rplPrintTree(nodesList, prrMatrix);
     }
 
     /* Re-schedule the next DIO and KA for all nodes that are synced and are not on the list of scheduled DIOs */
@@ -657,7 +660,7 @@ void rplTXKA(uint8_t rpl_alg, Node_t *txNode, List *nodesList, uint8_t prrMatrix
     if (rplProcessTXKA(rpl_alg, txNode, nodesList, prrMatrix, freq))
     {
         /* Print the new tree */
-//        rplPrintTree(nodesList, prrMatrix);
+        rplPrintTree(nodesList, prrMatrix);
     }
 
     /* Schedule the next KA message for that node */
