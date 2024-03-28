@@ -7,13 +7,13 @@
 #include "../util/list.h"
 #include "../util/defs.h"
 
-#define MAX_NODES 50
+#define MAX_NODES 13
 #define MAX_HOP_COUNT MAX_NODES
-#define MAX_TIMESLOTS 256
+#define MAX_TIMESLOTS 70
 #define MAX_PKT_RETRIES 3
 #define NODE_QUEUE_SIZE 10
 
-#define NUM_CHANNELS 16
+#define NUM_CHANNELS 6
 
 typedef enum {
 	SINK,
