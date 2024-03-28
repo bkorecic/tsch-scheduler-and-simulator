@@ -13,5 +13,7 @@
 
 # Add your config here!
 
-
-
+VPATH += src/graphs
+VPATH += src/tasa
+VPATH += src/mcc
+VPATH += src/util

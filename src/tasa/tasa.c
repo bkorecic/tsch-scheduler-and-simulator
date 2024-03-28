@@ -6,8 +6,6 @@
 #include "coloring.h"
 #include "../util/list.h"
 #include "../util/debug.h"
-#include "../util/files.h"
-#include "../util/files.h"
 #include "../util/defs.h"
 #include "../graphs/graphs.h"
 
@@ -56,8 +54,8 @@ bool main_tasa(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id,
         tasaMatching(&DCFL, q, Q, tree, k, getNode(sink_id, nodesList));
 
         /* Print the Duplex Conflic Free Links */
-        PRINTF("Links scheduled at time slot %d\n", k+1);
-        printListLinks(&DCFL);
+        //PRINTF("Links scheduled at time slot %d\n", k+1);
+        //printListLinks(&DCFL);
 
         /* We also create a list of transmitter nodes in this time slot for coloring purpose */
         List nodesScheduled; memset(&nodesScheduled, 0, sizeof(List)); ListInit(&nodesScheduled);
@@ -80,7 +78,7 @@ bool main_tasa(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id,
         /* Coloring the links scheduled at this time slot */
         uint8_t max_color = tasaColoring(&nodesScheduled, confMatrix, Q, k, channel);
 
-        printListNodes(nodesList);
+        //printListNodes(nodesList);
 
         if (max_color >= NUM_CHANNELS)
         {
@@ -140,7 +138,7 @@ bool main_tasa(List *nodesList, List *linksList, Tree_t *tree, uint8_t sink_id,
             Q[i][k] = calculateQ(node, k, q, tree);
         }
 
-        printListNodes(nodesList);
+        //printListNodes(nodesList);
     }
 
     printListNodes(nodesList);
